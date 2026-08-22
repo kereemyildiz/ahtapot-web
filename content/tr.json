@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "siteTitle": "Ahtapot Tıbbi Teknolojiler",
+    "siteDescription": "Mekanikten uygulama yazılımına, bir cihazı uçtan uca aynı ekip yapıyor."
+  },
+  "nav": {
+    "layers": {
+      "mekanik": "Mekanik",
+      "elektronik": "Elektronik",
+      "gomulu": "Gömülü yazılım",
+      "uygulama": "Uygulama",
+      "saha": "Saha"
+    },
+    "sections": {
+      "urunler": "Ürünler",
+      "hakkimizda": "Hakkımızda",
+      "ekip": "Ekip",
+      "referanslar": "Referanslar",
+      "kariyer": "Kariyer",
+      "iletisim": "İletişim"
+    }
+  },
+  "hero": {
+    "eyebrow": "Ankara — tıbbi cihaz geliştirme",
+    "heading": "Bir cihazın mekaniğini, elektroniğini ve yazılımını aynı odada yapıyoruz. Dördümüz.",
+    "cta": "Ürünleri gör"
+  },
+  "theme": {
+    "light": "Aydınlık",
+    "dark": "Koyu",
+    "toggleLabel": "Temayı değiştir"
+  },
+  "locale": {
+    "tr": "Türkçe",
+    "en": "English",
+    "switchLabel": "Dili değiştir"
+  },
+  "product": {
+    "inDevelopmentBadge": "Geliştirme aşamasında"
+  },
+  "products": {
+    "su-banyosu": {
+      "name": "Laboratuvar su banyosu",
+      "tagline": "Mekanik, elektronik ve gömülü yazılım aynı ürün içinde."
+    },
+    "dijital-patoloji": {
+      "name": "Dijital patoloji yazılımı",
+      "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi."
+    }
+  }
+}

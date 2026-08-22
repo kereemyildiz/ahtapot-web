@@ -1,0 +1,10 @@
+{
+  "slug": "dijital-patoloji",
+  "order": 2,
+  "status": "in-development",
+  "interaction": "gallery",
+  "layers": ["uygulama"],
+  "assets": {
+    "gallery": []
+  }
+}

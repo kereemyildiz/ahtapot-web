@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design token'lar — CLAUDE.md'de kesin. Yeni renk uydurma, yeni font ekleme.
+ * Tema aydınlık varsayılan; koyu temada aynı token seti ters çevriliyor
+ * (zemin ink, metin slide). Kaynak: src/lib/theme.ts + cookie, bkz.
+ * [locale]/layout.tsx — sistem prefers-color-scheme'i otomatik uygulanmıyor.
+ */
+@theme {
+  --color-ink: #10142b;
+  --color-ahtapot: #3e52e0;
+  --color-periwinkle: #93a4f4;
+  --color-eosin: #e0518a;
+  --color-slide: #f1f3f7;
+  --color-steel: #737a8c;
+
+  --color-background: var(--color-slide);
+  --color-foreground: var(--color-ink);
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono-data: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular",
+    monospace;
+
+  /* Meander dik açılıdır — 0 veya 2px dışında radius yok (logo/fotoğraf
+     maskeleri hariç, onlar bileşen seviyesinde ayrıca ele alınır). */
+  --radius-none: 0px;
+  --radius-sharp: 2px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root[data-theme="dark"] {
+  --color-background: var(--color-ink);
+  --color-foreground: var(--color-slide);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--color-ahtapot);
+  color: var(--color-slide);
+}
+
+/* Erişilebilirlik: görünür focus halkası, her zaman eosin (CLAUDE.md'nin
+   eosin için izin verdiği üç kullanım alanından biri). */
+:focus-visible {
+  outline: 2px solid var(--color-eosin);
+  outline-offset: 2px;
+}
+
+/* Sol rail etiketleri — aktif/seçili durumu eosin nokta işaretler (bkz.
+   SiteRail.tsx, ScrollTrigger toggleClass). Nokta kare (radius 0) —
+   meander'ın dik açılı diline uysun diye, yuvarlak değil. */
+.rail-label {
+  position: relative;
+  color: var(--color-steel);
+  transition: color 150ms ease;
+}
+
+.rail-label:hover {
+  color: var(--color-ahtapot);
+}
+
+.rail-label.is-active {
+  color: var(--color-ahtapot);
+  font-weight: 600;
+}
+
+.rail-label .rail-dot {
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--color-eosin);
+  transform: translateY(-50%) scale(0);
+  transition: transform 150ms ease;
+}
+
+.rail-label.is-active .rail-dot {
+  transform: translateY(-50%) scale(1);
 }

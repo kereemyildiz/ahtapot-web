@@ -1,0 +1,10 @@
+{
+  "slug": "su-banyosu",
+  "order": 1,
+  "status": "available",
+  "interaction": "gallery",
+  "layers": ["mekanik", "elektronik", "gomulu"],
+  "assets": {
+    "gallery": []
+  }
+}

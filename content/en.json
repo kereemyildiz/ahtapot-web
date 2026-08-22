@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "siteTitle": "Ahtapot Medical Technologies",
+    "siteDescription": "From mechanics to application software, one team builds the device end to end."
+  },
+  "nav": {
+    "layers": {
+      "mekanik": "Mechanical",
+      "elektronik": "Electronics",
+      "gomulu": "Embedded software",
+      "uygulama": "Application",
+      "saha": "Field"
+    },
+    "sections": {
+      "urunler": "Products",
+      "hakkimizda": "About",
+      "ekip": "Team",
+      "referanslar": "References",
+      "kariyer": "Careers",
+      "iletisim": "Contact"
+    }
+  },
+  "hero": {
+    "eyebrow": "Ankara — medical device development",
+    "heading": "We build a device's mechanics, electronics, and software in one room. All four of us.",
+    "cta": "See the products"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "toggleLabel": "Switch theme"
+  },
+  "locale": {
+    "tr": "Türkçe",
+    "en": "English",
+    "switchLabel": "Switch language"
+  },
+  "product": {
+    "inDevelopmentBadge": "In development"
+  },
+  "products": {
+    "su-banyosu": {
+      "name": "Laboratory water bath",
+      "tagline": "Mechanical, electronics, and embedded software in one product."
+    },
+    "dijital-patoloji": {
+      "name": "Digital pathology software",
+      "tagline": "Imaging, annotation, and case management for the pathologist's review."
+    }
+  }
+}
