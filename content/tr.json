@@ -16,7 +16,7 @@
       "saha": "Saha"
     },
     "sections": {
-      "katmanlar": "Nasıl çalışıyoruz",
+      "katmanlar": "Katmanlar",
       "urunler": "Ürünler",
       "hakkimizda": "Hakkımızda",
       "ekip": "Ekip",
@@ -54,11 +54,37 @@
   "products": {
     "su-banyosu": {
       "name": "Laboratuvar su banyosu",
-      "tagline": "Mekanik, elektronik ve gömülü yazılım aynı ürün içinde."
+      "tagline": "Mekanik, elektronik ve gömülü yazılım aynı ürün içinde.",
+      "description": "Numuneleri sabit sıcaklıkta tutmak için tasarlanan laboratuvar su banyosu. Gövdesini, ısıtma kontrolünü ve arayüzünü aynı ekip tasarladı — mekanikten gömülü yazılıma kadar dışarıya iş verilmedi.",
+      "features": [
+        "Dijital sıcaklık kontrolü ve ekran",
+        "Paslanmaz çelik gövde",
+        "Sessiz sirkülasyon pompası",
+        "Taşma korumalı su seviyesi sensörü"
+      ]
     },
     "dijital-patoloji": {
       "name": "Dijital patoloji yazılımı",
-      "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi."
+      "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi.",
+      "description": "AhtaPatoloji, whole-slide görüntüleri tarayıcıdan yükleyip inceleme, işaretleme ve vaka yönetimi yapmayı sağlıyor. Patoloğun kararını vermiyor — incelemesini kolaylaştırıyor.",
+      "features": [
+        "Whole-slide görüntü (SVS, TIFF, NDPI) desteği",
+        "Poligon ve nokta ile annotasyon",
+        "Vaka ve slayt yönetimi",
+        "Slaytlar arası yan yana karşılaştırma görünümü"
+      ]
     }
+  },
+  "about": {
+    "paragraph": "Kurucumuz hekim — aynı zamanda yazılım, elektronik ve mekanik tasarımdan da anlıyor, cihazın teknik tarafına bizzat giriyor. Ekip, onun uzun süredir tanıdığı mühendis arkadaşlarından oluşuyor. Ankara'da, yeni kurulduk. Bir cihazı mekaniğinden uygulama yazılımına kadar aynı odada, dışarıya iş vermeden yapıyoruz."
+  },
+  "team": {
+    "intro": "Küçük bir ekibiz — her katmanın kendi mühendisi var.",
+    "roles": [
+      "Kurucu — hekim, ürün geliştirme",
+      "Mekanik mühendisi",
+      "Elektronik mühendisi",
+      "Yazılım mühendisi"
+    ]
   }
 }

@@ -172,7 +172,7 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
 
   return (
     <div ref={rootRef}>
-      <div className="sticky top-0 hidden h-screen w-28 shrink-0 flex-col border-r border-steel/20 md:flex">
+      <div className="sticky top-0 hidden h-screen w-36 shrink-0 flex-col border-r border-steel/20 md:flex">
         {/* Logonun kendi elması + meander bacakları — kod-türetilmiş
             çizginin "kaynağı". Gerçek logo varlığı (bkz. public/logo.jpg,
             arka planı silinmiş hali public/logo-mark.png). */}

@@ -37,6 +37,18 @@ Aşağıdakiler kullanıcıdan geldi, gerçek — mock değil:
   `nativeMpp` değerleri gerçek metadata'dan (`content/products/
   dijital-patoloji.json`).
 
+## Mimari not (mock değil, karar kaydı)
+
+**Turntable/DeepZoom artık sayfa scroll'una bağlı değil.** İlk sürüm
+ScrollTrigger scrub kullanıyordu (sayfayı kaydırınca dönüyor/yakınlaşıyordu)
+— bu hem sayfanın kendi scroll'uyla çakışıyordu hem de "görsele
+odaklanınca hiçbir şey olmuyor" şikayetine yol açtı. Artık ikisi de kendi
+üzerine gelip tekerlek çevirince/sürükleyince tepki veriyor (deepzoom için
+OpenSeadragon'un kendi native mouseNavEnabled'ı, turntable için elle
+yazılmış pointer-drag + wheel handler), sayfa scroll'una hiç dokunmuyor.
+Ayrıca "fancy" etkileşim artık ana sayfada değil, `/urunler/[slug]` detay
+sayfasında — ana sayfadaki kart sakin bir statik önizleme.
+
 ## Mock veriler — gerçeğiyle değiştirilmeli
 
 ### Turntable kare seti (su banyosu)
@@ -48,14 +60,33 @@ göre daha dürüst). Gerçek su banyosunun 360° çekilmiş 36 karesi gelince
 kalabilir, dosyalar yer değiştirir; `Turntable.tsx`'te kod değişikliği
 gerekmez.
 
-### Ekip (Team bölümü)
-Henüz hiç kurulmadı — isim, rol, fotoğraf yok. Kurucunun (doktor) ve
-mühendis arkadaşlarının gerçek isimleri/rolleri/fotoğrafları geldiğinde
-`TeamSection.tsx` yazılacak.
+### Ekip (Team bölümü) — dolduruldu, MOCK
+`TeamSection.tsx` artık 4 rol kartı gösteriyor (`content/tr.json` →
+`team.roles`): "Kurucu — hekim, ürün geliştirme", "Mekanik mühendisi",
+"Elektronik mühendisi", "Yazılım mühendisi". **İsim yok, gerçek fotoğraf
+yok** — avatar bilinçli olarak sahte bir fotoğraf gibi durmayan düz bir
+harf-kutusu (rolün ilk harfi). "4 kişi" sayısı bir iddia olarak yazılmadı
+(metinde geçmiyor), yalnız kaç kart gösterildiği kadar — gerçek isim/rol/
+fotoğraf geldiğinde `team.roles` gerçek isimlerle, avatar kutuları gerçek
+fotoğrafla değiştirilmeli.
 
-### Hakkımızda
-Şirket hikâyesi metni hâlâ yazılmadı (yalnız üstteki kısa doktor-kurucu
-notu Hero'da var). `AboutSection.tsx` boş kabuk.
+### Hakkımızda — dolduruldu, GERÇEK çerçeve
+`AboutSection.tsx`'teki paragraf (`content/tr.json` → `about.paragraph`)
+kullanıcının verdiği gerçek bilgilerden yazıldı (kurucu hekim + teknik,
+ekip mühendis arkadaşları, Ankara, yeni kuruldu) — **mock değil**, ama
+uydurma bir "kuruluş hikâyesi" (ör. "bir ihtiyaçtan doğdu" gibi) EKLENMEDİ,
+yalnız doğrulanmış gerçekler var.
+
+### Ürün detay sayfası açıklama + özellikler — MOCK
+`content/tr.json`/`en.json` → `products.<slug>.description` ve `.features`
+— `/urunler/[slug]` sayfasında gösteriliyor. **Gerçek spesifikasyon değil**:
+su banyosu için nitel özellikler (dijital sıcaklık kontrolü, paslanmaz
+gövde vb.) — kasıtlı olarak kesin sayı/tolerans YAZILMADI (ör. "±0.1°C"
+gibi bir değer uydurmak CLAUDE.md'nin mevzuat kuralına aykırı olurdu).
+Dijital patoloji için özellikler gerçek ekran görüntülerinden gözlemlenen
+işlevlere dayanıyor (annotasyon araçları, karşılaştırma görünümü, vaka
+listesi) — bunlar da mock ama en azından gerçek arayüzden gözlemlendi.
+Gerçek spesifikasyon/özellik listesi geldiğinde bu iki alan değiştirilmeli.
 
 ### Kariyer
 İçerik yok — açık pozisyon var mı belirtilmedi. `CareerSection.tsx` boş

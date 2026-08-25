@@ -73,6 +73,25 @@ export default async function ProductDetailPage({
       <div className="mt-12">
         <ProductInteractionView product={product} />
       </div>
+
+      {/* TODO(mock-data): açıklama + özellik listesi gerçek spesifikasyon
+          değil, ekran görüntülerinden/verilen çerçeveden türetildi — bkz.
+          docs/mock-data-todo.md. */}
+      <div className="mt-16 grid gap-10 md:grid-cols-[3fr_2fr]">
+        <p className="font-body text-lg leading-relaxed text-foreground">
+          {tProducts(`${slug}.description`)}
+        </p>
+        <ul className="flex flex-col gap-3 border-t border-steel/20 pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+          {(tProducts.raw(`${slug}.features`) as string[]).map((feature) => (
+            <li
+              key={feature}
+              className="font-mono-data text-sm text-foreground/80"
+            >
+              {feature}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

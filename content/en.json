@@ -16,7 +16,7 @@
       "saha": "Field"
     },
     "sections": {
-      "katmanlar": "How we work",
+      "katmanlar": "Layers",
       "urunler": "Products",
       "hakkimizda": "About",
       "ekip": "Team",
@@ -54,11 +54,37 @@
   "products": {
     "su-banyosu": {
       "name": "Laboratory water bath",
-      "tagline": "Mechanical, electronics, and embedded software in one product."
+      "tagline": "Mechanical, electronics, and embedded software in one product.",
+      "description": "A laboratory water bath designed to hold samples at a constant temperature. The enclosure, heating control, and interface were all designed by the same team — nothing outsourced, from mechanics to embedded software.",
+      "features": [
+        "Digital temperature control and display",
+        "Stainless steel enclosure",
+        "Quiet circulation pump",
+        "Overflow-protected water level sensor"
+      ]
     },
     "dijital-patoloji": {
       "name": "Digital pathology software",
-      "tagline": "Imaging, annotation, and case management for the pathologist's review."
+      "tagline": "Imaging, annotation, and case management for the pathologist's review.",
+      "description": "AhtaPatoloji lets you upload whole-slide images from the scanner and review, annotate, and manage cases. It doesn't make the call — it makes the pathologist's review easier.",
+      "features": [
+        "Whole-slide image support (SVS, TIFF, NDPI)",
+        "Polygon and point annotation",
+        "Case and slide management",
+        "Side-by-side slide comparison view"
+      ]
     }
+  },
+  "about": {
+    "paragraph": "Our founder is a physician — who also understands software, electronics, and mechanical design, and gets hands-on with the technical side of the device. The team is made up of engineers he's known for a long time. We're based in Ankara, newly founded. We build a device from mechanics to application software in one room, without outsourcing."
+  },
+  "team": {
+    "intro": "We're a small team — every layer has its own engineer.",
+    "roles": [
+      "Founder — physician, product development",
+      "Mechanical engineer",
+      "Electronics engineer",
+      "Software engineer"
+    ]
   }
 }

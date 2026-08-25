@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap, useGSAP } from "@/lib/gsapSetup";
+import { useGSAP } from "@/lib/gsapSetup";
 import type { Product } from "@/content/schema";
 
 // Kareler 4:3 üretildi (bkz. public/products/su-banyosu/turntable) —
@@ -11,17 +11,25 @@ const CANVAS_W = 900;
 const CANVAS_H = 675;
 
 /**
- * ScrollTrigger scrub ile dönen kare sekansı. Kareler önce tamamen preload
- * edilir (canvas'a çizim, <img src> değişimi değil — reflow/decode
- * gecikmesi olmasın). Mobilde 36 → 12 kareye düşer (adım atlayarak, ayrı
- * dosya seti değil). Reduced motion'da tek statik kare kalır, scrub kurulmaz.
+ * Artık sayfa scroll'una bağlı DEĞİL — sürükle ya da üzerindeyken tekerlek
+ * çevir, ürün döner; sayfa kendi kaydırmasını hiç kaybetmiyor (önceki
+ * ScrollTrigger scrub sürümü, sayfanın scroll'uyla karışıyordu, "görsele
+ * odaklanınca hiçbir şey olmuyor" şikayetinin sebebiydi — artık üzerine
+ * gelip tekerlek çevirmek TAM OLARAK bir şey yapıyor, sayfa kaymıyor).
+ * Kareler preload edilir, reduced motion'da tek statik kare kalır.
  */
 export function Turntable({ product }: { product: Product }) {
   const turntable = product.assets.turntable;
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const indexRef = useRef(0);
   const [ready, setReady] = useState(false);
+  const [reducedMotion] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 
   useEffect(() => {
     if (!turntable) return;
@@ -60,55 +68,69 @@ export function Turntable({ product }: { product: Product }) {
         }
       };
 
-      const mm = gsap.matchMedia();
-      mm.add(
-        {
-          reduced: "(prefers-reduced-motion: reduce)",
-          mobile: "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
-          desktop: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
-        },
-        (context) => {
-          const { reduced, mobile } = context.conditions as {
-            reduced: boolean;
-            mobile: boolean;
-          };
+      const total = turntable.frameCount;
+      // Çekici bir başlangıç açısı (tam cepheden değil).
+      indexRef.current = Math.floor(total * 0.15);
+      drawFrame(indexRef.current);
 
-          if (reduced) {
-            // Tek statik kare — çekici bir açı, dönüş yok.
-            drawFrame(Math.floor(turntable.frameCount * 0.15));
-            return;
-          }
+      if (reducedMotion) return; // statik kare, sürükleme/tekerlek yok.
 
-          // Mobilde 36 → 12: ayrı dosya seti değil, aynı setten adım atlama.
-          const step = mobile ? 3 : 1;
-          const indices: number[] = [];
-          for (let i = 0; i < turntable.frameCount; i += step) {
-            indices.push(i);
-          }
-          drawFrame(indices[0]);
+      canvas.style.cursor = "grab";
+      canvas.style.touchAction = "pan-y"; // dikey scroll'u mobilde bloklama
 
-          const state = { progress: 0 };
-          gsap.to(state, {
-            progress: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.3,
-            },
-            onUpdate: () => {
-              const i = Math.min(
-                indices.length - 1,
-                Math.floor(state.progress * indices.length)
-              );
-              drawFrame(indices[i]);
-            },
-          });
+      const setIndex = (next: number) => {
+        indexRef.current = ((next % total) + total) % total;
+        drawFrame(indexRef.current);
+      };
+
+      let dragging = false;
+      let lastX = 0;
+      const DRAG_PX_PER_FRAME = 6;
+
+      const onPointerDown = (e: PointerEvent) => {
+        dragging = true;
+        lastX = e.clientX;
+        canvas.setPointerCapture(e.pointerId);
+        canvas.style.cursor = "grabbing";
+      };
+      const onPointerMove = (e: PointerEvent) => {
+        if (!dragging) return;
+        const dx = e.clientX - lastX;
+        if (Math.abs(dx) >= DRAG_PX_PER_FRAME) {
+          const steps = Math.trunc(dx / DRAG_PX_PER_FRAME);
+          setIndex(indexRef.current - steps);
+          lastX += steps * DRAG_PX_PER_FRAME;
         }
-      );
+      };
+      const endDrag = () => {
+        dragging = false;
+        canvas.style.cursor = "grab";
+      };
+      // Sayfa üzerindeyken tekerlek çevirince SAYFA kaymaz, ürün döner.
+      // preventDefault TEK BAŞINA yetmiyor — Lenis wheel'i window'da ayrıca
+      // dinliyor ve kendi scroll'unu sürüyor, defaultPrevented'e bakmıyor.
+      // stopPropagation olayın Lenis'e hiç ulaşmamasını sağlıyor.
+      const onWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIndex(indexRef.current + (e.deltaY > 0 ? 1 : -1));
+      };
 
-      return () => mm.revert();
+      canvas.addEventListener("pointerdown", onPointerDown);
+      canvas.addEventListener("pointermove", onPointerMove);
+      canvas.addEventListener("pointerup", endDrag);
+      canvas.addEventListener("pointerleave", endDrag);
+      canvas.addEventListener("pointercancel", endDrag);
+      canvas.addEventListener("wheel", onWheel, { passive: false });
+
+      return () => {
+        canvas.removeEventListener("pointerdown", onPointerDown);
+        canvas.removeEventListener("pointermove", onPointerMove);
+        canvas.removeEventListener("pointerup", endDrag);
+        canvas.removeEventListener("pointerleave", endDrag);
+        canvas.removeEventListener("pointercancel", endDrag);
+        canvas.removeEventListener("wheel", onWheel);
+      };
     },
     { scope: containerRef, dependencies: [ready] }
   );
@@ -122,15 +144,20 @@ export function Turntable({ product }: { product: Product }) {
   }
 
   return (
-    <div ref={containerRef} className="aspect-[4/3] overflow-hidden bg-slide">
+    <div ref={containerRef} className="relative aspect-[4/3] overflow-hidden bg-slide">
       <canvas
         ref={canvasRef}
         width={CANVAS_W}
         height={CANVAS_H}
         className="h-full w-full"
         role="img"
-        aria-label={`${product.slug} ürününün 360° dönen görseli`}
+        aria-label={`${product.slug} ürününün 360° dönen görseli — sürükle ya da tekerlek çevir`}
       />
+      {!reducedMotion && (
+        <p className="pointer-events-none absolute bottom-3 left-3 font-mono-data text-[11px] uppercase tracking-[0.06em] text-steel">
+          sürükle / tekerlek çevir
+        </p>
+      )}
     </div>
   );
 }

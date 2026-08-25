@@ -54,7 +54,10 @@ export async function ProductCard({ product, variant }: ProductCardProps) {
         <h3 className="font-display text-xl font-semibold">
           {tProducts(`${product.slug}.name`)}
         </h3>
-        <p className="font-body text-sm text-foreground/80">
+        {/* min-h: 2 satırlık yer hep ayrılıyor — yoksa 1 satırlık ve 2
+            satırlık tagline'lar arasında altındaki layer-strip/"detayları
+            gör" satırları kartlar arasında hizasız kalıyordu. */}
+        <p className="min-h-[42px] font-body text-sm text-foreground/80">
           {tProducts(`${product.slug}.tagline`)}
         </p>
         <LayerStrip activeLayers={product.layers} labels={layerLabels} />

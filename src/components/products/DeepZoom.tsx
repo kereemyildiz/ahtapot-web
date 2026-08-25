@@ -12,8 +12,7 @@ import type OpenSeadragonType from "openseadragon";
 const ANNOTATION_D = "M32,22 L58,17 L66,36 L50,52 L30,45 Z";
 
 // Bu bileşen yalnız client'ta render ediliyor (ProductInteractionView'de
-// next/dynamic ssr:false) — ilk render'da bile window var, useEffect'e
-// gerek yok (React: "setState within an effect" uyarısını da önlüyor).
+// next/dynamic ssr:false) — ilk render'da bile window var.
 function computeAutoActivate(): boolean {
   if (typeof window === "undefined") return false;
   const isDesktop = window.matchMedia("(min-width: 768px)").matches;
@@ -24,13 +23,12 @@ function computeAutoActivate(): boolean {
 }
 
 /**
- * OpenSeadragon, scroll ile 2×→40× (gerçek slayt metadata'sından
- * kalibre edilmiş — bkz. assets.deepzoom.nativeObjective/nativeMpp).
- * Masaüstünde + hareket kısıtlı değilse otomatik açılır ve scroll'u
- * sürer; mobilde ve reduced-motion'da statik poster + "Demoyu aç" —
- * tıklanınca gerçek viewer açılır ama scroll'a bağlı değil, parmakla/
- * fare ile serbestçe gezilir (CLAUDE.md: ürün etkileşimleri statik
- * postere düşer).
+ * OpenSeadragon'un KENDİ mouse/touch gesture sistemi açık (mouseNavEnabled)
+ * — üzerindeyken tekerlek çevirmek/pinch yapmak SADECE görüntüyü
+ * yakınlaştırır, sayfa kaymaz (tıpkı bir harita gibi — standart, bilinen
+ * davranış). Önceki sürüm sayfa scroll'unu GSAP scrub ile sürüyordu; bu
+ * hem "görsele odaklanınca hiçbir şey olmuyor" şikayetinin hem de
+ * scroll çakışmasının kök sebebiydi. Artık scroll'a hiç bağımlı değil.
  */
 export function DeepZoom({ product }: { product: Product }) {
   const dz = product.assets.deepzoom;
@@ -40,14 +38,12 @@ export function DeepZoom({ product }: { product: Product }) {
   const labelRef = useRef<HTMLParagraphElement>(null);
   const viewerRef = useRef<OpenSeadragonType.Viewer | null>(null);
 
-  const [autoActive] = useState(computeAutoActivate);
   const [activated, setActivated] = useState(computeAutoActivate);
 
   useEffect(() => {
     if (!dz || !activated || !osdElRef.current) return;
     let cancelled = false;
     let viewer: OpenSeadragonType.Viewer | undefined;
-    let ctx: ReturnType<typeof gsap.context> | undefined;
 
     import("openseadragon").then(({ default: OpenSeadragon }) => {
       if (cancelled || !osdElRef.current) return;
@@ -56,13 +52,9 @@ export function DeepZoom({ product }: { product: Product }) {
         element: osdElRef.current,
         tileSources: dz.dziPath,
         showNavigator: false,
-        showNavigationControl: !autoActive,
-        // autoActive (masaüstü, scroll bizim GSAP scrub'ımızda): OSD'nin
-        // mouse/wheel'e hiç dokunmaması lazım, yoksa Lenis'in sayfa
-        // scroll'uyla çakışıyor ("scroll garip çalışıyor" bug'ı buydu —
-        // scrollToZoom:false tek başına yetmiyor, OSD yine de wheel'i
-        // kısmen yakalıyordu).
-        mouseNavEnabled: !autoActive,
+        showNavigationControl: true,
+        mouseNavEnabled: true,
+        gestureSettingsTouch: { pinchToZoom: true, flickEnabled: true },
         animationTime: 0.4,
       });
       viewerRef.current = viewer;
@@ -71,67 +63,37 @@ export function DeepZoom({ product }: { product: Product }) {
         if (cancelled || !viewer) return;
         const viewport = viewer.viewport;
 
-        const updateLabel = (imageZoom: number) => {
+        const updateLabel = () => {
           if (!labelRef.current) return;
+          const imageZoom = viewport.viewportToImageZoom(viewport.getZoom(true));
           const magnification = dz.nativeObjective * imageZoom;
           const mpp = dz.nativeMpp / imageZoom;
           labelRef.current.textContent = `${magnification.toFixed(0)}× · ${mpp.toFixed(2)} µm/px`;
         };
 
-        updateLabel(viewport.viewportToImageZoom(viewport.getZoom()));
+        updateLabel();
+        viewer!.addHandler("viewport-change", updateLabel);
 
-        // Mobil/manuel açılış: parmakla gez, scroll'a bağlı scrub yok.
-        if (!autoActive) return;
-
-        const minImageZoom = 2 / dz.nativeObjective;
-        const maxImageZoom = 1; // native çözünürlük = tam nativeObjective
-        const minZoom = viewport.imageToViewportZoom(minImageZoom);
-        const maxZoom = viewport.imageToViewportZoom(maxImageZoom);
-        const center = viewport.getCenter();
-
-        viewport.zoomTo(minZoom, center, true);
-        updateLabel(minImageZoom);
-
-        ctx = gsap.context(() => {
-          const state = { t: 0 };
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.4,
-            },
+        // Annotasyon bir kez, açılışta yumuşakça beliriyor — artık
+        // scroll'a değil, "görüntü hazır" anına bağlı.
+        if (annotationRef.current) {
+          gsap.set(annotationRef.current, { drawSVG: "0%" });
+          gsap.to(annotationRef.current, {
+            drawSVG: "100%",
+            duration: 0.8,
+            delay: 0.6,
+            ease: "power2.out",
           });
-          tl.to(
-            state,
-            {
-              t: 1,
-              ease: "none",
-              onUpdate: () => {
-                const zoom = gsap.utils.interpolate(minZoom, maxZoom, state.t);
-                viewport.zoomTo(zoom, center, true);
-                updateLabel(viewport.viewportToImageZoom(zoom));
-              },
-            },
-            0
-          );
-          if (annotationRef.current) {
-            gsap.set(annotationRef.current, { drawSVG: "0%" });
-            // Annotasyon yalnız yakınlaşmanın ikinci yarısında belirir —
-            // "yakınlaşınca işaretleme ortaya çıkıyor" okunuşu.
-            tl.to(annotationRef.current, { drawSVG: "100%", ease: "none" }, 0.55);
-          }
-        }, containerRef);
+        }
       });
     });
 
     return () => {
       cancelled = true;
-      ctx?.revert();
       viewer?.destroy();
       viewerRef.current = null;
     };
-  }, [dz, activated, autoActive]);
+  }, [dz, activated]);
 
   if (!dz) {
     return (
@@ -180,7 +142,7 @@ export function DeepZoom({ product }: { product: Product }) {
             ref={osdElRef}
             className="h-full w-full"
             role="img"
-            aria-label={`${product.slug} — whole-slide görüntüde 2×–40× arası yakınlaştırma`}
+            aria-label={`${product.slug} — whole-slide görüntüde tekerlek/pinch ile 2×–40× arası yakınlaştırma`}
           />
           <svg
             className="pointer-events-none absolute inset-0 h-full w-full"

@@ -51,6 +51,11 @@ const productCopySchema = z
   .object({
     name: z.string(),
     tagline: z.string(),
+    // Detay sayfası için (/urunler/[slug]) — TODO(mock-data): gerçek
+    // spesifikasyon değil, ekran görüntülerinden/gerçek çerçeveden
+    // türetilmiş nitel özellikler. Bkz. docs/mock-data-todo.md.
+    description: z.string(),
+    features: z.array(z.string()),
   })
   .strict();
 
@@ -110,6 +115,19 @@ export const localeContentSchema = z
     // slug -> ürün metni. Yapısal alanlar (order/status/interaction/layers/
     // assets) burada değil, content/products/*.json'da — bkz. productSchema.
     products: z.record(z.string(), productCopySchema),
+    about: z
+      .object({
+        paragraph: z.string(),
+      })
+      .strict(),
+    // TODO(mock-data): gerçek isim/fotoğraf yok, yalnız rol — bkz.
+    // docs/mock-data-todo.md.
+    team: z
+      .object({
+        intro: z.string(),
+        roles: z.array(z.string()),
+      })
+      .strict(),
   })
   .strict();
 
