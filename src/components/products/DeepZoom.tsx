@@ -52,7 +52,11 @@ export function DeepZoom({ product }: { product: Product }) {
         element: osdElRef.current,
         tileSources: dz.dziPath,
         showNavigator: false,
-        showNavigationControl: true,
+        // OSD'nin varsayılan +/- buton ikonları kendi asset klasöründen
+        // geliyor (prefixUrl kurmadık) — ikonlar yüklenmiyordu, kırık
+        // görsel + alt metin ("Zoom in" vb.) üst üste biniyordu. Zaten
+        // tekerlek/pinch/sürükle native çalışıyor, butona gerek yok.
+        showNavigationControl: false,
         mouseNavEnabled: true,
         gestureSettingsTouch: { pinchToZoom: true, flickEnabled: true },
         animationTime: 0.4,

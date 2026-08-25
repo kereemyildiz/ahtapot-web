@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import { LenisContext } from "./LenisContext";
+import { usePathname } from "@/i18n/navigation";
 
 /**
  * Lenis + GSAP ScrollTrigger senkronizasyonu (CLAUDE.md'deki snippet birebir).
@@ -14,6 +15,22 @@ import { LenisContext } from "./LenisContext";
  */
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
+  // Lenis (ve ScrollTrigger'ın kendi ölçümleri) sayfanın YÜKSEKLİĞİNİ
+  // ilk kurulumda ölçüyor. Next.js layout, iki route arasında (ör.
+  // /urunler/su-banyosu -> /#urunler) aynı kalıp — Lenis instance'ı
+  // yeniden kurulmuyor, ama sayfa içeriği (dolayısıyla yüksekliği)
+  // tamamen değişiyor. resize() çağrılmazsa Lenis eski (kısa) sayfanın
+  // sınırını hatırlıyor ve tekerlek çevirince hiç kaymıyor — "detay
+  // sayfasından dönünce scroll çalışmıyor" bug'ının kök sebebi buydu.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      lenisRef.current?.resize();
+      ScrollTrigger.refresh();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [pathname]);
 
   useGSAP(() => {
     const prefersReducedMotion = window.matchMedia(

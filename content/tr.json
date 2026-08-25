@@ -16,7 +16,7 @@
       "saha": "Saha"
     },
     "sections": {
-      "katmanlar": "Katmanlar",
+      "katmanlar": "Kabiliyet",
       "urunler": "Ürünler",
       "hakkimizda": "Hakkımızda",
       "ekip": "Ekip",
@@ -86,5 +86,9 @@
       "Elektronik mühendisi",
       "Yazılım mühendisi"
     ]
+  },
+  "career": {
+    "message": "Şu an açık pozisyonumuz yok. Büyüdükçe burada duyururuz. Mekanik, elektronik ya da yazılım tarafında kendini bu ekipte görüyorsan yine de yaz.",
+    "contactCta": "İletişime geç"
   }
 }

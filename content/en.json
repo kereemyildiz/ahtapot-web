@@ -16,7 +16,7 @@
       "saha": "Field"
     },
     "sections": {
-      "katmanlar": "Layers",
+      "katmanlar": "Capability",
       "urunler": "Products",
       "hakkimizda": "About",
       "ekip": "Team",
@@ -86,5 +86,9 @@
       "Electronics engineer",
       "Software engineer"
     ]
+  },
+  "career": {
+    "message": "No open positions right now. We'll post here as we grow. If you see yourself on the mechanical, electronics, or software side of this team, reach out anyway.",
+    "contactCta": "Get in touch"
   }
 }

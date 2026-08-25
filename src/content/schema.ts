@@ -128,6 +128,12 @@ export const localeContentSchema = z
         roles: z.array(z.string()),
       })
       .strict(),
+    career: z
+      .object({
+        message: z.string(),
+        contactCta: z.string(),
+      })
+      .strict(),
   })
   .strict();
 
