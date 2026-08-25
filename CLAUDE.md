@@ -3,7 +3,7 @@
 ## Proje
 
 Ahtapot Tıbbi Teknolojiler A.Ş. için tek sayfalık (scroll-driven) kurumsal tanıtım sitesi.
-Şirket medikal cihaz geliştiriyor: mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı — hepsi ekip içinde. Ankara merkezli, yeni kurulmuş, 4 kişilik ekip.
+Şirket medikal cihaz geliştiriyor: mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı — hepsi ekip içinde. Ankara merkezli, yeni kurulmuş. Kurucu bir doktor — aynı zamanda yazılım, elektronik ve mekanikten de anlıyor, işin teknik tarafına bizzat giriyor. Ekip, kurucunun uzun süredir tanıdığı mühendis arkadaşlarından oluşuyor. (Not: "4 kişilik ekip" / "Dördümüz" ifadesi eski, doğru değil — bkz. docs/mock-data-todo.md.)
 
 **Hedef kitle (öncelik sırasıyla)**
 1. Yatırımcı — "bu ekip gerçekten ürün çıkarabiliyor" demeli
@@ -11,7 +11,7 @@ Ahtapot Tıbbi Teknolojiler A.Ş. için tek sayfalık (scroll-driven) kurumsal t
 3. Distribütör
 4. Üniversite / araştırmacı
 
-**Sayfanın tek işi:** Ziyaretçiyi, dört kişilik yeni bir ekibin bir cihazı mekaniğinden uygulama yazılımına kadar uçtan uca yapabildiğine ikna etmek ve talep formunu doldurtmak.
+**Sayfanın tek işi:** Ziyaretçiyi, doktor kurucunun ve mühendis arkadaşlarından oluşan bu ekibin bir cihazı mekaniğinden uygulama yazılımına kadar uçtan uca yapabildiğine ikna etmek ve talep formunu doldurtmak.
 
 **Sitenin konusu tek bir ürün değil, kabiliyettir.** Yatırımcının satın aldığı şey bir cihaz değil, ürün çıkarabilme yeteneğidir. Ürünler bunun kanıtı olarak durur, sitenin merkezi olarak değil.
 
@@ -203,9 +203,9 @@ Pazarlık konusu değil. Chrome DevTools MCP ile ölç, tahmin etme.
 **Ton:** Profesyonel ama genç. Kurumsal şişkinlik yok. Kısa cümle, aktif çatı, somut ifade.
 
 - ❌ "Sağlık teknolojilerinde yenilikçi çözümler sunarak sektöre değer katıyoruz."
-- ✅ "Bir cihazın mekaniğini, elektroniğini ve yazılımını aynı odada yapıyoruz. Dördümüz."
+- ✅ "Bir cihazın mekaniğini, elektroniğini ve yazılımını aynı odada yapıyoruz. Kurucumuz doktor."
 
-Küçük ekip olmak saklanacak değil, kullanılacak bir şey. Yatırımcı 4 kişinin çıkardığı çalışan cihazı görünce etkilenir; 4 kişinin 200 kişilik dil kullanmasını görünce şüphelenir.
+Küçük ekip olmak saklanacak değil, kullanılacak bir şey. Yatırımcı, klinik problemi bizzat yaşayan bir doktorun cihazı mühendis arkadaşlarıyla birlikte çıkardığını görünce etkilenir; kalabalık bir ekipmiş gibi 200 kişilik dil kullanmasını görünce şüphelenir.
 
 Buton metinleri ne olacağını söyler: "Teklif iste", "Demo talep et" — "Gönder" veya "Daha fazla" değil. Aksiyon adı akış boyunca değişmez.
 

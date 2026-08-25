@@ -25,6 +25,16 @@ const layerLabelsSchema = z
   })
   .strict();
 
+const layerSentencesSchema = z
+  .object({
+    mekanik: z.string(),
+    elektronik: z.string(),
+    gomulu: z.string(),
+    uygulama: z.string(),
+    saha: z.string(),
+  })
+  .strict();
+
 const sectionLabelsSchema = z
   .object({
     urunler: z.string(),
@@ -51,17 +61,26 @@ export const localeContentSchema = z
         siteDescription: z.string(),
       })
       .strict(),
+    // Gerçek şirket bilgisi (kullanıcı verdi) — İletişim/KVKK için.
+    company: z
+      .object({
+        legalName: z.string(),
+        address: z.string(),
+      })
+      .strict(),
     nav: z
       .object({
         layers: layerLabelsSchema,
         sections: sectionLabelsSchema,
       })
       .strict(),
+    // Katmanlar bölümünde her katman için tek cümle (spec: "jenerik
+    // infografik yapma, çizgiden türet" — görsel yok, yalnız etiket + cümle).
+    layerSentences: layerSentencesSchema,
     hero: z
       .object({
         eyebrow: z.string(),
         heading: z.string(),
-        cta: z.string(),
       })
       .strict(),
     theme: z
@@ -134,6 +153,10 @@ const productAssetsSchema = z
     deepzoom: z
       .object({
         dziPath: z.string(),
+        // Gerçek slayt metadata'sı (openslide ile okundu) — mono
+        // büyütme etiketi bundan canlı hesaplanıyor, uydurma değil.
+        nativeObjective: z.number().positive(),
+        nativeMpp: z.number().positive(),
       })
       .strict()
       .optional(),

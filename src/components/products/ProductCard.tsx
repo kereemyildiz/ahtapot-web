@@ -24,10 +24,11 @@ export async function ProductCard({ product, variant }: ProductCardProps) {
 
   return (
     <article
+      id={product.slug}
       className={
         variant === "single"
-          ? "grid gap-6 border border-steel/20 p-6 md:grid-cols-[3fr_2fr]"
-          : "flex flex-col gap-4 border border-steel/20 p-6"
+          ? "grid scroll-mt-6 gap-6 border border-steel/20 p-6 md:grid-cols-[3fr_2fr]"
+          : "flex scroll-mt-6 flex-col gap-4 border border-steel/20 p-6"
       }
     >
       <div>

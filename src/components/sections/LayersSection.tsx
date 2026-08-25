@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { LayerBeats } from "./LayerBeats";
 
 const LAYER_IDS = [
   "mekanik",
@@ -9,27 +10,30 @@ const LAYER_IDS = [
 ] as const;
 
 /**
- * 5 kompakt beat (spec §7) — SiteRail'in 5 kink'iyle aynı sıra/id. Bu
- * round'da yalnız katman etiketleri var; her beat'in gerçek cümlesi/görseli
- * ya da tipografik `stat` fallback'i görsel bölüm çalışmasında eklenecek
- * (bkz. LayerBeat tipi, tasarım dokümanı §7).
+ * 5 kompakt beat, SiteRail'in 5 kink'iyle aynı sıra/id — bkz. spec §7.
  */
 export async function LayersSection() {
-  const t = await getTranslations("nav.layers");
+  const tLabel = await getTranslations("nav.layers");
+  const tSentence = await getTranslations("layerSentences");
+
+  const items = LAYER_IDS.map((id) => ({
+    id,
+    label: tLabel(id),
+    sentence: tSentence(id),
+    // Yalnız uygulama katmanının gerçek görseli var (AhtaPatoloji arayüzü) —
+    // diğer 4 katman için henüz görsel yok, uydurmadık (bkz. mock-data-todo).
+    image:
+      id === "uygulama"
+        ? {
+            src: "/products/dijital-patoloji/annotasyon.png",
+            alt: "AhtaPatoloji arayüzünde whole-slide görüntüde annotasyon",
+          }
+        : undefined,
+  }));
 
   return (
-    <section id="katmanlar" className="flex flex-col">
-      {LAYER_IDS.map((id) => (
-        <div
-          key={id}
-          id={id}
-          className="flex min-h-[40vh] items-center border-t border-steel/20 py-10 md:min-h-[42vh]"
-        >
-          <h2 className="font-display text-3xl font-semibold tracking-[-0.01em] md:text-5xl">
-            {t(id)}
-          </h2>
-        </div>
-      ))}
+    <section id="katmanlar">
+      <LayerBeats items={items} />
     </section>
   );
 }

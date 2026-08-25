@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import { buildRailPath, type RailMarker } from "@/components/meander/kinkPath";
 import { useLenisContext } from "@/components/providers/LenisContext";
@@ -124,8 +125,21 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
 
   return (
     <div ref={rootRef}>
-      <div className="sticky top-0 hidden h-screen w-28 shrink-0 border-r border-steel/20 md:block">
-        <div className="relative h-full w-full">
+      <div className="sticky top-0 hidden h-screen w-28 shrink-0 flex-col border-r border-steel/20 md:flex">
+        {/* Logonun kendi elması + meander bacakları — kod-türetilmiş
+            çizginin "kaynağı". Gerçek logo varlığı (bkz. public/logo.jpg,
+            arka planı silinmiş hali public/logo-mark.png). */}
+        <div className="flex shrink-0 justify-center py-6">
+          <Image
+            src="/logo-mark.png"
+            alt="Ahtapot"
+            width={112}
+            height={144}
+            priority
+            className="h-9 w-auto"
+          />
+        </div>
+        <div className="relative w-full flex-1">
           <svg
             viewBox={`-4 0 70 ${VIEWBOX_HEIGHT}`}
             className="absolute inset-0 h-full w-full"

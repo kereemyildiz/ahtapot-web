@@ -3,6 +3,10 @@
     "siteTitle": "Ahtapot Medical Technologies",
     "siteDescription": "From mechanics to application software, one team builds the device end to end."
   },
+  "company": {
+    "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
+    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul, Türkiye"
+  },
   "nav": {
     "layers": {
       "mekanik": "Mechanical",
@@ -20,10 +24,16 @@
       "iletisim": "Contact"
     }
   },
+  "layerSentences": {
+    "mekanik": "We design the enclosure, the moving parts, and the tolerances ourselves.",
+    "elektronik": "We design the circuit board from scratch and prepare it for production ourselves.",
+    "gomulu": "We write the software running inside the device, end to end, ourselves.",
+    "uygulama": "We design the imaging and review interface together with the people who use it.",
+    "saha": "We stay with you after installation — maintenance and support included."
+  },
   "hero": {
     "eyebrow": "Ankara — medical device development",
-    "heading": "We build a device's mechanics, electronics, and software in one room. All four of us.",
-    "cta": "See the products"
+    "heading": "We build a device's mechanics, electronics, and software in one room. Our founder is a doctor."
   },
   "theme": {
     "light": "Light",

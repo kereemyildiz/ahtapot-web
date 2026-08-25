@@ -2,9 +2,13 @@
   "slug": "su-banyosu",
   "order": 1,
   "status": "available",
-  "interaction": "gallery",
+  "interaction": "turntable",
   "layers": ["mekanik", "elektronik", "gomulu"],
   "assets": {
-    "gallery": []
+    "gallery": [],
+    "turntable": {
+      "framesPath": "/products/su-banyosu/turntable/frame-",
+      "frameCount": 36
+    }
   }
 }

@@ -2,9 +2,14 @@
   "slug": "dijital-patoloji",
   "order": 2,
   "status": "in-development",
-  "interaction": "gallery",
+  "interaction": "deepzoom",
   "layers": ["uygulama"],
   "assets": {
-    "gallery": []
+    "gallery": [],
+    "deepzoom": {
+      "dziPath": "/deepzoom/primary-tumor-he-009.dzi",
+      "nativeObjective": 41.22,
+      "nativeMpp": 0.242591
+    }
   }
 }
