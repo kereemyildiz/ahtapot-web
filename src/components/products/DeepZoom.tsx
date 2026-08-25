@@ -57,7 +57,12 @@ export function DeepZoom({ product }: { product: Product }) {
         tileSources: dz.dziPath,
         showNavigator: false,
         showNavigationControl: !autoActive,
-        gestureSettingsMouse: { scrollToZoom: !autoActive },
+        // autoActive (masaüstü, scroll bizim GSAP scrub'ımızda): OSD'nin
+        // mouse/wheel'e hiç dokunmaması lazım, yoksa Lenis'in sayfa
+        // scroll'uyla çakışıyor ("scroll garip çalışıyor" bug'ı buydu —
+        // scrollToZoom:false tek başına yetmiyor, OSD yine de wheel'i
+        // kısmen yakalıyordu).
+        mouseNavEnabled: !autoActive,
         animationTime: 0.4,
       });
       viewerRef.current = viewer;

@@ -83,3 +83,16 @@ body {
 .rail-label.is-active .rail-dot {
   transform: translateY(-50%) scale(1);
 }
+
+/* Tick etiketi (sayfa bölümü nav'ı) kink'ten (katman anlatısı) daha sessiz
+   duruyor — onluk düz bir liste gibi görünmesin diye. Hover/focus/aktifte
+   tam görünürlüğe döner. */
+.rail-label--tick {
+  opacity: 0.55;
+}
+
+.rail-label--tick:hover,
+.rail-label--tick:focus-visible,
+.rail-label--tick.is-active {
+  opacity: 1;
+}

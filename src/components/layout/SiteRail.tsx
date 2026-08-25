@@ -26,6 +26,14 @@ const VIEWBOX_HEIGHT = 900;
  * oranı değil. Aktif durum ise gerçek section sınırlarından (ScrollTrigger)
  * geliyor — o yüzden vurgulanan etiket her zaman doğru, konumu her zaman
  * aynı yerde.
+ *
+ * 10 marker (5 kink + 5 tick) tek bir sürekli dizi olarak eşit aralıklı —
+ * eskiden iki ayrı kümeydi (kink'ler üstte sıkışık, aralarında büyük boş
+ * alan, tick'ler dipte sıkışık), kompozisyon olarak kötüydü. Ayrıca kink ve
+ * tick artık metin ağırlığında da ayrışıyor: kink etiketi (katman — asıl
+ * anlatı) her zaman tam görünür, tick etiketi (sayfa bölümü — nav) sessiz
+ * durur, hover/aktifte belirginleşir. Onluk düz bir liste gibi görünmesin
+ * diye.
  */
 export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
   const { scrollToId } = useLenisContext();
@@ -34,16 +42,24 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
   const mobileFillRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
+  const totalMarkers = layerMarkers.length + sectionMarkers.length;
+  const marginTop = 50;
+  const marginBottom = 50;
+  const step =
+    totalMarkers > 1
+      ? (VIEWBOX_HEIGHT - marginTop - marginBottom) / (totalMarkers - 1)
+      : 0;
+
   const positioned = [
     ...layerMarkers.map((m, i) => ({
       ...m,
       kind: "kink" as const,
-      y: 40 + i * (520 / layerMarkers.length),
+      y: marginTop + i * step,
     })),
     ...sectionMarkers.map((m, i) => ({
       ...m,
       kind: "tick" as const,
-      y: 610 + i * (260 / sectionMarkers.length),
+      y: marginTop + (layerMarkers.length + i) * step,
     })),
   ];
 
@@ -129,7 +145,7 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
         {/* Logonun kendi elması + meander bacakları — kod-türetilmiş
             çizginin "kaynağı". Gerçek logo varlığı (bkz. public/logo.jpg,
             arka planı silinmiş hali public/logo-mark.png). */}
-        <div className="flex shrink-0 justify-center py-6">
+        <div className="flex shrink-0 flex-col items-center gap-1.5 py-6">
           <Image
             src="/logo-mark.png"
             alt="Ahtapot"
@@ -138,6 +154,9 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
             priority
             className="h-9 w-auto"
           />
+          <span className="font-display text-[11px] font-semibold tracking-[0.02em] text-foreground">
+            AHTAPOT
+          </span>
         </div>
         <div className="relative w-full flex-1">
           <svg
@@ -183,7 +202,11 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
                     ref={(el) => {
                       labelRefs.current[marker.id] = el;
                     }}
-                    className="rail-label whitespace-nowrap font-mono-data text-[11px] uppercase tracking-[0.06em]"
+                    className={`rail-label whitespace-nowrap font-mono-data uppercase tracking-[0.06em] ${
+                      marker.kind === "kink"
+                        ? "text-[11px]"
+                        : "rail-label--tick text-[10px]"
+                    }`}
                   >
                     <span className="rail-dot" aria-hidden="true" />
                     {marker.label}

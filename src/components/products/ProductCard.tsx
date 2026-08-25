@@ -35,11 +35,16 @@ export async function ProductCard({ product, variant }: ProductCardProps) {
         <ProductInteractionView product={product} />
       </div>
       <div className="flex flex-col gap-3">
-        {product.status === "in-development" && (
-          <span className="w-fit border border-eosin px-2 py-0.5 font-mono-data text-[11px] uppercase tracking-[0.06em] text-eosin">
-            {tProductUi("inDevelopmentBadge")}
-          </span>
-        )}
+        {/* Rozet olsun/olmasın bu slot hep aynı yüksekliği kaplıyor —
+            yoksa "GELİŞTİRME AŞAMASINDA" olan kart başlığı, olmayan
+            karta göre aşağı kayıyordu (hizalama bozuluyordu). */}
+        <div className="h-6">
+          {product.status === "in-development" && (
+            <span className="w-fit border border-eosin px-2 py-0.5 font-mono-data text-[11px] uppercase tracking-[0.06em] text-eosin">
+              {tProductUi("inDevelopmentBadge")}
+            </span>
+          )}
+        </div>
         <h3 className="font-display text-xl font-semibold">
           {tProducts(`${product.slug}.name`)}
         </h3>
