@@ -80,15 +80,90 @@
   },
   "team": {
     "intro": "Küçük bir ekibiz — her katmanın kendi mühendisi var.",
-    "roles": [
-      "Kurucu — hekim, ürün geliştirme",
-      "Mekanik mühendisi",
-      "Elektronik mühendisi",
-      "Yazılım mühendisi"
+    "members": [
+      {
+        "name": "Kaan Aydın",
+        "role": "Kurucu — Hekim",
+        "bio": "Cihazın hem klinik hem teknik tarafında bizzat çalışıyor."
+      },
+      {
+        "name": "Efe Demir",
+        "role": "Mekanik Mühendisi",
+        "bio": "Gövdeyi ve hareketli parçaları tasarlıyor."
+      },
+      {
+        "name": "Cem Şahin",
+        "role": "Elektronik Mühendisi",
+        "bio": "Devre kartını baştan çizip üretime hazırlıyor."
+      },
+      {
+        "name": "Ada Kaya",
+        "role": "Yazılım Mühendisi",
+        "bio": "Gömülü yazılımdan uygulama arayüzüne kadar kodu yazıyor."
+      }
     ]
   },
   "career": {
     "message": "Şu an açık pozisyonumuz yok. Büyüdükçe burada duyururuz. Mekanik, elektronik ya da yazılım tarafında kendini bu ekipte görüyorsan yine de yaz.",
     "contactCta": "İletişime geç"
+  },
+  "contact": {
+    "intro": "Ürün bilgisi, demo, distribütörlük ya da iş başvurusu — hangisi olursa olsun, aşağıdan yaz.",
+    "fields": {
+      "name": "Ad Soyad",
+      "email": "E-posta",
+      "organization": "Kurum (opsiyonel)",
+      "requestType": "Talep türü",
+      "message": "Mesaj"
+    },
+    "requestTypes": {
+      "urunBilgisi": "Ürün bilgisi",
+      "distributorluk": "Distribütörlük",
+      "demo": "Demo",
+      "isBasvurusu": "İş başvurusu",
+      "diger": "Diğer"
+    },
+    "consent": {
+      "label": "KVKK Aydınlatma Metni'ni okudum, kişisel verilerimin işlenmesini kabul ediyorum.",
+      "linkText": "KVKK Aydınlatma Metni"
+    },
+    "submit": "Talebi gönder",
+    "submitting": "Gönderiliyor…",
+    "success": {
+      "title": "Mesajın ulaştı.",
+      "body": "2 iş günü içinde dönüş yapıyoruz."
+    },
+    "errors": {
+      "nameRequired": "Ad soyad yaz.",
+      "emailRequired": "E-posta adresi yaz.",
+      "emailInvalid": "Geçerli bir e-posta adresi yaz.",
+      "messageRequired": "Mesajını yaz.",
+      "messageTooShort": "Mesajını biraz daha uzun yaz — en az 10 karakter.",
+      "consentRequired": "Devam etmek için KVKK Aydınlatma Metni'ni onayla.",
+      "rateLimited": "Kısa sürede çok fazla talep gönderildi. Birkaç dakika sonra tekrar dene.",
+      "sendFailed": "Şu anda gönderilemedi. Birazdan tekrar dene.",
+      "generic": "Bir şeyler ters gitti. Tekrar dene."
+    }
+  },
+  "kvkk": {
+    "title": "KVKK Aydınlatma Metni",
+    "legalReviewNote": "Bu metin taslaktır — yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
+    "body": [
+      "Bu aydınlatma metni, Ahtapot Tıbbi Teknolojiler A.Ş. (\"Şirket\") tarafından 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") kapsamında veri sorumlusu sıfatıyla hazırlanmıştır.",
+      "İletişim formu üzerinden paylaştığınız ad-soyad, e-posta, kurum ve mesaj içeriği; talebinizi değerlendirmek ve sizinle iletişime geçmek amacıyla işlenir.",
+      "Verileriniz bir veritabanında saklanmaz; form gönderimi doğrudan e-posta olarak iletilir ve yalnızca talebinizin yanıtlanması amacıyla kullanılır.",
+      "KVKK'nın 11. maddesi kapsamında verilerinizin işlenip işlenmediğini öğrenme, işlenme amacını öğrenme, düzeltilmesini veya silinmesini isteme haklarına sahipsiniz.",
+      "Taleplerinizi iletişim bölümündeki adresimize yazılı olarak iletebilirsiniz."
+    ]
+  },
+  "privacy": {
+    "title": "Gizlilik",
+    "legalReviewNote": "Bu metin taslaktır — yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
+    "body": [
+      "Bu site analitik veya takip amaçlı çerez kullanmaz.",
+      "İletişim formu üzerinden paylaştığınız bilgiler bir veritabanında saklanmaz; yalnızca e-posta olarak iletilir.",
+      "Sitede üçüncü taraf reklam ya da izleme kodu bulunmaz.",
+      "Sorularınız için iletişim bölümünden bize ulaşabilirsiniz."
+    ]
   }
 }

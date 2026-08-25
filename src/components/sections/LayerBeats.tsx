@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsapSetup";
 import { buildMiniKinkPath } from "@/components/meander/kinkPath";
 
@@ -9,8 +8,6 @@ export type LayerBeatItem = {
   id: string;
   label: string;
   sentence: string;
-  /** Yalnız gerçek görseli olan katmanda dolu — bkz. spec §7, uydurma yok. */
-  image?: { src: string; alt: string };
 };
 
 const GLYPH_SIZE = 20;
@@ -95,26 +92,9 @@ export function LayerBeats({ items }: { items: LayerBeatItem[] }) {
               {item.label}
             </h2>
           </div>
-          <div className="flex flex-col gap-6 md:w-[65%] md:flex-row md:items-center">
-            <p
-              className={`font-body text-xl leading-snug text-foreground md:text-2xl ${
-                item.image ? "md:w-[55%]" : "md:w-full"
-              }`}
-            >
-              {item.sentence}
-            </p>
-            {item.image && (
-              <div className="relative aspect-[4/3] w-full overflow-hidden border border-steel/20 md:w-[45%]">
-                <Image
-                  src={item.image.src}
-                  alt={item.image.alt}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 768px) 30vw, 90vw"
-                />
-              </div>
-            )}
-          </div>
+          <p className="font-body text-xl leading-snug text-foreground md:w-[65%] md:text-2xl">
+            {item.sentence}
+          </p>
         </div>
       ))}
     </div>

@@ -80,15 +80,90 @@
   },
   "team": {
     "intro": "We're a small team — every layer has its own engineer.",
-    "roles": [
-      "Founder — physician, product development",
-      "Mechanical engineer",
-      "Electronics engineer",
-      "Software engineer"
+    "members": [
+      {
+        "name": "Kaan Aydın",
+        "role": "Founder — Physician",
+        "bio": "Works hands-on on both the clinical and technical side of the device."
+      },
+      {
+        "name": "Efe Demir",
+        "role": "Mechanical Engineer",
+        "bio": "Designs the enclosure and the moving parts."
+      },
+      {
+        "name": "Cem Şahin",
+        "role": "Electronics Engineer",
+        "bio": "Designs the circuit board from scratch and preps it for production."
+      },
+      {
+        "name": "Ada Kaya",
+        "role": "Software Engineer",
+        "bio": "Writes the code, from embedded software to the application interface."
+      }
     ]
   },
   "career": {
     "message": "No open positions right now. We'll post here as we grow. If you see yourself on the mechanical, electronics, or software side of this team, reach out anyway.",
     "contactCta": "Get in touch"
+  },
+  "contact": {
+    "intro": "Product info, a demo, distribution, or a job — whatever it is, write below.",
+    "fields": {
+      "name": "Full name",
+      "email": "Email",
+      "organization": "Organization (optional)",
+      "requestType": "Request type",
+      "message": "Message"
+    },
+    "requestTypes": {
+      "urunBilgisi": "Product info",
+      "distributorluk": "Distribution",
+      "demo": "Demo",
+      "isBasvurusu": "Job application",
+      "diger": "Other"
+    },
+    "consent": {
+      "label": "I've read the Privacy Notice and agree to the processing of my personal data.",
+      "linkText": "Privacy Notice"
+    },
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "success": {
+      "title": "Your message is in.",
+      "body": "We'll get back to you within 2 business days."
+    },
+    "errors": {
+      "nameRequired": "Enter your full name.",
+      "emailRequired": "Enter your email address.",
+      "emailInvalid": "Enter a valid email address.",
+      "messageRequired": "Write your message.",
+      "messageTooShort": "Write a bit more — at least 10 characters.",
+      "consentRequired": "Agree to the Privacy Notice to continue.",
+      "rateLimited": "Too many requests in a short time. Try again in a few minutes.",
+      "sendFailed": "Couldn't send right now. Try again shortly.",
+      "generic": "Something went wrong. Try again."
+    }
+  },
+  "kvkk": {
+    "title": "KVKK Notice",
+    "legalReviewNote": "This is a draft — it must be reviewed by legal counsel before publishing.",
+    "body": [
+      "This notice is prepared by Ahtapot Tıbbi Teknolojiler A.Ş. (\"the Company\") as the data controller under Turkey's Personal Data Protection Law No. 6698 (\"KVKK\").",
+      "The name, email, organization, and message you share through the contact form are processed to evaluate your request and get back to you.",
+      "Your data isn't stored in a database — the form is delivered directly by email and used only to respond to your request.",
+      "Under Article 11 of the KVKK, you have the right to learn whether your data is processed, learn the purpose of processing, and request correction or deletion.",
+      "You can send these requests in writing to the address in our Contact section."
+    ]
+  },
+  "privacy": {
+    "title": "Privacy",
+    "legalReviewNote": "This is a draft — it must be reviewed by legal counsel before publishing.",
+    "body": [
+      "This site doesn't use analytics or tracking cookies.",
+      "Information you share through the contact form isn't stored in a database — it's only sent by email.",
+      "There's no third-party advertising or tracking code on this site.",
+      "For questions, reach us through the Contact section."
+    ]
   }
 }

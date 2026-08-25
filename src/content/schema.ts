@@ -120,18 +120,89 @@ export const localeContentSchema = z
         paragraph: z.string(),
       })
       .strict(),
-    // TODO(mock-data): gerçek isim/fotoğraf yok, yalnız rol — bkz.
-    // docs/mock-data-todo.md.
+    // TODO(mock-data): gerçek isim/fotoğraf yok — bkz. docs/mock-data-todo.md.
     team: z
       .object({
         intro: z.string(),
-        roles: z.array(z.string()),
+        members: z.array(
+          z
+            .object({
+              name: z.string(),
+              role: z.string(),
+              bio: z.string(),
+            })
+            .strict()
+        ),
       })
       .strict(),
     career: z
       .object({
         message: z.string(),
         contactCta: z.string(),
+      })
+      .strict(),
+    contact: z
+      .object({
+        intro: z.string(),
+        fields: z
+          .object({
+            name: z.string(),
+            email: z.string(),
+            organization: z.string(),
+            requestType: z.string(),
+            message: z.string(),
+          })
+          .strict(),
+        requestTypes: z
+          .object({
+            urunBilgisi: z.string(),
+            distributorluk: z.string(),
+            demo: z.string(),
+            isBasvurusu: z.string(),
+            diger: z.string(),
+          })
+          .strict(),
+        consent: z
+          .object({
+            label: z.string(),
+            linkText: z.string(),
+          })
+          .strict(),
+        submit: z.string(),
+        submitting: z.string(),
+        success: z
+          .object({
+            title: z.string(),
+            body: z.string(),
+          })
+          .strict(),
+        errors: z
+          .object({
+            nameRequired: z.string(),
+            emailRequired: z.string(),
+            emailInvalid: z.string(),
+            messageRequired: z.string(),
+            messageTooShort: z.string(),
+            consentRequired: z.string(),
+            rateLimited: z.string(),
+            sendFailed: z.string(),
+            generic: z.string(),
+          })
+          .strict(),
+      })
+      .strict(),
+    kvkk: z
+      .object({
+        title: z.string(),
+        legalReviewNote: z.string(),
+        body: z.array(z.string()),
+      })
+      .strict(),
+    privacy: z
+      .object({
+        title: z.string(),
+        legalReviewNote: z.string(),
+        body: z.array(z.string()),
       })
       .strict(),
   })

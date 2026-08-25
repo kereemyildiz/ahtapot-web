@@ -14,7 +14,7 @@ export async function CareerSection() {
         {tCareer("message")}
       </p>
       <Link
-        href="/#iletisim"
+        href="/?type=is-basvurusu#iletisim"
         className="mt-4 inline-block w-fit font-mono-data text-xs uppercase tracking-[0.06em] text-ahtapot hover:text-eosin"
       >
         {tCareer("contactCta")} →

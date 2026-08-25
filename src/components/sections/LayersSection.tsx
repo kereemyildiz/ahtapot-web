@@ -20,15 +20,6 @@ export async function LayersSection() {
     id,
     label: tLabel(id),
     sentence: tSentence(id),
-    // Yalnız uygulama katmanının gerçek görseli var (AhtaPatoloji arayüzü) —
-    // diğer 4 katman için henüz görsel yok, uydurmadık (bkz. mock-data-todo).
-    image:
-      id === "uygulama"
-        ? {
-            src: "/products/dijital-patoloji/annotasyon.png",
-            alt: "AhtaPatoloji arayüzünde whole-slide görüntüde annotasyon",
-          }
-        : undefined,
   }));
 
   return (

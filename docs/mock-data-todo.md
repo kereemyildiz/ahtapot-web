@@ -60,15 +60,16 @@ göre daha dürüst). Gerçek su banyosunun 360° çekilmiş 36 karesi gelince
 kalabilir, dosyalar yer değiştirir; `Turntable.tsx`'te kod değişikliği
 gerekmez.
 
-### Ekip (Team bölümü) — dolduruldu, MOCK
-`TeamSection.tsx` artık 4 rol kartı gösteriyor (`content/tr.json` →
-`team.roles`): "Kurucu — hekim, ürün geliştirme", "Mekanik mühendisi",
-"Elektronik mühendisi", "Yazılım mühendisi". **İsim yok, gerçek fotoğraf
-yok** — avatar bilinçli olarak sahte bir fotoğraf gibi durmayan düz bir
-harf-kutusu (rolün ilk harfi). "4 kişi" sayısı bir iddia olarak yazılmadı
-(metinde geçmiyor), yalnız kaç kart gösterildiği kadar — gerçek isim/rol/
-fotoğraf geldiğinde `team.roles` gerçek isimlerle, avatar kutuları gerçek
-fotoğrafla değiştirilmeli.
+### Ekip (Team bölümü) — dolduruldu, MOCK (isimler dahil)
+`TeamSection.tsx` `content/tr.json`/`en.json` → `team.members` içindeki 4
+kaydı render ediyor: **Kaan Aydın** (Kurucu — Hekim), **Efe Demir**
+(Mekanik Mühendisi), **Cem Şahin** (Elektronik Mühendisi), **Ada Kaya**
+(Yazılım Mühendisi) — her biri bir cümlelik bio ile. **İsimler UYDURMA —
+gerçek kişi adları değil** (kurucunun soyadı gerçek isimle karışmasın diye
+bilinçli olarak "Yıldız" kullanılmadı). Gerçek fotoğraf da yok — avatar
+bilinçli olarak sahte bir fotoğraf gibi durmayan düz bir harf-kutusu
+(adın ilk harfi). Gerçek isim/rol/bio/fotoğraf geldiğinde `team.members`
+gerçek verilerle, avatar kutuları gerçek fotoğrafla değiştirilmeli.
 
 ### Hakkımızda — dolduruldu, GERÇEK çerçeve
 `AboutSection.tsx`'teki paragraf (`content/tr.json` → `about.paragraph`)
@@ -102,18 +103,31 @@ Gerçek referans verilmedi — bölüm bilinçli olarak hiç render edilmiyor
 CE / ISO 13485 / TİTCK-ÜTS — hiçbiri kullanılmadı (ne gerçek ne mock;
 belge numarasız sertifika kullanma kuralı gereği hiç yazılmadı).
 
-### İletişim formu
-Yalnız iskelet + gerçek adres var. Form alanları, KVKK checkbox, Resend
-entegrasyonu (`RESEND_API_KEY` env var gerekecek) kurulmadı.
+### İletişim formu — kuruldu, GÖNDERİM env değişkenleri EKSİK
+`ContactForm.tsx` (client) + `app/api/contact/route.ts` (server) canlı test
+edildi: client-side zod validasyonu, server-side zod validasyonu, honeypot
+(`hp` doluysa sessizce `{ok:true}`, mail gönderilmez), rate limit (aynı IP
+için 10 dakikada 6. istekte `429`) — hepsi gerçek isteklerle doğrulandı.
+**Eksik olan gerçek veri, kod değil, ortam değişkenleri:**
+- `RESEND_API_KEY` — ayarlanmadı, şu an her gönderim `500 send_failed`
+  ile düşüyor (kullanıcıya "Şu anda gönderilemedi" gösteriliyor, çökmüyor).
+- `CONTACT_EMAIL_TO` — talep e-postalarının gideceği gerçek kutu adresi
+  henüz yok.
+- `CONTACT_EMAIL_FROM` (opsiyonel) — verilmezse `onboarding@resend.dev`'e
+  düşüyor, Resend hesabında doğrulanmış bir gönderen alanı olduğunda
+  gerçek adresle değiştirilmeli.
+Bu üçü Vercel proje ayarlarında (ya da yerelde `.env.local`) tanımlanınca
+kod tarafında hiçbir değişiklik gerekmiyor.
 
 ### Ürün galerisi görselleri
 `content/products/su-banyosu.json` ve `dijital-patoloji.json` →
 `assets.gallery: []` — ikisi de boş (gallery artık birincil etkileşim
 değil, turntable/deepzoom kullanılıyor, ama yedek/ek görsel yok).
 
-### Katman görselleri (MEKANİK / ELEKTRONİK / GÖMÜLÜ / SAHA)
-Yalnız UYGULAMA'nın gerçek görseli var (yukarıda). Diğer 4 katman hâlâ
-yalnız cümle — bilinçli olarak mock görsel de eklenmedi bu round'da
-(kapsam turntable/deepzoom/ürün grid'iydi). İstenirse bir sonraki round'da
-soyut illüstrasyon (turntable kareleriyle aynı stil) ya da gerçek fotoğraf
-eklenebilir.
+### Katman beat'leri (MEKANİK / ELEKTRONİK / GÖMÜLÜ / UYGULAMA / SAHA)
+Kullanıcı talebiyle ("burada screenshot kullanmana gerek yok") UYGULAMA
+satırındaki AhtaPatoloji ekran görüntüsü kaldırıldı — `LayerBeats.tsx`
+artık hiçbir katmanda görsel desteklemiyor (`LayerBeatItem.image` alanı
+tamamen silindi), 5 katman da simetrik: mini meander glyph + tek cümle.
+`annotasyon.png` hâlâ `public/products/dijital-patoloji/` altında duruyor,
+başka hiçbir yerde kullanılmıyor (gerekirse ürün detay sayfasına taşınabilir).
