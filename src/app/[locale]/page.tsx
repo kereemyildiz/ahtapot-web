@@ -35,9 +35,13 @@ export default async function HomePage({
   const tSections = await getTranslations("nav.sections");
 
   const layerMarkers = LAYER_IDS.map((id) => ({ id, label: tLayers(id) }));
+  // "katmanlar" gerçek bir sayfa bölümü olarak rail'in birincil nav'ında —
+  // 5 katman artık kendi başlarına nav durağı değil, bu bölümün İÇİNDE
+  // meander'ın kıvrıldığı anlar (bkz. SiteRail.tsx).
   const sectionKeys =
     references.length > 0
       ? ([
+          "katmanlar",
           "urunler",
           "hakkimizda",
           "ekip",
@@ -45,7 +49,14 @@ export default async function HomePage({
           "kariyer",
           "iletisim",
         ] as const)
-      : (["urunler", "hakkimizda", "ekip", "kariyer", "iletisim"] as const);
+      : ([
+          "katmanlar",
+          "urunler",
+          "hakkimizda",
+          "ekip",
+          "kariyer",
+          "iletisim",
+        ] as const);
   const sectionMarkers = sectionKeys.map((id) => ({ id, label: tSections(id) }));
 
   return (

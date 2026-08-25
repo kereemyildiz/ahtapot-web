@@ -37,6 +37,7 @@ const layerSentencesSchema = z
 
 const sectionLabelsSchema = z
   .object({
+    katmanlar: z.string(),
     urunler: z.string(),
     hakkimizda: z.string(),
     ekip: z.string(),
@@ -102,6 +103,8 @@ export const localeContentSchema = z
       .object({
         // CLAUDE.md: bu rozet gizlenemez, küçültülemez, opsiyonel değildir.
         inDevelopmentBadge: z.string(),
+        detailsCta: z.string(),
+        backToProducts: z.string(),
       })
       .strict(),
     // slug -> ürün metni. Yapısal alanlar (order/status/interaction/layers/

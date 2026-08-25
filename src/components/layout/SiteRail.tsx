@@ -9,31 +9,26 @@ import { useLenisContext } from "@/components/providers/LenisContext";
 export type RailMarkerInput = { id: string; label: string };
 
 type SiteRailProps = {
-  layerMarkers: RailMarkerInput[]; // KATMANLAR — 5 kink
-  sectionMarkers: RailMarkerInput[]; // ÜRÜNLER..İLETİŞİM — tick (referanslar veri yoksa listeye girmez)
+  layerMarkers: RailMarkerInput[]; // MEKANİK..SAHA — artık nav durağı değil
+  sectionMarkers: RailMarkerInput[]; // KATMANLAR, ÜRÜNLER..İLETİŞİM — gerçek nav
 };
 
 const VIEWBOX_HEIGHT = 900;
+const MARGIN_TOP = 50;
+const MARGIN_BOTTOM = 50;
 
 /**
- * Sayfayı baştan sona kat eden tek meander path — sol rail'de kalıcı, hem
- * nav hem ilerleme göstergesi. Bkz. docs/superpowers/specs/2026-08-22-
- * ahtapot-web-design.md §1-2.
+ * Rail'in nav'ı gerçek sayfa bölümleridir (KATMANLAR, ÜRÜNLER, HAKKIMIZDA,
+ * EKİP, KARİYER, İLETİŞİM) — eşit aralıklı, eşit ağırlıkta 6 durak.
  *
- * Marker Y konumları (viewBox içinde) gerçek section yüksekliklerine göre
- * ölçeklenmiyor — bilinçli: rail, sayfanın *sıkıştırılmış sembolik* bir
- * temsili (sabit yükseklikli sticky kolon), section'ların gerçek piksel
- * oranı değil. Aktif durum ise gerçek section sınırlarından (ScrollTrigger)
- * geliyor — o yüzden vurgulanan etiket her zaman doğru, konumu her zaman
- * aynı yerde.
- *
- * 10 marker (5 kink + 5 tick) tek bir sürekli dizi olarak eşit aralıklı —
- * eskiden iki ayrı kümeydi (kink'ler üstte sıkışık, aralarında büyük boş
- * alan, tick'ler dipte sıkışık), kompozisyon olarak kötüydü. Ayrıca kink ve
- * tick artık metin ağırlığında da ayrışıyor: kink etiketi (katman — asıl
- * anlatı) her zaman tam görünür, tick etiketi (sayfa bölümü — nav) sessiz
- * durur, hover/aktifte belirginleşir. Onluk düz bir liste gibi görünmesin
- * diye.
+ * MEKANİK/ELEKTRONİK/GÖMÜLÜ/UYGULAMA/SAHA artık kendi başlarına nav durağı
+ * DEĞİL — bunlar KATMANLAR durağının kendi içinde meander'ın kıvrıldığı
+ * anlar. Kalıcı, tıklanabilir bir liste olarak durmuyorlar; yalnızca o
+ * bölümü scroll'larken tek bir canlı "şu an buradayız" göstergesi olarak
+ * beliriyor, kink'in yanına oturuyor, sonra kayboluyor. Önceki sürümde
+ * hepsi ÜRÜNLER/HAKKIMIZDA gibi gerçek sayfa bölümleriyle aynı görsel
+ * ağırlıkta, kalıcı bir liste halindeydi — bu "neden mekanik bir ana
+ * başlık" eleştirisinin sebebiydi.
  */
 export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
   const { scrollToId } = useLenisContext();
@@ -41,32 +36,35 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
   const drawnPathRef = useRef<SVGPathElement>(null);
   const mobileFillRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const currentLayerRef = useRef<HTMLDivElement>(null);
 
-  const totalMarkers = layerMarkers.length + sectionMarkers.length;
-  const marginTop = 50;
-  const marginBottom = 50;
-  const step =
-    totalMarkers > 1
-      ? (VIEWBOX_HEIGHT - marginTop - marginBottom) / (totalMarkers - 1)
+  const primaryStep =
+    sectionMarkers.length > 1
+      ? (VIEWBOX_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM) /
+        (sectionMarkers.length - 1)
       : 0;
 
-  const positioned = [
-    ...layerMarkers.map((m, i) => ({
-      ...m,
-      kind: "kink" as const,
-      y: marginTop + i * step,
-    })),
-    ...sectionMarkers.map((m, i) => ({
-      ...m,
-      kind: "tick" as const,
-      y: marginTop + (layerMarkers.length + i) * step,
-    })),
-  ];
-
-  const railMarkers: RailMarker[] = positioned.map((m) => ({
-    type: m.kind,
-    y: m.y,
+  const tickPositioned = sectionMarkers.map((m, i) => ({
+    ...m,
+    kind: "tick" as const,
+    y: MARGIN_TOP + i * primaryStep,
   }));
+
+  // Kink'ler yalnız KATMANLAR (ilk tick) ile bir sonraki tick arasındaki
+  // aralığa gömülü — kendi nav satırları yok, yalnız path geometrisi +
+  // canlı gösterge için Y konumu.
+  const katmanlarY = tickPositioned[0]?.y ?? MARGIN_TOP;
+  const nextTickY = tickPositioned[1]?.y ?? VIEWBOX_HEIGHT - MARGIN_BOTTOM;
+  const kinkGap = (nextTickY - katmanlarY) / (layerMarkers.length + 1);
+  const kinkPositioned = layerMarkers.map((m, i) => ({
+    ...m,
+    kind: "kink" as const,
+    y: katmanlarY + (i + 1) * kinkGap,
+  }));
+
+  const railMarkers: RailMarker[] = [...tickPositioned, ...kinkPositioned].map(
+    (m) => ({ type: m.kind, y: m.y })
+  );
   const d = buildRailPath(VIEWBOX_HEIGHT, railMarkers);
 
   useGSAP(
@@ -84,7 +82,6 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
           const { reduced } = context.conditions as { reduced: boolean };
 
           if (reduced) {
-            // Çizgi tek seferde çizili görünür — scrub yok.
             gsap.set(drawnPathRef.current, { drawSVG: "100%" });
             if (mobileFillRef.current) {
               gsap.set(mobileFillRef.current, { scaleX: 1 });
@@ -117,10 +114,8 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
             }
           }
 
-          // Aktif katman/bölüm vurgusu — gerçek section sınırlarından.
-          // Bu bir "hareket" değil, bir konum göstergesi; reduced motion'da
-          // da çalışır.
-          positioned.forEach((marker) => {
+          // Gerçek nav (tick) aktif durumu — gerçek section sınırlarından.
+          tickPositioned.forEach((marker) => {
             const sectionEl = document.getElementById(marker.id);
             const labelEl = labelRefs.current[marker.id];
             if (!sectionEl || !labelEl) return;
@@ -131,6 +126,42 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
               toggleClass: { targets: labelEl, className: "is-active" },
             });
           });
+
+          // Katman göstergesi — kalıcı liste değil, tek bir canlı etiket.
+          // Her katman section'ına girince (ileri ya da geri) metni/konumu
+          // günceller; ilk katmanın öncesine ya da sonuncunun sonrasına
+          // çıkınca kaybolur.
+          const currentLayerEl = currentLayerRef.current;
+          if (currentLayerEl) {
+            kinkPositioned.forEach((marker, i) => {
+              const sectionEl = document.getElementById(marker.id);
+              if (!sectionEl) return;
+
+              const show = () => {
+                currentLayerEl.textContent = marker.label;
+                currentLayerEl.style.top = `${(marker.y / VIEWBOX_HEIGHT) * 100}%`;
+                currentLayerEl.classList.add("is-visible");
+              };
+
+              ScrollTrigger.create({
+                trigger: sectionEl,
+                start: "top center",
+                end: "bottom center",
+                onEnter: show,
+                onEnterBack: show,
+                onLeave: () => {
+                  if (i === kinkPositioned.length - 1) {
+                    currentLayerEl.classList.remove("is-visible");
+                  }
+                },
+                onLeaveBack: () => {
+                  if (i === 0) {
+                    currentLayerEl.classList.remove("is-visible");
+                  }
+                },
+              });
+            });
+          }
         }
       );
 
@@ -188,9 +219,18 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
               strokeWidth={2}
             />
           </svg>
+
+          {/* Katman göstergesi — KATMANLAR bölümünü scroll'larken beliren
+              tek, hareketli etiket. Nav değil, salt "şu an buradayız". */}
+          <div
+            ref={currentLayerRef}
+            className="rail-current-layer absolute left-14 -translate-y-1/2 whitespace-nowrap font-mono-data text-[11px] uppercase tracking-[0.06em] text-eosin"
+            aria-hidden="true"
+          />
+
           <nav aria-label="Bölüm gezinme">
             <ul className="absolute inset-0">
-              {positioned.map((marker) => (
+              {tickPositioned.map((marker) => (
                 <li
                   key={marker.id}
                   className="absolute left-14 -translate-y-1/2"
@@ -202,11 +242,7 @@ export function SiteRail({ layerMarkers, sectionMarkers }: SiteRailProps) {
                     ref={(el) => {
                       labelRefs.current[marker.id] = el;
                     }}
-                    className={`rail-label whitespace-nowrap font-mono-data uppercase tracking-[0.06em] ${
-                      marker.kind === "kink"
-                        ? "text-[11px]"
-                        : "rail-label--tick text-[10px]"
-                    }`}
+                    className="rail-label whitespace-nowrap font-mono-data text-[11px] uppercase tracking-[0.06em]"
                   >
                     <span className="rail-dot" aria-hidden="true" />
                     {marker.label}

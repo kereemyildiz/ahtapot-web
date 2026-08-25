@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import type { Product, ProductLayer } from "@/content/schema";
 import { LayerStrip } from "@/components/meander/LayerStrip";
-import { ProductInteractionView } from "./ProductInteractionView";
+import { ProductPreview } from "./ProductPreview";
+import { Link } from "@/i18n/navigation";
 
 type ProductCardProps = {
   product: Product;
@@ -10,6 +11,11 @@ type ProductCardProps = {
   variant: "paired" | "single";
 };
 
+/**
+ * Ana sayfadaki kart — sakin, statik önizleme + "Detayları gör" linki.
+ * Canlı turntable/deepzoom etkileşimi burada değil, `/urunler/[slug]`'da
+ * (bkz. ProductPreview.tsx, app/[locale]/urunler/[slug]/page.tsx).
+ */
 export async function ProductCard({ product, variant }: ProductCardProps) {
   const tProducts = await getTranslations("products");
   const tLayers = await getTranslations("nav.layers");
@@ -31,9 +37,9 @@ export async function ProductCard({ product, variant }: ProductCardProps) {
           : "flex scroll-mt-6 flex-col gap-4 border border-steel/20 p-6"
       }
     >
-      <div>
-        <ProductInteractionView product={product} />
-      </div>
+      <Link href={`/urunler/${product.slug}`} className="block">
+        <ProductPreview product={product} />
+      </Link>
       <div className="flex flex-col gap-3">
         {/* Rozet olsun/olmasın bu slot hep aynı yüksekliği kaplıyor —
             yoksa "GELİŞTİRME AŞAMASINDA" olan kart başlığı, olmayan
@@ -52,6 +58,12 @@ export async function ProductCard({ product, variant }: ProductCardProps) {
           {tProducts(`${product.slug}.tagline`)}
         </p>
         <LayerStrip activeLayers={product.layers} labels={layerLabels} />
+        <Link
+          href={`/urunler/${product.slug}`}
+          className="w-fit font-mono-data text-xs uppercase tracking-[0.06em] text-ahtapot hover:text-eosin"
+        >
+          {tProductUi("detailsCta")} →
+        </Link>
       </div>
     </article>
   );

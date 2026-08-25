@@ -16,6 +16,7 @@
       "saha": "Saha"
     },
     "sections": {
+      "katmanlar": "Nasıl çalışıyoruz",
       "urunler": "Ürünler",
       "hakkimizda": "Hakkımızda",
       "ekip": "Ekip",
@@ -46,7 +47,9 @@
     "switchLabel": "Dili değiştir"
   },
   "product": {
-    "inDevelopmentBadge": "Geliştirme aşamasında"
+    "inDevelopmentBadge": "Geliştirme aşamasında",
+    "detailsCta": "Detayları gör",
+    "backToProducts": "Ürünlere dön"
   },
   "products": {
     "su-banyosu": {

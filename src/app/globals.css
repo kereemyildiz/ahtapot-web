@@ -84,15 +84,14 @@ body {
   transform: translateY(-50%) scale(1);
 }
 
-/* Tick etiketi (sayfa bölümü nav'ı) kink'ten (katman anlatısı) daha sessiz
-   duruyor — onluk düz bir liste gibi görünmesin diye. Hover/focus/aktifte
-   tam görünürlüğe döner. */
-.rail-label--tick {
-  opacity: 0.55;
+/* Katman göstergesi — kalıcı bir nav listesi değil, KATMANLAR bölümünü
+   scroll'larken beliren tek hareketli etiket (bkz. SiteRail.tsx). Konumu
+   (top) JS'ten geliyor, görünürlüğü bu sınıfla. */
+.rail-current-layer {
+  opacity: 0;
+  transition: opacity 200ms ease, top 300ms ease;
 }
 
-.rail-label--tick:hover,
-.rail-label--tick:focus-visible,
-.rail-label--tick.is-active {
+.rail-current-layer.is-visible {
   opacity: 1;
 }

@@ -16,6 +16,7 @@
       "saha": "Field"
     },
     "sections": {
+      "katmanlar": "How we work",
       "urunler": "Products",
       "hakkimizda": "About",
       "ekip": "Team",
@@ -46,7 +47,9 @@
     "switchLabel": "Switch language"
   },
   "product": {
-    "inDevelopmentBadge": "In development"
+    "inDevelopmentBadge": "In development",
+    "detailsCta": "See details",
+    "backToProducts": "Back to products"
   },
   "products": {
     "su-banyosu": {
