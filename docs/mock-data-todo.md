@@ -88,9 +88,11 @@ işlevlere dayanıyor (annotasyon araçları, karşılaştırma görünümü, va
 listesi) — bunlar da mock ama en azından gerçek arayüzden gözlemlendi.
 Gerçek spesifikasyon/özellik listesi geldiğinde bu iki alan değiştirilmeli.
 
-### Kariyer
-İçerik yok — açık pozisyon var mı belirtilmedi. `CareerSection.tsx` boş
-kabuk.
+### Kariyer — dolduruldu
+"Şu an açık pozisyonumuz yok, büyüdükçe duyururuz" mesajı + iletişime
+yönlendirme. Gerçek açık pozisyon olduğunda `content/tr.json`/`en.json` →
+`career.message` değişmeli, gerekirse gerçek bir pozisyon listesi
+eklenmeli.
 
 ### Referanslar
 Gerçek referans verilmedi — bölüm bilinçli olarak hiç render edilmiyor
