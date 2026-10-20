@@ -1,27 +1,27 @@
-import { Archivo, Manrope, JetBrains_Mono } from "next/font/google";
+import { Unbounded, Onest, JetBrains_Mono } from "next/font/google";
 
-// Archivo'nun genişlik (wdth) eksenini açıkça istemek gerekiyor — next/font
-// bunu otomatik eklemiyor, axes belirtilmezse variable font wght-only iner ve
-// hero'daki "expanded" ayarı hiçbir şey yapmaz. Aralık (62–125, default 100)
-// node_modules/next/dist/compiled/@next/font/dist/google/font-data.json'dan
-// doğrulandı.
-export const archivo = Archivo({
+// latin-ext zorunlu: Türkçe ğ ş ı İ ç ö ü glifleri oradan geliyor.
+// Unbounded: başlıklar — köşeleri yuvarlatılmış kare formlar, logodaki
+// wordmark ve meander'ın dik açılı diliyle akraba.
+export const unbounded = Unbounded({
   subsets: ["latin", "latin-ext"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  variable: "--font-unbounded",
   display: "swap",
 });
 
-export const manrope = Manrope({
+// Onest: gövde metni, butonlar, form.
+export const onest = Onest({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-manrope",
+  variable: "--font-onest",
   display: "swap",
 });
 
+// JetBrains Mono: yalnız gerçek kod bloklarında (gömülü yazılım paneli).
 export const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin", "latin-ext"],
   variable: "--font-jetbrains-mono",
   display: "swap",
+  preload: false,
 });
 
-export const fontVariables = `${archivo.variable} ${manrope.variable} ${jetbrainsMono.variable}`;
+export const fontVariables = `${unbounded.variable} ${onest.variable} ${jetbrainsMono.variable}`;

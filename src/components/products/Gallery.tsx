@@ -1,37 +1,31 @@
 import Image from "next/image";
 import type { Product } from "@/content/schema";
+import type { InteractionLabels } from "./ProductInteractionView";
 
-/**
- * Varsayılan/yedek etkileşim — CLAUDE.md: bilinmeyen `interaction` değeri
- * buraya düşer. Görsel yoksa placeholder yazı değil, sade çerçeveli boş
- * alan (yön verir, özür dilemez — CLAUDE.md).
- */
-export function Gallery({ product }: { product: Product }) {
-  const images = product.assets.gallery;
-
-  if (images.length === 0) {
+/** Varlığı az olan ürün için sade ekran görüntüsü galerisi. */
+export function Gallery({ product, labels }: { product: Product; labels: InteractionLabels }) {
+  const [first, ...rest] = product.assets.gallery;
+  if (!first) {
     return (
-      <div
-        className="aspect-[4/3] border border-dashed border-steel/40"
-        role="img"
-        aria-label="Ürün görseli henüz eklenmedi"
-      />
+      <div className="flex aspect-[4/3] items-center justify-center bg-surface p-6 text-center text-small text-muted">
+        TODO: {product.slug} için görsel eksik.
+      </div>
     );
   }
-
   return (
-    <div className="grid aspect-[4/3] grid-cols-2 gap-1 overflow-hidden">
-      {images.map((image) => (
-        <div key={image.src} className="relative">
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            className="object-cover"
-            sizes="(min-width: 768px) 25vw, 50vw"
-          />
+    <div className="flex flex-col gap-3">
+      <div className="relative aspect-[4/3] bg-surface">
+        <Image src={first.src} alt={labels.screens[0] ?? ""} fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover object-left-top" />
+      </div>
+      {rest.length > 0 && (
+        <div className="grid grid-cols-2 gap-3">
+          {rest.map((img, i) => (
+            <div key={img.src} className="relative aspect-[16/9] bg-surface">
+              <Image src={img.src} alt={labels.screens[i + 1] ?? ""} fill sizes="25vw" className="object-cover object-left-top" />
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }

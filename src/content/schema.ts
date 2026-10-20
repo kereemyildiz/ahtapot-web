@@ -1,49 +1,72 @@
 import { z } from "zod";
+import { LAYER_IDS, PRODUCT_LAYERS, type LayerId, type ProductLayer } from "./constants";
 
 // ---------------------------------------------------------------------------
 // content/tr.json ve content/en.json şeması.
 //
-// Kural (CLAUDE.md): "bir dilde olup diğerinde olmayan anahtar build'i
-// kırmalı". Bu şema hem şekli/tipleri doğruluyor (zod .strict() ile fazla
-// anahtarı reddediyor), hem de src/content/index.ts'teki assertMatchingKeys
-// iki dosya arasında anahtar kümesini derinlemesine karşılaştırıyor — bu
-// ikincisi özellikle `products` gibi record tipli alanlarda (zod tek başına
-// "tr'de var, en'de yok" gibi bir slug farkını yakalamaz) gerekli.
+// Bu şema şekli doğruluyor (.strict() fazla anahtarı reddediyor);
+// src/content/index.ts'teki assertMatchingKeys iki dil arasındaki anahtar
+// farkını yakalıyor. Bir dilde olup diğerinde olmayan anahtar build'i kırar.
 //
-// Not: metinler burada normal case tutuluyor. UPPERCASE her zaman CSS
-// (text-transform: uppercase) ile ve doğru `lang` altında uygulanıyor —
-// Türkçe i→İ dönüşümü buna bağlı, JSON içine büyük harf yazmıyoruz.
+// Metinler normal case tutulur; büyük harf her zaman CSS ile ve doğru
+// `lang` altında uygulanır (Türkçe i→İ buna bağlı).
 // ---------------------------------------------------------------------------
 
-const layerLabelsSchema = z
-  .object({
-    mekanik: z.string(),
-    elektronik: z.string(),
-    gomulu: z.string(),
-    uygulama: z.string(),
-    saha: z.string(),
-  })
-  .strict();
+export const layerIdSchema = z.enum(LAYER_IDS);
+export { LAYER_IDS, PRODUCT_LAYERS, type LayerId, type ProductLayer };
 
-const layerSentencesSchema = z
-  .object({
-    mekanik: z.string(),
-    elektronik: z.string(),
-    gomulu: z.string(),
-    uygulama: z.string(),
-    saha: z.string(),
-  })
-  .strict();
+const byLayer = <T extends z.ZodTypeAny>(item: T) =>
+  z
+    .object({
+      mekanik: item,
+      elektronik: item,
+      gomulu: item,
+      uygulama: item,
+      saha: item,
+    })
+    .strict();
 
-const sectionLabelsSchema = z
+const productLayerRecord = <T extends z.ZodTypeAny>(item: T) =>
+  z
+    .object({
+      mekanik: item,
+      elektronik: item,
+      gomulu: item,
+      uygulama: item,
+    })
+    .strict();
+
+/** Yalnız metin taşıyan, anahtarları sabit bir nesne. */
+function strings<K extends string>(keys: readonly K[]) {
+  return z
+    .object(Object.fromEntries(keys.map((k) => [k, z.string()])) as Record<K, z.ZodString>)
+    .strict();
+}
+
+const VIEWER_KEYS = [
+  "sampleNote", "open", "engage", "engaged", "zoomIn", "zoomOut",
+  "home", "fullscreen", "annotations", "objective",
+  "toolsLabel", "toolPan", "toolPolygon", "toolRect", "toolRuler",
+  "deleteSelected", "clearAll", "hintPan", "hintPolygon", "hintRect",
+  "hintRuler", "measureNote",
+] as const;
+
+const SIMULATOR_KEYS = [
+  "power", "stop", "setpoint", "actual", "heater", "decrease", "increase",
+  "presets", "lid", "lidOpen", "lidClosed", "water", "waterOk", "waterLow",
+  "explode", "assemble", "statusIdle", "statusHeating", "statusHolding",
+  "statusCooling", "statusInterlock", "statusDone", "chartTitle", "chartTemp",
+  "chartSet", "timer", "timerOff", "timerWaiting", "minutes", "pump", "pumpOn",
+  "pumpOff", "panelHint", "disclaimer",
+] as const;
+
+const requestTypeRecord = z
   .object({
-    katmanlar: z.string(),
-    urunler: z.string(),
-    hakkimizda: z.string(),
-    ekip: z.string(),
-    referanslar: z.string(),
-    kariyer: z.string(),
-    iletisim: z.string(),
+    urunBilgisi: z.string(),
+    demo: z.string(),
+    distributorluk: z.string(),
+    isBasvurusu: z.string(),
+    diger: z.string(),
   })
   .strict();
 
@@ -51,99 +74,192 @@ const productCopySchema = z
   .object({
     name: z.string(),
     tagline: z.string(),
-    // Detay sayfası için (/urunler/[slug]) — TODO(mock-data): gerçek
-    // spesifikasyon değil, ekran görüntülerinden/gerçek çerçeveden
-    // türetilmiş nitel özellikler. Bkz. docs/mock-data-todo.md.
+    // TODO(mock-data): gerçek spesifikasyon değil, nitel özellikler.
     description: z.string(),
     features: z.array(z.string()),
+    // assets.gallery ile aynı sırada, görsel başına bir açıklama.
+    screens: z.array(z.string()),
+    // assets.compare varsa: mikroskop ↔ dijital karşılaştırmasının metinleri.
+    compare: z
+      .object({
+        heading: z.string(),
+        caption: z.string(),
+        microscopeLabel: z.string(),
+        digitalLabel: z.string(),
+        microscopeAlt: z.string(),
+        digitalAlt: z.string(),
+        handle: z.string(),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict();
+
+const legalPageSchema = z
+  .object({
+    title: z.string(),
+    legalReviewNote: z.string(),
+    body: z.array(z.string()),
   })
   .strict();
 
 export const localeContentSchema = z
   .object({
-    meta: z
-      .object({
-        siteTitle: z.string(),
-        siteDescription: z.string(),
-      })
-      .strict(),
-    // Gerçek şirket bilgisi (kullanıcı verdi) — İletişim/KVKK için.
+    meta: z.object({ siteTitle: z.string(), siteDescription: z.string() }).strict(),
     company: z
       .object({
         legalName: z.string(),
+        shortName: z.string(),
+        // Logoda "Ahtapot" yazısının altındaki küçük satır.
+        brandSub: z.string(),
         address: z.string(),
+        // TODO: gerçek e-posta / telefon — boşsa render edilmez.
+        email: z.string(),
+        phone: z.string(),
       })
       .strict(),
     nav: z
       .object({
-        layers: layerLabelsSchema,
-        sections: sectionLabelsSchema,
+        kabiliyet: z.string(),
+        urunler: z.string(),
+        hakkimizda: z.string(),
+        iletisim: z.string(),
+        cta: z.string(),
+        menu: z.string(),
+        close: z.string(),
+        skip: z.string(),
+        home: z.string(),
+        localeLabel: z.string(),
+        localeName: z.string(),
+        navLabel: z.string(),
       })
       .strict(),
-    // Katmanlar bölümünde her katman için tek cümle (spec: "jenerik
-    // infografik yapma, çizgiden türet" — görsel yok, yalnız etiket + cümle).
-    layerSentences: layerSentencesSchema,
     hero: z
       .object({
-        eyebrow: z.string(),
+        title: z.string(),
+        lead: z.string(),
+        primaryCta: z.string(),
+        secondaryCta: z.string(),
+        visualAlt: z.string(),
+        callouts: productLayerRecord(z.string()),
+      })
+      .strict(),
+    layers: byLayer(z.string()),
+    capability: z
+      .object({
         heading: z.string(),
-      })
-      .strict(),
-    theme: z
-      .object({
-        light: z.string(),
-        dark: z.string(),
-        toggleLabel: z.string(),
-      })
-      .strict(),
-    locale: z
-      .object({
-        tr: z.string(),
-        en: z.string(),
-        switchLabel: z.string(),
-      })
-      .strict(),
-    // Ürüne özel olmayan, paylaşılan ürün-arayüzü metinleri.
-    product: z
-      .object({
-        // CLAUDE.md: bu rozet gizlenemez, küçültülemez, opsiyonel değildir.
-        inDevelopmentBadge: z.string(),
-        detailsCta: z.string(),
-        backToProducts: z.string(),
-      })
-      .strict(),
-    // slug -> ürün metni. Yapısal alanlar (order/status/interaction/layers/
-    // assets) burada değil, content/products/*.json'da — bkz. productSchema.
-    products: z.record(z.string(), productCopySchema),
-    about: z
-      .object({
-        paragraph: z.string(),
-      })
-      .strict(),
-    // TODO(mock-data): gerçek isim/fotoğraf yok — bkz. docs/mock-data-todo.md.
-    team: z
-      .object({
-        intro: z.string(),
-        members: z.array(
+        progressLabel: z.string(),
+        // Sahnelerdeki araç arayüzlerinin (CAD, PCB, IDE, saha) etiketleri.
+        visuals: z
+          .object({
+            cad: z
+              .object({ tree: z.string(), parts: z.array(z.string()), commands: z.array(z.string()), units: z.string(), view: z.string() })
+              .strict(),
+            pcb: z
+              .object({
+                layers: z.string(),
+                layerNames: z.array(z.string()),
+                nets: z.array(z.string()),
+                net: z.string(),
+                drc: z.string(),
+                drcRunning: z.string(),
+                board: z.string(),
+              })
+              .strict(),
+            ide: z
+              .object({
+                files: z.array(z.string()),
+                watch: z.string(),
+                terminal: z.string(),
+                plot: z.string(),
+                build: z.string(),
+                flash: z.string(),
+                running: z.string(),
+                ok: z.string(),
+              })
+              .strict(),
+            field: z
+              .object({
+                center: z.string(),
+                devices: z.array(z.string()),
+                online: z.string(),
+                installing: z.string(),
+                installed: z.string(),
+                training: z.string(),
+                trained: z.string(),
+                calibrating: z.string(),
+                calibrated: z.string(),
+                updating: z.string(),
+                updated: z.string(),
+              })
+              .strict(),
+          })
+          .strict(),
+        items: byLayer(
           z
             .object({
-              name: z.string(),
-              role: z.string(),
-              bio: z.string(),
+              title: z.string(),
+              sentence: z.string(),
+              // TODO(mock-data): genel yetkinlik başlıkları, onay bekliyor.
+              deliverables: z.array(z.string()),
+              caption: z.string(),
+              alt: z.string(),
             })
             .strict()
         ),
       })
       .strict(),
-    career: z
+    // Ürüne özel olmayan, paylaşılan ürün arayüzü metinleri.
+    product: z
       .object({
-        message: z.string(),
-        contactCta: z.string(),
+        heading: z.string(),
+        intro: z.string(),
+        statusAvailable: z.string(),
+        // Bu rozet gizlenemez, küçültülemez, opsiyonel değildir.
+        inDevelopmentBadge: z.string(),
+        layersLabel: z.string(),
+        detailsCta: z.string(),
+        quoteCta: z.string(),
+        demoCta: z.string(),
+        dragHint: z.string(),
+        featuresHeading: z.string(),
+        backToProducts: z.string(),
+        screensHeading: z.string(),
+        modelAlt: z.string(),
+        viewer: strings(VIEWER_KEYS),
+        simulator: strings(SIMULATOR_KEYS),
+      })
+      .strict(),
+    // slug -> ürün metni. Yapısal alanlar content/products/*.json'da.
+    products: z.record(z.string(), productCopySchema),
+    about: z
+      .object({
+        heading: z.string(),
+        lead: z.string(),
+        body: z.string(),
+        facts: z.array(z.object({ label: z.string(), value: z.string() }).strict()),
+        pillars: z.array(z.object({ title: z.string(), text: z.string() }).strict()),
+        founder: z
+          .object({
+            label: z.string(),
+            name: z.string(),
+            role: z.string(),
+            bio: z.string(),
+            areas: z.array(z.string()),
+          })
+          .strict(),
       })
       .strict(),
     contact: z
       .object({
-        intro: z.string(),
+        heading: z.string(),
+        promptLine1: z.string(),
+        promptLine2: z.string(),
+        next: z.string(),
+        detailsHeading: z.string(),
+        addressLabel: z.string(),
+        emailLabel: z.string(),
+        phoneLabel: z.string(),
         fields: z
           .object({
             name: z.string(),
@@ -153,29 +269,12 @@ export const localeContentSchema = z
             message: z.string(),
           })
           .strict(),
-        requestTypes: z
-          .object({
-            urunBilgisi: z.string(),
-            distributorluk: z.string(),
-            demo: z.string(),
-            isBasvurusu: z.string(),
-            diger: z.string(),
-          })
-          .strict(),
-        consent: z
-          .object({
-            label: z.string(),
-            linkText: z.string(),
-          })
-          .strict(),
-        submit: z.string(),
+        requestTypes: requestTypeRecord,
+        // Buton metni ne olacağını söyler; konuya göre değişir.
+        submitByType: requestTypeRecord,
+        consent: z.object({ label: z.string(), linkText: z.string() }).strict(),
         submitting: z.string(),
-        success: z
-          .object({
-            title: z.string(),
-            body: z.string(),
-          })
-          .strict(),
+        success: z.object({ title: z.string(), body: z.string() }).strict(),
         errors: z
           .object({
             nameRequired: z.string(),
@@ -191,24 +290,60 @@ export const localeContentSchema = z
           .strict(),
       })
       .strict(),
-    kvkk: z
+    footer: z
       .object({
-        title: z.string(),
-        legalReviewNote: z.string(),
-        body: z.array(z.string()),
+        tagline: z.string(),
+        kvkk: z.string(),
+        privacy: z.string(),
+        credits: z.string(),
+        backToTop: z.string(),
       })
       .strict(),
-    privacy: z
-      .object({
-        title: z.string(),
-        legalReviewNote: z.string(),
-        body: z.array(z.string()),
-      })
-      .strict(),
+    // Açık lisanslı fotoğrafların atıf sayfası (footer'dan bağlantı).
+    credits: z.object({ title: z.string(), intro: z.string() }).strict(),
+    kvkk: legalPageSchema,
+    privacy: legalPageSchema,
   })
   .strict();
 
 export type LocaleContent = z.infer<typeof localeContentSchema>;
+
+// ---------------------------------------------------------------------------
+// content/media.json — dilden bağımsız görsel varlıkları. Alt metinler dil
+// dosyalarında.
+// ---------------------------------------------------------------------------
+
+const imageSchema = z
+  .object({
+    src: z.string(),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    // Mikroskopi görüntülerinde bir pikselin fiziksel boyutu (ölçek çubuğu için).
+    umPerPx: z.number().positive().optional(),
+  })
+  .strict();
+export type MediaImage = z.infer<typeof imageSchema>;
+
+export const mediaSchema = z
+  .object({
+    images: z.record(z.string(), imageSchema),
+    // Tek görsel ya da ekran görüntüsü dizisi (dizi → üst üste pencereler).
+    capability: byLayer(z.union([z.string(), z.array(z.string())]).nullable()),
+    credits: z.array(
+      z
+        .object({
+          title: z.string(),
+          creator: z.string().nullable(),
+          license: z.string(),
+          licenseUrl: z.string(),
+          page: z.string(),
+          via: z.string(),
+        })
+        .strict()
+    ),
+  })
+  .strict();
+export type Media = z.infer<typeof mediaSchema>;
 
 // ---------------------------------------------------------------------------
 // content/products/*.json şeması
@@ -217,47 +352,52 @@ export type LocaleContent = z.infer<typeof localeContentSchema>;
 export const productStatusSchema = z.enum(["available", "in-development"]);
 export type ProductStatus = z.infer<typeof productStatusSchema>;
 
-// `interaction` bilinçli olarak gevşek: bilinmeyen bir değer build'i
-// kırmamalı, render katmanında gallery'ye düşmeli (CLAUDE.md). Bileşen
-// seçimi için kullanılan daraltılmış tip ayrıca aşağıda tanımlı.
+// `interaction` bilinçli olarak gevşek: bilinmeyen değer build'i kırmaz,
+// render katmanında gallery'ye düşer.
 export const productInteractionSchema = z.string();
-export type ProductInteraction = "turntable" | "deepzoom" | "gallery";
+export type ProductInteraction = "simulator" | "turntable" | "deepzoom" | "gallery";
 
-export const productLayerSchema = z.enum([
-  "mekanik",
-  "elektronik",
-  "gomulu",
-  "uygulama",
-]);
-export type ProductLayer = z.infer<typeof productLayerSchema>;
-
-const imageAssetSchema = z
-  .object({
-    src: z.string(),
-    alt: z.string(),
-  })
-  .strict();
+export const productLayerSchema = z.enum(PRODUCT_LAYERS);
 
 const productAssetsSchema = z
   .object({
-    gallery: z.array(imageAssetSchema),
+    // Ek ekran görüntüleri; açıklamaları products.<slug>.screens'te aynı sırada.
+    gallery: z.array(imageSchema),
     turntable: z
       .object({
-        framesPath: z.string(),
-        frameCount: z.number().int().positive(),
+        // Gerçek 360° fotoğraf kareleri geldiğinde: framesPath + frameCount.
+        framesPath: z.string().optional(),
+        frameCount: z.number().int().positive().optional(),
+        // Kare yokken kullanılan çizim modeli (bkz. components/device).
+        model: z.string().optional(),
+      })
+      .strict()
+      .optional(),
+    // Çalışma prensibini gösteren etkileşimli simülasyon. `kind` hangi fizik
+    // modelinin ve çizimin kullanılacağını seçer (bkz. products/simulator).
+    // TODO(mock-data): params gerçek ürün değerleri değil, temsili.
+    simulator: z
+      .object({
+        kind: z.string(),
+        model: z.string(),
+        params: z.record(z.string(), z.number()),
+        presets: z.array(z.number()),
       })
       .strict()
       .optional(),
     deepzoom: z
       .object({
         dziPath: z.string(),
-        // Gerçek slayt metadata'sı (openslide ile okundu) — mono
-        // büyütme etiketi bundan canlı hesaplanıyor, uydurma değil.
+        posterPath: z.string(),
+        // Gerçek slayt metadata'sı (openslide ile okundu).
         nativeObjective: z.number().positive(),
         nativeMpp: z.number().positive(),
       })
       .strict()
       .optional(),
+    // Mikroskop (oküler) ↔ dijital slayt karşılaştırması: aynı kesitin
+    // küçük bir görüntüsü ve gerçek piksel boyutu (ölçek çubuğu için).
+    compare: imageSchema.optional(),
   })
   .strict();
 
@@ -268,8 +408,6 @@ export const productSchema = z
     status: productStatusSchema,
     interaction: productInteractionSchema,
     layers: z.array(productLayerSchema).min(1),
-    // Öne çıkarma diziden değil buradan türer (bkz. spec §3).
-    featured: z.boolean().optional(),
     assets: productAssetsSchema,
   })
   .strict();

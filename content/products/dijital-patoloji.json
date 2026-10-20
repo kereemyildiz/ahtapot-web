@@ -3,13 +3,33 @@
   "order": 2,
   "status": "in-development",
   "interaction": "deepzoom",
-  "layers": ["uygulama"],
+  "layers": [
+    "uygulama"
+  ],
   "assets": {
-    "gallery": [],
+    "gallery": [
+      {
+        "src": "/products/dijital-patoloji/galeri.png",
+        "width": 1907,
+        "height": 893
+      },
+      {
+        "src": "/products/dijital-patoloji/karsilastirma.png",
+        "width": 1917,
+        "height": 915
+      }
+    ],
     "deepzoom": {
       "dziPath": "/deepzoom/primary-tumor-he-009.dzi",
+      "posterPath": "/deepzoom/poster.jpg",
       "nativeObjective": 41.22,
       "nativeMpp": 0.242591
+    },
+    "compare": {
+      "src": "/deepzoom/poster.jpg",
+      "width": 900,
+      "height": 900,
+      "umPerPx": 1.6561
     }
   }
 }

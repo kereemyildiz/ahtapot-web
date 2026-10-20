@@ -1,155 +1,412 @@
 {
   "meta": {
-    "siteTitle": "Ahtapot Tıbbi Teknolojiler",
-    "siteDescription": "Mekanikten uygulama yazılımına, bir cihazı uçtan uca aynı ekip yapıyor."
+    "siteTitle": "Ahtapot Tıbbi Teknolojileri",
+    "siteDescription": "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir tıbbi cihaza uçtan uca dönüştürüyoruz."
   },
   "company": {
-    "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
-    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul"
+    "legalName": "Ahtapot Tıbbi Teknolojileri A.Ş.",
+    "shortName": "Ahtapot",
+    "brandSub": "Tıbbi Teknolojileri",
+    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul",
+    "email": "",
+    "phone": "+90 535 770 66 49"
   },
   "nav": {
-    "layers": {
-      "mekanik": "Mekanik",
-      "elektronik": "Elektronik",
-      "gomulu": "Gömülü yazılım",
-      "uygulama": "Uygulama",
-      "saha": "Saha"
-    },
-    "sections": {
-      "katmanlar": "Kabiliyet",
-      "urunler": "Ürünler",
-      "hakkimizda": "Hakkımızda",
-      "ekip": "Ekip",
-      "referanslar": "Referanslar",
-      "kariyer": "Kariyer",
-      "iletisim": "İletişim"
-    }
-  },
-  "layerSentences": {
-    "mekanik": "Cihazın gövdesini, hareketli parçalarını ve toleranslarını biz çiziyoruz.",
-    "elektronik": "Devre kartını baştan tasarlıyor, üretime kendimiz hazırlıyoruz.",
-    "gomulu": "Cihazın içinde çalışan gömülü yazılımı uçtan uca biz yazıyoruz.",
-    "uygulama": "Görüntüleme ve inceleme arayüzünü kullanıcıyla birlikte tasarlıyoruz.",
-    "saha": "Kurulumdan sonra da yanınızdayız — bakım ve destek dahil."
+    "kabiliyet": "Yetkinlikler",
+    "urunler": "Ürünler",
+    "hakkimizda": "Hakkımızda",
+    "iletisim": "İletişim",
+    "cta": "Görüşme talep edin",
+    "menu": "Menü",
+    "close": "Kapat",
+    "skip": "İçeriğe geç",
+    "home": "Ahtapot ana sayfa",
+    "localeLabel": "Dili değiştir",
+    "localeName": "English",
+    "navLabel": "Ana menü"
   },
   "hero": {
-    "eyebrow": "Ankara — tıbbi cihaz geliştirme",
-    "heading": "Bir cihazın mekaniğini, elektroniğini ve yazılımını aynı odada yapıyoruz. Kurucumuz doktor."
+    "title": "Tıbbi cihaz, uçtan uca.",
+    "lead": "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir cihaza uçtan uca dönüştürüyoruz.",
+    "primaryCta": "Görüşme talep edin",
+    "secondaryCta": "Ürünleri inceleyin",
+    "visualAlt": "Ahtapot logosundaki meander işareti; dört kolu mekanik, elektronik, gömülü yazılım ve uygulama katmanlarına uzanıyor.",
+    "callouts": {
+      "mekanik": "Gövde ve mekanizma",
+      "elektronik": "Devre ve sensörler",
+      "gomulu": "Kontrol ve güvenlik",
+      "uygulama": "Arayüz ve veri"
+    }
   },
-  "theme": {
-    "light": "Aydınlık",
-    "dark": "Koyu",
-    "toggleLabel": "Temayı değiştir"
+  "layers": {
+    "mekanik": "Mekanik",
+    "elektronik": "Elektronik",
+    "gomulu": "Gömülü yazılım",
+    "uygulama": "Uygulama",
+    "saha": "Saha"
   },
-  "locale": {
-    "tr": "Türkçe",
-    "en": "English",
-    "switchLabel": "Dili değiştir"
+  "capability": {
+    "heading": "Fikirden sahaya, beş katman tek ekipte",
+    "progressLabel": "Katman",
+    "items": {
+      "mekanik": {
+        "title": "Mekanik tasarım",
+        "sentence": "Gövde, mekanizma ve toleransları üretilebilirliği baştan gözeterek tasarlıyoruz; 3B modelden teknik resme ve prototipe kadar.",
+        "deliverables": [
+          "3B CAD modelleme",
+          "Teknik resim ve toleranslandırma",
+          "Prototip ve üretim hazırlığı"
+        ],
+        "caption": "3B CAD modeli ve ölçülendirme (örnek gövde)",
+        "alt": "CAD çalışma alanında dönen bir cihaz gövdesinin tel kafes modeli, ölçü çizgileri, model ağacı ve komut satırı."
+      },
+      "elektronik": {
+        "title": "Elektronik tasarım",
+        "sentence": "Şematikten kart yerleşimine kadar elektroniği tasarlıyor; sensör, güç ve kontrol katlarını cihazın ihtiyacına göre kurguluyoruz.",
+        "deliverables": [
+          "Şematik tasarım",
+          "PCB yerleşimi",
+          "Prototip kart ve test"
+        ],
+        "caption": "Kart yerleşimi ve iz yönlendirme (örnek kart)",
+        "alt": "Kart tasarım aracında bileşen yerleşimi, iki bakır katman, yönlendirilen izler ve kural denetimi."
+      },
+      "gomulu": {
+        "title": "Gömülü yazılım",
+        "sentence": "Cihazın üzerinde çalışan yazılımı geliştiriyoruz: sensör okuma, kontrol algoritmaları ve cihazı güvende tutan kilitler.",
+        "deliverables": [
+          "Kontrol algoritmaları",
+          "Donanım sürücüleri",
+          "Güvenlik kilitleri"
+        ],
+        "caption": "Kontrol yazılımı, hata ayıklama ve canlı veri (örnek)",
+        "alt": "Kod editöründe adım adım çalışan bir kontrol döngüsü, değişken izleme paneli, seri terminal ve canlı sıcaklık grafiği."
+      },
+      "uygulama": {
+        "title": "Uygulama yazılımı",
+        "sentence": "Cihaz ekranından web uygulamasına kadar kullanıcı arayüzlerini, sahada kullanacak kişiyle birlikte tasarlıyoruz.",
+        "deliverables": [
+          "Cihaz arayüzü",
+          "Web uygulaması",
+          "Veri ve vaka yönetimi"
+        ],
+        "caption": "AhtaPatolog: galeri, inceleme ve karşılaştırma ekranları",
+        "alt": "AhtaPatolog arayüzünden üç ekran: slayt galerisi, işaretleme araçlarıyla açılmış bir doku kesiti ve iki slaytın yan yana karşılaştırması."
+      },
+      "saha": {
+        "title": "Saha desteği",
+        "sentence": "Kurulum, kullanıcı eğitimi, periyodik bakım ve yazılım güncellemeleriyle cihazın kullanım ömrü boyunca yanında oluyoruz.",
+        "deliverables": [
+          "Kurulum",
+          "Eğitim",
+          "Bakım",
+          "Güncelleme"
+        ],
+        "caption": "Sahadaki cihazlar: uzaktan izleme, bakım ve güncelleme (temsili)",
+        "alt": "Bir sağlık kuruluşunda farklı tıbbi cihazlar; servis merkezine bağlı izleme hatları, kalibrasyon ve yazılım güncellemesi."
+      }
+    },
+    "visuals": {
+      "cad": {
+        "tree": "Model ağacı",
+        "parts": [
+          "Alt gövde",
+          "Eğik ön panel",
+          "Ekran çerçevesi",
+          "Düğme yuvaları",
+          "Havalandırma",
+          "Kesit A-A"
+        ],
+        "commands": [
+          "EXTRUDE  profil_1  220 mm",
+          "SHELL  et kalınlığı 2,5 mm",
+          "OFFSET  ekran çerçevesi 4 mm",
+          "HOLE  Ø22  düğme yuvası",
+          "PATTERN  havalandırma 5 × 8 mm",
+          "SECTION  A-A  X ekseni"
+        ],
+        "units": "Birim: mm",
+        "view": "İzometrik"
+      },
+      "pcb": {
+        "layers": "Katmanlar",
+        "layerNames": [
+          "Üst bakır",
+          "Alt bakır",
+          "Serigrafi",
+          "Kart kenarı"
+        ],
+        "nets": [
+          "SPI_SCK",
+          "SPI_MOSI",
+          "SENS_IN",
+          "HEATER_PWM",
+          "USB_D±",
+          "3V3"
+        ],
+        "net": "Net",
+        "drc": "Kural denetimi: 0 hata",
+        "drcRunning": "Kural denetimi…",
+        "board": "Örnek kart · 2 katman"
+      },
+      "ide": {
+        "files": [
+          "control.c",
+          "pid.h",
+          "safety.c"
+        ],
+        "watch": "İzleme",
+        "terminal": "Seri terminal",
+        "plot": "Sıcaklık ve ayar",
+        "build": "Derleniyor",
+        "flash": "Karta yükleniyor",
+        "running": "Çalışıyor · adım adım",
+        "ok": "Derleme başarılı · 0 uyarı"
+      },
+      "field": {
+        "center": "Ahtapot servis",
+        "devices": [
+          "Laboratuvar cihazı",
+          "Görüntüleme istasyonu",
+          "Klinik cihaz"
+        ],
+        "online": "Çevrimiçi",
+        "installing": "Kurulum",
+        "installed": "Kuruldu",
+        "training": "Eğitim",
+        "trained": "Eğitim tamam",
+        "calibrating": "Kalibrasyon",
+        "calibrated": "Kalibre edildi",
+        "updating": "Güncelleniyor",
+        "updated": "Güncel"
+      }
+    }
   },
   "product": {
+    "heading": "Ürünler",
+    "intro": "Aynı ekipten iki ürün: laboratuvar tezgâhında çalışan bir cihaz ve tarayıcıda çalışan bir görüntüleme yazılımı.",
+    "statusAvailable": "Piyasada",
     "inDevelopmentBadge": "Geliştirme aşamasında",
-    "detailsCta": "Detayları gör",
-    "backToProducts": "Ürünlere dön"
+    "layersLabel": "İçerdiği katmanlar",
+    "detailsCta": "Ürünü inceleyin",
+    "quoteCta": "Teklif isteyin",
+    "demoCta": "Demo talep edin",
+    "dragHint": "Sürükleyerek döndürün",
+    "featuresHeading": "Özellikler",
+    "backToProducts": "Ürünlere dön",
+    "screensHeading": "Arayüzden",
+    "modelAlt": "Laboratuvar su banyosunun döndürülebilir çizimi.",
+    "viewer": {
+      "sampleNote": "Gerçek bir H&E preparatından 6144 × 6144 piksellik kesit.",
+      "open": "Görüntüleyiciyi açın",
+      "engage": "Yakınlaştırmak için görüntüye tıklayın",
+      "engaged": "Tekerlekle yakınlaştırın, sürükleyerek gezinin",
+      "zoomIn": "Yakınlaştır",
+      "zoomOut": "Uzaklaştır",
+      "home": "Tümünü göster",
+      "fullscreen": "Tam ekran",
+      "annotations": "İşaretlemeler",
+      "objective": "Büyütme",
+      "toolsLabel": "Araçlar",
+      "toolPan": "Gezin ve seçin",
+      "toolPolygon": "Poligon",
+      "toolRect": "Dikdörtgen",
+      "toolRuler": "Mesafe ölçümü",
+      "deleteSelected": "Seçileni sil",
+      "clearAll": "Tümünü temizle",
+      "hintPan": "Sürükleyerek gezinin; seçmek için bir işaretlemeye tıklayın.",
+      "hintPolygon": "Köşe eklemek için tıklayın; bitirmek için ilk noktaya tıklayın ya da Enter'a basın.",
+      "hintRect": "Karşılıklı iki köşeye tıklayın.",
+      "hintRuler": "İki noktaya tıklayın; aradaki mesafe ölçülür.",
+      "measureNote": "Ölçümler slaytın gerçek piksel boyutundan (µm/px) hesaplanır."
+    },
+    "simulator": {
+      "power": "Çalıştır",
+      "stop": "Durdur",
+      "setpoint": "Ayar",
+      "actual": "Su",
+      "heater": "Isıtıcı",
+      "decrease": "Ayarı düşür",
+      "increase": "Ayarı artır",
+      "presets": "Hazır ayarlar",
+      "lid": "Kapak",
+      "lidOpen": "Açık",
+      "lidClosed": "Kapalı",
+      "water": "Su seviyesi",
+      "waterOk": "Yeterli",
+      "waterLow": "Düşük",
+      "explode": "İçini gösterin",
+      "assemble": "Birleştirin",
+      "statusIdle": "Beklemede",
+      "statusHeating": "Isıtıyor",
+      "statusHolding": "Sıcaklıkta sabit",
+      "statusCooling": "Soğuyor",
+      "statusInterlock": "Düşük su: ısıtıcı güvenlik kilidiyle kapatıldı",
+      "statusDone": "Süre doldu, ısıtma durdu",
+      "chartTitle": "Son 40 dakika",
+      "chartTemp": "Su",
+      "chartSet": "Ayar",
+      "timer": "Zamanlayıcı",
+      "timerOff": "Kapalı",
+      "timerWaiting": "ayara ulaşınca başlar",
+      "minutes": "dk",
+      "pump": "Sirkülasyon",
+      "pumpOn": "Açık",
+      "pumpOff": "Kapalı",
+      "panelHint": "Ön paneldeki tuşları kullanın, kapağa tıklayın, sürükleyerek döndürün.",
+      "disclaimer": "Temsili simülasyon: 10 L su, 1 kW ısıtıcı ve basit bir ısı kaybı modeliyle hesaplanır; pompa ve zamanlayıcı davranışı da temsilidir, ürünün teknik değerlerini yansıtmaz. Zaman 90 kat hızlandırılmıştır."
+    }
   },
   "products": {
     "su-banyosu": {
       "name": "Laboratuvar su banyosu",
-      "tagline": "Mekanik, elektronik ve gömülü yazılım aynı ürün içinde.",
-      "description": "Numuneleri sabit sıcaklıkta tutmak için tasarlanan laboratuvar su banyosu. Gövdesini, ısıtma kontrolünü ve arayüzünü aynı ekip tasarladı — mekanikten gömülü yazılıma kadar dışarıya iş verilmedi.",
+      "tagline": "Numuneleri ayarlanan sıcaklıkta sabit tutar. Mekanik, elektronik ve gömülü yazılımı kendi tasarımımızdır.",
+      "description": "Numunelerin sabit sıcaklıkta ısıtılması ve inkübasyonu için geliştirilmiş laboratuvar su banyosu. Gövde, ısıtma kontrolü ve kullanıcı arayüzü aynı ekip tarafından tasarlandı. Simülasyonda ayar sıcaklığını değiştirerek cihazın nasıl tepki verdiğini görebilirsiniz.",
       "features": [
         "Dijital sıcaklık kontrolü ve ekran",
         "Paslanmaz çelik gövde",
         "Sessiz sirkülasyon pompası",
         "Taşma korumalı su seviyesi sensörü"
-      ]
+      ],
+      "screens": []
     },
     "dijital-patoloji": {
-      "name": "Dijital patoloji yazılımı",
+      "name": "AhtaPatolog",
       "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi.",
-      "description": "AhtaPatoloji, whole-slide görüntüleri tarayıcıdan yükleyip inceleme, işaretleme ve vaka yönetimi yapmayı sağlıyor. Patoloğun kararını vermiyor — incelemesini kolaylaştırıyor.",
+      "description": "Whole-slide görüntüleri tarayıcıda açar; patoloğun dokuyu yüksek büyütmede incelemesini, işaretlemesini ve vakaları düzenlemesini sağlar. Tanı kararı patoloğa aittir; yazılım inceleme sürecini destekler.",
       "features": [
-        "Whole-slide görüntü (SVS, TIFF, NDPI) desteği",
-        "Poligon ve nokta ile annotasyon",
+        "Whole-slide görüntü desteği: SVS, TIFF, NDPI",
+        "Poligon, dikdörtgen ve nokta ile işaretleme",
         "Vaka ve slayt yönetimi",
-        "Slaytlar arası yan yana karşılaştırma görünümü"
-      ]
+        "İki slaytın eşzamanlı, yan yana karşılaştırılması"
+      ],
+      "screens": [
+        "Galeri: yüklenen slaytlar ve işaretleme sayıları",
+        "Karşılaştırma: iki slayt, eşzamanlı gezinmeyle yan yana"
+      ],
+      "compare": {
+        "heading": "Mikroskoptan ekrana",
+        "caption": "Doku incelemesi bugün çoğunlukla mikroskop başında, oküler üzerinden yapılıyor. AhtaPatolog aynı kesiti ekrana taşıyor.",
+        "microscopeLabel": "Mikroskop · oküler görüntü",
+        "digitalLabel": "AhtaPatolog · dijital slayt",
+        "microscopeAlt": "Aynı doku kesitinin mikroskop okülerinden görüldüğü gibi temsili, dairesel görünümü.",
+        "digitalAlt": "Aynı doku kesitinin AhtaPatolog'daki dijital görünümü: bir işaretleme ve ölçek çubuğu.",
+        "handle": "Karşılaştırma ayracı"
+      }
     }
   },
   "about": {
-    "paragraph": "Kurucumuz hekim — aynı zamanda yazılım, elektronik ve mekanik tasarımdan da anlıyor, cihazın teknik tarafına bizzat giriyor. Ekip, onun uzun süredir tanıdığı mühendis arkadaşlarından oluşuyor. Ankara'da, yeni kurulduk. Bir cihazı mekaniğinden uygulama yazılımına kadar aynı odada, dışarıya iş vermeden yapıyoruz."
-  },
-  "team": {
-    "intro": "Küçük bir ekibiz — her katmanın kendi mühendisi var.",
-    "members": [
+    "heading": "Hakkımızda",
+    "lead": "Ahtapot Tıbbi Teknolojileri, bir hekimin kurduğu bir tıbbi cihaz şirketi. Amacımız, bugün yurt dışından tedarik edilen tıbbi cihazları Türkiye'de tasarlamak ve üretmek.",
+    "body": "Bir cihazın mekaniğini, elektroniğini ve yazılımını kendimiz geliştiriyoruz. Tasarım bilgisi bizde olduğu için bir parçayı değiştirmek, yeni bir özellik eklemek ya da bir güncelleme çıkarmak için kimseyi beklemiyoruz.",
+    "facts": [
       {
-        "name": "Kaan Aydın",
-        "role": "Kurucu — Hekim",
-        "bio": "Cihazın hem klinik hem teknik tarafında bizzat çalışıyor."
+        "label": "Merkez",
+        "value": "İstanbul"
       },
       {
-        "name": "Efe Demir",
-        "role": "Mekanik Mühendisi",
-        "bio": "Gövdeyi ve hareketli parçaları tasarlıyor."
+        "label": "Odak",
+        "value": "Tıbbi cihazların yerlileştirilmesi"
       },
       {
-        "name": "Cem Şahin",
-        "role": "Elektronik Mühendisi",
-        "bio": "Devre kartını baştan çizip üretime hazırlıyor."
-      },
-      {
-        "name": "Ada Kaya",
-        "role": "Yazılım Mühendisi",
-        "bio": "Gömülü yazılımdan uygulama arayüzüne kadar kodu yazıyor."
+        "label": "Disiplinler",
+        "value": "Mekanik, elektronik, gömülü ve uygulama yazılımı"
       }
-    ]
-  },
-  "career": {
-    "message": "Şu an açık pozisyonumuz yok. Büyüdükçe burada duyururuz. Mekanik, elektronik ya da yazılım tarafında kendini bu ekipte görüyorsan yine de yaz.",
-    "contactCta": "İletişime geç"
+    ],
+    "pillars": [
+      {
+        "title": "Yerli tasarım ve üretim",
+        "text": "Cihazın her katmanı Türkiye'de tasarlanır ve üretime hazırlanır. Yedek parça, bakım ve güncellemede yurt dışına bağımlılık azalır."
+      },
+      {
+        "title": "Hekimin bakış açısı",
+        "text": "Gereksinimleri kliniği içeriden bilen bir hekim tanımlar. Her cihaz, kullanılacağı ortam ve onu kullanacak kişi düşünülerek tasarlanır."
+      },
+      {
+        "title": "Uçtan uca sorumluluk",
+        "text": "İlk çizimden sahadaki bakıma kadar her aşamayı kendimiz yürütürüz. Her konunun tek bir muhatabı vardır."
+      }
+    ],
+    "founder": {
+      "label": "Kurucu",
+      "name": "Dr. Mustafa Can Yılmaz",
+      "role": "Kurucu · Tıp Doktoru",
+      "bio": "Hekimliğin yanı sıra yazılım, elektronik ve mekanik tasarımda da çalışıyor. Cihazların klinik gereksinimlerini tanımlıyor; devre, yazılım ve gövde tasarımında mühendislerle birlikte bizzat yer alıyor.",
+      "areas": [
+        "Klinik gereksinimler",
+        "Yazılım",
+        "Elektronik",
+        "Mekanik"
+      ]
+    }
   },
   "contact": {
-    "intro": "Ürün bilgisi, demo, distribütörlük ya da iş başvurusu — hangisi olursa olsun, aşağıdan yaz.",
+    "heading": "İletişim",
+    "promptLine1": "Ürün bilgisi, demo, distribütörlük veya iş birliği.",
+    "promptLine2": "Talebinizi iletin; iki iş günü içinde dönüş yapıyoruz.",
+    "next": "Mesajınız doğrudan ekibimize e-posta olarak iletilir ve bir veritabanında saklanmaz.",
+    "detailsHeading": "İletişim bilgileri",
+    "addressLabel": "Adres",
+    "emailLabel": "E-posta",
+    "phoneLabel": "Telefon",
     "fields": {
-      "name": "Ad Soyad",
+      "name": "Ad soyad",
       "email": "E-posta",
-      "organization": "Kurum (opsiyonel)",
-      "requestType": "Talep türü",
-      "message": "Mesaj"
+      "organization": "Kurum (isteğe bağlı)",
+      "requestType": "Konu",
+      "message": "Mesajınız"
     },
     "requestTypes": {
       "urunBilgisi": "Ürün bilgisi",
-      "distributorluk": "Distribütörlük",
       "demo": "Demo",
+      "distributorluk": "Distribütörlük",
       "isBasvurusu": "İş başvurusu",
       "diger": "Diğer"
     },
+    "submitByType": {
+      "urunBilgisi": "Teklif isteyin",
+      "demo": "Demo talep edin",
+      "distributorluk": "Görüşme talep edin",
+      "isBasvurusu": "Başvuru gönderin",
+      "diger": "Mesajı gönderin"
+    },
     "consent": {
-      "label": "KVKK Aydınlatma Metni'ni okudum, kişisel verilerimin işlenmesini kabul ediyorum.",
+      "label": "Kişisel verilerimin bu talep kapsamında işlenmesini kabul ediyorum.",
       "linkText": "KVKK Aydınlatma Metni"
     },
-    "submit": "Talebi gönder",
     "submitting": "Gönderiliyor…",
     "success": {
-      "title": "Mesajın ulaştı.",
-      "body": "2 iş günü içinde dönüş yapıyoruz."
+      "title": "Talebiniz alındı.",
+      "body": "En geç iki iş günü içinde size dönüş yapacağız."
     },
     "errors": {
-      "nameRequired": "Ad soyad yaz.",
-      "emailRequired": "E-posta adresi yaz.",
-      "emailInvalid": "Geçerli bir e-posta adresi yaz.",
-      "messageRequired": "Mesajını yaz.",
-      "messageTooShort": "Mesajını biraz daha uzun yaz — en az 10 karakter.",
-      "consentRequired": "Devam etmek için KVKK Aydınlatma Metni'ni onayla.",
-      "rateLimited": "Kısa sürede çok fazla talep gönderildi. Birkaç dakika sonra tekrar dene.",
-      "sendFailed": "Şu anda gönderilemedi. Birazdan tekrar dene.",
-      "generic": "Bir şeyler ters gitti. Tekrar dene."
+      "nameRequired": "Lütfen adınızı ve soyadınızı girin.",
+      "emailRequired": "Lütfen e-posta adresinizi girin.",
+      "emailInvalid": "Lütfen geçerli bir e-posta adresi girin.",
+      "messageRequired": "Lütfen mesajınızı yazın.",
+      "messageTooShort": "Mesajınız en az 10 karakter olmalı.",
+      "consentRequired": "Devam etmek için lütfen onay kutusunu işaretleyin.",
+      "rateLimited": "Kısa sürede çok sayıda talep alındı. Lütfen birkaç dakika sonra tekrar deneyin.",
+      "sendFailed": "Talebiniz şu anda gönderilemedi. Lütfen biraz sonra tekrar deneyin veya adresimize yazın.",
+      "generic": "Gönderim tamamlanamadı. Lütfen tekrar deneyin."
     }
+  },
+  "footer": {
+    "tagline": "Tıbbi cihaz, uçtan uca.",
+    "kvkk": "KVKK",
+    "privacy": "Gizlilik",
+    "backToTop": "Başa dön",
+    "credits": "Görsel kaynakları"
+  },
+  "credits": {
+    "title": "Görsel kaynakları",
+    "intro": "Ürün ve arayüz görselleri Ahtapot'a aittir. Aşağıdaki fotoğraflar açık lisanslıdır ve sitede renkleri düzenlenerek kullanılmıştır."
   },
   "kvkk": {
     "title": "KVKK Aydınlatma Metni",
-    "legalReviewNote": "Bu metin taslaktır — yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
+    "legalReviewNote": "Bu metin taslaktır, yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
     "body": [
-      "Bu aydınlatma metni, Ahtapot Tıbbi Teknolojiler A.Ş. (\"Şirket\") tarafından 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") kapsamında veri sorumlusu sıfatıyla hazırlanmıştır.",
+      "Bu aydınlatma metni, Ahtapot Tıbbi Teknolojileri A.Ş. (\"Şirket\") tarafından 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") kapsamında veri sorumlusu sıfatıyla hazırlanmıştır.",
       "İletişim formu üzerinden paylaştığınız ad-soyad, e-posta, kurum ve mesaj içeriği; talebinizi değerlendirmek ve sizinle iletişime geçmek amacıyla işlenir.",
       "Verileriniz bir veritabanında saklanmaz; form gönderimi doğrudan e-posta olarak iletilir ve yalnızca talebinizin yanıtlanması amacıyla kullanılır.",
       "KVKK'nın 11. maddesi kapsamında verilerinizin işlenip işlenmediğini öğrenme, işlenme amacını öğrenme, düzeltilmesini veya silinmesini isteme haklarına sahipsiniz.",
@@ -158,7 +415,7 @@
   },
   "privacy": {
     "title": "Gizlilik",
-    "legalReviewNote": "Bu metin taslaktır — yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
+    "legalReviewNote": "Bu metin taslaktır, yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
     "body": [
       "Bu site analitik veya takip amaçlı çerez kullanmaz.",
       "İletişim formu üzerinden paylaştığınız bilgiler bir veritabanında saklanmaz; yalnızca e-posta olarak iletilir.",

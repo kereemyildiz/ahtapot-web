@@ -1,17 +1,13 @@
 import { z } from "zod";
+import { REQUEST_TYPES } from "./validate";
 
-// Talep türleri — spec'te verilen 5 sabit değer.
-export const requestTypeSchema = z.enum([
-  "urun-bilgisi",
-  "distributorluk",
-  "demo",
-  "is-basvurusu",
-  "diger",
-]);
-export type RequestType = z.infer<typeof requestTypeSchema>;
+// Talep türleri — 5 sabit değer. Liste validate.ts'te, istemciyle ortak.
+export const requestTypeSchema = z.enum(REQUEST_TYPES);
+export type { RequestType } from "./validate";
 
 /**
- * Client ve server AYNI şemayı kullanıyor. Mesajlar burada YOK — zod'un
+ * Sunucu doğrulaması (route.ts). İstemci aynı kuralları zod'suz
+ * validate.ts ile önceden kontrol eder. Mesajlar burada YOK — zod'un
  * kendi hata metnini kullanıcıya göstermiyoruz (tek dil olurdu, i18n'e
  * uymazdı). Server yalnız HANGİ alanın hangi KOD ile başarısız olduğunu
  * döndürüyor (`fieldErrorCode` — bkz. route.ts), client bunu

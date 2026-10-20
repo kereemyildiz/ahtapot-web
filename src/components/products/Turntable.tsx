@@ -1,163 +1,207 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useGSAP } from "@/lib/gsapSetup";
-import type { Product } from "@/content/schema";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { gsap, useGSAP } from "@/lib/gsapSetup";
+import type { Product, ProductLayer } from "@/content/schema";
+import { DEVICE_MODELS } from "@/components/device/registry";
+import type { InteractionLabels } from "./ProductInteractionView";
 
-// Kareler 4:3 üretildi (bkz. public/products/su-banyosu/turntable) —
-// TODO(mock-data): su banyosunun gerçek fotoğrafları yerine kod-üretimli
-// soyut kareler kullanılıyor, bkz. docs/mock-data-todo.md.
-const CANVAS_W = 900;
-const CANVAS_H = 675;
+type TurntableProps = {
+  product: Product;
+  labels: InteractionLabels;
+  activeLayer?: ProductLayer | null;
+};
 
 /**
- * Artık sayfa scroll'una bağlı DEĞİL — sürükle ya da üzerindeyken tekerlek
- * çevir, ürün döner; sayfa kendi kaydırmasını hiç kaybetmiyor (önceki
- * ScrollTrigger scrub sürümü, sayfanın scroll'uyla karışıyordu, "görsele
- * odaklanınca hiçbir şey olmuyor" şikayetinin sebebiydi — artık üzerine
- * gelip tekerlek çevirmek TAM OLARAK bir şey yapıyor, sayfa kaymıyor).
- * Kareler preload edilir, reduced motion'da tek statik kare kalır.
+ * Fiziksel cihaz için tek etkileşim: sürükleyerek çevir. Boştayken yavaşça
+ * kendi döner. Tekerlek olayına dokunmaz; sayfa kaydırması her zaman
+ * kullanıcıda kalır.
+ *
+ * Kaynak: assets.turntable.framesPath varsa gerçek fotoğraf kareleri,
+ * yoksa assets.turntable.model ile kayıtlı çizim modeli.
  */
-export function Turntable({ product }: { product: Product }) {
-  const turntable = product.assets.turntable;
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const indexRef = useRef(0);
-  const [ready, setReady] = useState(false);
-  const [reducedMotion] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
-
-  useEffect(() => {
-    if (!turntable) return;
-    let cancelled = false;
-    const total = turntable.frameCount;
-    const images: HTMLImageElement[] = new Array(total);
-    let loadedCount = 0;
-
-    for (let i = 0; i < total; i++) {
-      const img = new window.Image();
-      img.src = `${turntable.framesPath}${String(i + 1).padStart(2, "0")}.jpg`;
-      img.onload = img.onerror = () => {
-        loadedCount++;
-        if (loadedCount === total && !cancelled) setReady(true);
-      };
-      images[i] = img;
-    }
-    imagesRef.current = images;
-
-    return () => {
-      cancelled = true;
-    };
-  }, [turntable]);
-
-  useGSAP(
-    () => {
-      if (!turntable || !ready) return;
-      const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
-      if (!canvas || !ctx) return;
-
-      const drawFrame = (index: number) => {
-        const img = imagesRef.current[index];
-        if (img?.complete) {
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        }
-      };
-
-      const total = turntable.frameCount;
-      // Çekici bir başlangıç açısı (tam cepheden değil).
-      indexRef.current = Math.floor(total * 0.15);
-      drawFrame(indexRef.current);
-
-      if (reducedMotion) return; // statik kare, sürükleme/tekerlek yok.
-
-      canvas.style.cursor = "grab";
-      canvas.style.touchAction = "pan-y"; // dikey scroll'u mobilde bloklama
-
-      const setIndex = (next: number) => {
-        indexRef.current = ((next % total) + total) % total;
-        drawFrame(indexRef.current);
-      };
-
-      let dragging = false;
-      let lastX = 0;
-      const DRAG_PX_PER_FRAME = 6;
-
-      const onPointerDown = (e: PointerEvent) => {
-        dragging = true;
-        lastX = e.clientX;
-        canvas.setPointerCapture(e.pointerId);
-        canvas.style.cursor = "grabbing";
-      };
-      const onPointerMove = (e: PointerEvent) => {
-        if (!dragging) return;
-        const dx = e.clientX - lastX;
-        if (Math.abs(dx) >= DRAG_PX_PER_FRAME) {
-          const steps = Math.trunc(dx / DRAG_PX_PER_FRAME);
-          setIndex(indexRef.current - steps);
-          lastX += steps * DRAG_PX_PER_FRAME;
-        }
-      };
-      const endDrag = () => {
-        dragging = false;
-        canvas.style.cursor = "grab";
-      };
-      // Sayfa üzerindeyken tekerlek çevirince SAYFA kaymaz, ürün döner.
-      // preventDefault TEK BAŞINA yetmiyor — Lenis wheel'i window'da ayrıca
-      // dinliyor ve kendi scroll'unu sürüyor, defaultPrevented'e bakmıyor.
-      // stopPropagation olayın Lenis'e hiç ulaşmamasını sağlıyor.
-      const onWheel = (e: WheelEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIndex(indexRef.current + (e.deltaY > 0 ? 1 : -1));
-      };
-
-      canvas.addEventListener("pointerdown", onPointerDown);
-      canvas.addEventListener("pointermove", onPointerMove);
-      canvas.addEventListener("pointerup", endDrag);
-      canvas.addEventListener("pointerleave", endDrag);
-      canvas.addEventListener("pointercancel", endDrag);
-      canvas.addEventListener("wheel", onWheel, { passive: false });
-
-      return () => {
-        canvas.removeEventListener("pointerdown", onPointerDown);
-        canvas.removeEventListener("pointermove", onPointerMove);
-        canvas.removeEventListener("pointerup", endDrag);
-        canvas.removeEventListener("pointerleave", endDrag);
-        canvas.removeEventListener("pointercancel", endDrag);
-        canvas.removeEventListener("wheel", onWheel);
-      };
-    },
-    { scope: containerRef, dependencies: [ready] }
-  );
-
-  if (!turntable) {
+export function Turntable({ product, labels, activeLayer }: TurntableProps) {
+  const tt = product.assets.turntable;
+  if (tt?.framesPath && tt.frameCount) {
+    return <FrameTurntable framesPath={tt.framesPath} frameCount={tt.frameCount} labels={labels} />;
+  }
+  const Model = tt?.model ? DEVICE_MODELS[tt.model] : undefined;
+  if (!Model) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center border border-dashed border-eosin/50 p-4 text-center font-mono-data text-xs uppercase tracking-[0.06em] text-eosin">
-        TODO: turntable kare seti eksik ({product.slug})
+      <div className="flex aspect-[4/3] items-center justify-center bg-surface p-6 text-center text-small text-muted">
+        TODO: {product.slug} için turntable kaynağı (kare seti ya da model) eksik.
       </div>
     );
   }
+  return <ModelTurntable Model={Model} labels={labels} activeLayer={activeLayer} />;
+}
+
+function ModelTurntable({
+  Model,
+  labels,
+  activeLayer,
+}: {
+  Model: (typeof DEVICE_MODELS)[string];
+  labels: InteractionLabels;
+  activeLayer?: ProductLayer | null;
+}) {
+  const box = useRef<HTMLDivElement>(null);
+  const model = useRef<HTMLDivElement>(null);
+  const state = useRef({ ry: -30, dragging: false, lastX: 0, vel: 0 });
+
+  useGSAP(
+    () => {
+      const el = model.current;
+      const area = box.current;
+      if (!el || !area) return;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      gsap.set(el, { "--ry": state.current.ry });
+
+      const s = state.current;
+      let visible = false;
+      const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+      io.observe(area);
+
+      // Reduced motion: kendi kendine dönmez, ama sürükleyince döner
+      // (kullanıcının başlattığı hareket).
+      const tick = () => {
+        if (reduce || !visible || s.dragging) return;
+        s.vel *= 0.94;
+        s.ry += 0.12 + s.vel;
+        el.style.setProperty("--ry", String(s.ry));
+      };
+      gsap.ticker.add(tick);
+
+      const down = (e: PointerEvent) => {
+        s.dragging = true;
+        s.lastX = e.clientX;
+        s.vel = 0;
+        area.setPointerCapture(e.pointerId);
+        area.style.cursor = "grabbing";
+      };
+      const move = (e: PointerEvent) => {
+        if (!s.dragging) return;
+        const dx = e.clientX - s.lastX;
+        s.lastX = e.clientX;
+        s.ry += dx * 0.45;
+        s.vel = dx * 0.12;
+        el.style.setProperty("--ry", String(s.ry));
+      };
+      const up = () => {
+        s.dragging = false;
+        area.style.cursor = "grab";
+      };
+      area.addEventListener("pointerdown", down);
+      area.addEventListener("pointermove", move);
+      area.addEventListener("pointerup", up);
+      area.addEventListener("pointercancel", up);
+
+      return () => {
+        io.disconnect();
+        gsap.ticker.remove(tick);
+        area.removeEventListener("pointerdown", down);
+        area.removeEventListener("pointermove", move);
+        area.removeEventListener("pointerup", up);
+        area.removeEventListener("pointercancel", up);
+      };
+    },
+    { scope: box }
+  );
+
+  // Katman seçilince cihaz o katmanı gösterecek kadar açılır.
+  useGSAP(
+    () => {
+      if (!model.current) return;
+      gsap.to(model.current, {
+        "--x": activeLayer ? 0.85 : 0,
+        "--zoom": activeLayer ? 1.2 : 1.85,
+        duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.9,
+        ease: "expo.inOut",
+      });
+    },
+    { dependencies: [activeLayer], scope: box }
+  );
 
   return (
-    <div ref={containerRef} className="relative aspect-[4/3] overflow-hidden bg-slide">
-      <canvas
-        ref={canvasRef}
-        width={CANVAS_W}
-        height={CANVAS_H}
-        className="h-full w-full"
-        role="img"
-        aria-label={`${product.slug} ürününün 360° dönen görseli — sürükle ya da tekerlek çevir`}
-      />
-      {!reducedMotion && (
-        <p className="pointer-events-none absolute bottom-3 left-3 font-mono-data text-[11px] uppercase tracking-[0.06em] text-steel">
-          sürükle / tekerlek çevir
-        </p>
-      )}
+    <div
+      ref={box}
+      className="relative aspect-[4/3] cursor-grab touch-pan-y bg-surface"
+    >
+      <Model ref={model} label={labels.modelAlt} active={activeLayer} style={{ "--x": 0, "--rx": -16, "--zoom": 1.85 } as CSSProperties} />
+      <p className="pointer-events-none absolute bottom-4 left-4 text-small text-muted">{labels.dragHint}</p>
+    </div>
+  );
+}
+
+function FrameTurntable({
+  framesPath,
+  frameCount,
+  labels,
+}: {
+  framesPath: string;
+  frameCount: number;
+  labels: InteractionLabels;
+}) {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [frames, setFrames] = useState<HTMLImageElement[]>([]);
+  const index = useRef(0);
+
+  useEffect(() => {
+    // Mobilde 36 yerine 12 kare.
+    const step = window.matchMedia("(max-width: 767px)").matches ? 3 : 1;
+    const list: HTMLImageElement[] = [];
+    let loaded = 0;
+    let cancelled = false;
+    for (let i = 0; i < frameCount; i += step) {
+      const img = new window.Image();
+      img.src = `${framesPath}${String(i + 1).padStart(2, "0")}.jpg`;
+      img.onload = img.onerror = () => {
+        loaded++;
+        if (loaded === list.length && !cancelled) setFrames(list);
+      };
+      list.push(img);
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [framesPath, frameCount]);
+
+  useEffect(() => {
+    const c = canvas.current;
+    const ctx = c?.getContext("2d");
+    if (!c || !ctx || frames.length === 0) return;
+    const draw = () => ctx.drawImage(frames[index.current], 0, 0, c.width, c.height);
+    draw();
+    let dragging = false;
+    let lastX = 0;
+    const down = (e: PointerEvent) => {
+      dragging = true;
+      lastX = e.clientX;
+      c.setPointerCapture(e.pointerId);
+    };
+    const move = (e: PointerEvent) => {
+      if (!dragging) return;
+      const steps = Math.trunc((e.clientX - lastX) / 8);
+      if (!steps) return;
+      lastX += steps * 8;
+      index.current = (((index.current - steps) % frames.length) + frames.length) % frames.length;
+      draw();
+    };
+    const up = () => (dragging = false);
+    c.addEventListener("pointerdown", down);
+    c.addEventListener("pointermove", move);
+    c.addEventListener("pointerup", up);
+    return () => {
+      c.removeEventListener("pointerdown", down);
+      c.removeEventListener("pointermove", move);
+      c.removeEventListener("pointerup", up);
+    };
+  }, [frames]);
+
+  return (
+    <div className="relative aspect-[4/3] bg-surface">
+      <canvas ref={canvas} width={1200} height={900} className="h-full w-full cursor-grab touch-pan-y" role="img" aria-label={labels.modelAlt} />
+      <p className="pointer-events-none absolute bottom-4 left-4 text-small text-muted">{labels.dragHint}</p>
     </div>
   );
 }

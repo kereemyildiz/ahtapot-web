@@ -1,0 +1,381 @@
+/*
+ * CSS 3B su banyosu modeli. Tüm ölçüler em: model, kapsayıcısının
+ * boyutuna göre ölçeklenir (font-size kapsayıcı birimlerinden gelir).
+ *
+ * Değişkenler (kök elemanda, JS/GSAP bunları sürer):
+ *   --x   0 = birleşik, 1 = katmanlarına ayrılmış
+ *   --ry  Y ekseni dönüşü (derece, birimsiz)
+ *   --rx  X ekseni eğimi (derece, birimsiz)
+ */
+.scene {
+  --x: 1;
+  --ry: -28;
+  --rx: -20;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  container-type: size;
+  user-select: none;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: calc(min(2.3cqw, 1.85cqh) * var(--zoom, 1));
+  perspective: 120em;
+  perspective-origin: 50% 40%;
+}
+
+.rig {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateY(calc((-2.3 + 2.9 * var(--x) + var(--lid, 0) * 2.8) * 1em))
+    rotateX(calc(var(--rx) * 1deg)) rotateY(calc(var(--ry) * 1deg));
+}
+
+.overlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+
+.part {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-style: preserve-3d;
+  transform: translate3d(
+    0,
+    calc((var(--y0) + (var(--y1) - var(--y0)) * var(--x) - var(--lift, 0)) * 1em),
+    0
+  );
+}
+
+.float {
+  transform-style: preserve-3d;
+  animation: bob 7s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(var(--x) * -0.35em));
+  }
+}
+
+.face {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  backface-visibility: hidden;
+  opacity: var(--dim, 1);
+  transition: opacity 300ms ease;
+}
+
+/* Katman vurgusu: data-active verildiğinde diğer katmanlar söner. */
+.scene[data-active] [data-layer] {
+  --dim: 0.16;
+}
+.scene[data-active="mekanik"] [data-layer="mekanik"],
+.scene[data-active="elektronik"] [data-layer="elektronik"],
+.scene[data-active="gomulu"] [data-layer="gomulu"],
+.scene[data-active="uygulama"] [data-layer="uygulama"] {
+  --dim: 1;
+}
+
+/* Paslanmaz yüzeyler — düz ton adımları, tek grafik dil. */
+.steelTop {
+  background: #dfe3ec;
+}
+.steelFront {
+  background: #c5cad6;
+}
+.steelSide {
+  background: #a7aebe;
+}
+.steelBack {
+  background: #8c93a5;
+}
+.steelBottom {
+  background: #5a6074;
+}
+
+/* Üstten düşen sergi ışığı: dik yüzler yukarıda açık, aşağıda koyu. */
+.steelFront,
+.steelSide {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.16), transparent 40%, rgb(10 12 22 / 0.18));
+}
+
+.brushed {
+  background-image:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.035) 0 0.06em, transparent 0.06em 0.3em),
+    linear-gradient(180deg, rgb(255 255 255 / 0.16), transparent 40%, rgb(10 12 22 / 0.18));
+}
+
+/* Cihazın tezgâha düşen gölgesi (gövdeyle birlikte hareket eder). */
+.floor {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Gövde 26 × 18 em. Üstteki katman gövde kenarına yapışık temas gölgesi,
+     alttaki sergi ışığının zemindeki havuzu. */
+  width: 44em;
+  height: 34em;
+  margin: -17em 0 0 -22em;
+  background:
+    radial-gradient(closest-side, rgb(0 0 0 / 0.8) 58%, transparent 70%),
+    radial-gradient(closest-side, rgb(147 164 244 / 0.16), transparent);
+  pointer-events: none;
+}
+
+.water {
+  background: #3e52e0;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3em;
+  height: 3em;
+  margin: -1.5em 0 0 -1.5em;
+  border: 0.12em solid rgb(147 164 244 / 0.7);
+  border-radius: 50%;
+  animation: ripple calc(4.5s / (1 + var(--heat, 0) * 1.5)) ease-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0.2);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+
+.pcbTop {
+  background: #2b3cc4;
+}
+.pcbEdge {
+  background: #1d2a8f;
+}
+
+.plane {
+  backface-visibility: visible;
+}
+
+.display {
+  position: absolute;
+  background: #0a0c16;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0.6em;
+  opacity: var(--dim, 1);
+}
+
+.digits {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.55em;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #d7f89a;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  font-size: 0.45em;
+  margin-left: 0.15em;
+  vertical-align: top;
+}
+
+.knob {
+  position: absolute;
+  border-radius: 50%;
+  background: #8c93a5;
+  box-shadow: inset 0 0 0 0.25em #a7aebe;
+}
+
+.knob::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.35em;
+  width: 0.18em;
+  height: 0.7em;
+  margin-left: -0.09em;
+  background: #0a0c16;
+}
+
+.button {
+  position: absolute;
+  width: 1.3em;
+  height: 0.7em;
+  background: #8c93a5;
+}
+
+/* Isıtıcı ısındıkça periwinkle'dan fosfor yeşiline döner (--heat 0..1). */
+.coil {
+  stroke: color-mix(in oklab, #93a4f4, #d7f89a calc(var(--heat, 0) * 100%));
+}
+
+/* Ön paneldeki ısıtma LED'i. */
+.led {
+  position: absolute;
+  width: 0.55em;
+  height: 0.55em;
+  background: #3a4060;
+  box-shadow: 0 0 0 0.12em #8c93a5;
+}
+.led::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #d7f89a;
+  opacity: var(--heat-on, 0);
+  transition: opacity 200ms ease;
+}
+
+.logo {
+  position: absolute;
+  display: block;
+}
+
+/* Simülatörde ön panelin sağındaki tuş alanı (gerçek düğmeler). */
+.panel {
+  position: absolute;
+  right: 0.8em;
+  top: 0.8em;
+  width: 7.2em;
+  height: 4.4em;
+}
+
+/* Pompa göstergesi: pompa çalışırken periwinkle yanar. */
+.pumpLed::after {
+  background: #93a4f4;
+  opacity: 0;
+}
+.scene[data-pump="on"] .pumpLed::after {
+  opacity: 1;
+}
+
+/* Tıklanabilir parça (kapak). */
+.clickable .face {
+  cursor: pointer;
+}
+.clickable:hover .face {
+  filter: brightness(1.06);
+}
+
+/* Sirkülasyon: pompa çalışırken su yüzeyinde akış çizgileri. */
+.scene[data-pump="on"] .water::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 1.2em, rgb(147 164 244 / 0.28) 1.2em 1.4em);
+  animation: flow 1.6s linear infinite;
+}
+@keyframes flow {
+  to {
+    background-position: 1.4em 0;
+  }
+}
+
+.scene[data-water="low"] .water {
+  background: #1f2a6b;
+}
+.scene[data-water="low"] .ripple {
+  display: none;
+}
+
+.engraving {
+  position: absolute;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.9em;
+  letter-spacing: -0.02em;
+  color: #8c93a5;
+  text-transform: lowercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .ripple,
+  .scene[data-pump="on"] .water::after {
+    animation: none;
+  }
+}
+
+.subline {
+  display: block;
+  margin-top: 0.25em;
+  font-family: var(--font-sans);
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #93a4f4;
+}
+
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.steam {
+  position: absolute;
+  left: 0;
+  top: -9em;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.steam span {
+  position: absolute;
+  bottom: 0;
+  width: 2.6em;
+  height: 2.6em;
+  margin-left: -1.3em;
+  border-radius: 50%;
+  background: rgb(238 240 246 / 0.22);
+  filter: blur(0.5em);
+  animation: steam 3.2s ease-out infinite;
+}
+@keyframes steam {
+  from {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-7em) scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blink,
+  .steam span {
+    animation: none;
+  }
+}

@@ -2,13 +2,29 @@
   "slug": "su-banyosu",
   "order": 1,
   "status": "available",
-  "interaction": "turntable",
+  "interaction": "simulator",
   "layers": ["mekanik", "elektronik", "gomulu"],
   "assets": {
     "gallery": [],
     "turntable": {
-      "framesPath": "/products/su-banyosu/turntable/frame-",
-      "frameCount": 36
+      "model": "water-bath"
+    },
+    "simulator": {
+      "kind": "water-bath",
+      "model": "water-bath",
+      "params": {
+        "volumeL": 10,
+        "heaterW": 1000,
+        "ambientC": 22,
+        "lossLidClosedWK": 6,
+        "lossLidOpenWK": 14,
+        "minC": 25,
+        "maxC": 95,
+        "startC": 22,
+        "initialSetC": 37,
+        "timeScale": 90
+      },
+      "presets": [37, 45, 56]
     }
   }
 }

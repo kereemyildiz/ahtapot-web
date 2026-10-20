@@ -1,133 +1,50 @@
-# Mock veri takip listesi
+# Mock veri takip listesi (tasarım v2)
 
-Bu dosya, kullanıcının sağlamadığı ama sitenin ihtiyaç duyduğu her şey için
-kullanılan mock/placeholder verileri listeler (2026-08-25 talimatı: "ihtiyacın
-olan her şeyi mock verilerle hallet, ama not al"). Gerçek veri geldikçe
-buradan silinip ilgili dosyada yerine konmalı.
+Gerçek veri geldikçe ilgili dosyada değiştirilip buradan silinmeli.
 
-## Doğrulanmış gerçek veriler (referans, TODO değil)
+## Doğrulanmış gerçek veriler (TODO değil)
 
-Aşağıdakiler kullanıcıdan geldi, gerçek — mock değil:
+- **Şirket hikâyesi:** Tıbbi cihaz üreticisi; odak tıbbi cihazları yerlileştirmek. Kurucu hekim; yazılım/elektronik/mekanikten anlıyor, teknik işe bizzat giriyor. Ekip, kurucunun uzun süredir tanıdığı mühendis arkadaşları.
+- **Kurucu:** Dr. Mustafa Can Yılmaz (`content/*.json` → `about.founder.name`).
+- **Telefon:** +90 535 770 66 49 (`company.phone`; iletişim bölümü ve footer).
+- **Adres:** Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul (`content/*.json` → `company.address`).
+  Merkez İstanbul (kullanıcı onayladı).
+- **Ürün adı:** AhtaPatolog (AhtaPatoloji değil).
+- **AhtaPatolog ekran görüntüleri:** `public/products/dijital-patoloji/*.png` (gerçek arayüz; görüntülerin içinde eski "AhtaPatoloji" adı yazıyor, yeni ekran görüntüsü gelince değişmeli).
+- **Örnek WSI:** `public/deepzoom/` (gerçek H&E slaytından 6144×6144 kesit, metadata gerçek).
+- **Logo:** `public/logo.jpg`.
 
-- **Şirket hikâyesi:** Kurucu doktor, aynı zamanda yazılım/elektronik/mekanikten
-  anlıyor, teknik işe bizzat giriyor. Ekip, kurucunun mühendis arkadaşlarından
-  oluşuyor. **"4 kişilik ekip" / "Dördümüz" yanlıştı, kaldırıldı.**
-  (`CLAUDE.md`, `content/tr.json` → `hero.heading`, `content/en.json` → aynı)
-- **Şirket adresi:** Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404,
-  34903 Pendik/İstanbul (`content/tr.json` ve `en.json` → `company.address`,
-  `ContactSection.tsx`'te render ediliyor)
-- **Logo:** `public/logo.jpg` — `public/logo-mark.png` (arka planı silinmiş
-  hali, JPG kaynaklı, kenarlarda hafif halo var — gerçek vektör/AI dosyası
-  gelirse değiştirilmeli) sol rail'in üstünde ve `src/app/icon.png`
-  (favicon) olarak kullanılıyor.
-- **AhtaPatoloji (dijital patoloji ürünü) ekran görüntüleri:**
-  `public/products/dijital-patoloji/{annotasyon,karsilastirma,galeri}.png`
-  — gerçek uygulama arayüzü. `annotasyon.png` şu an LayersSection'ın
-  UYGULAMA katmanında kullanılıyor; `karsilastirma.png` ve `galeri.png`
-  henüz hiçbir yerde kullanılmıyor (ileride Ürünler bölümü veya vaka
-  çalışması için değerlendirilebilir).
-- **Örnek whole-slide image:** `D:\aky-personal\svs-viewer\sample_data\
-  PrimaryTumor_HE_009.svs` (gerçek H&E slaytı, openslide ile okundu:
-  53248×65536 px, native 41.22×, 0.242591 µm/px). Bu dosyadan native
-  çözünürlükte 6144×6144 px'lik gerçek bir doku kırpıntısı alındı (dolu
-  slaytın tamamı değil — 872 karolu DZI piramidi ~17MB, tüm slaytı DZI'ye
-  çevirmek onbinlerce karo/1GB+ ederdi, pratik değildi). Çıktı:
-  `public/deepzoom/primary-tumor-he-009.dzi` +
-  `public/deepzoom/primary-tumor-he-009_files/`. `nativeObjective`/
-  `nativeMpp` değerleri gerçek metadata'dan (`content/products/
-  dijital-patoloji.json`).
+## Mock / temsili — değiştirilmeli
 
-## Mimari not (mock değil, karar kaydı)
+| Ne | Nerede | Not |
+|---|---|---|
+| Logo işaretinin vektörü | `src/components/brand/LogoMark.tsx` | PNG'den elle iz sürüldü (tek çizgi, mavi degrade). Resmi SVG/AI gelince path'ler değişmeli. |
+| Logo yazısı ve tam logo | `public/brand/wordmark.png`, `public/brand/logo-full.png` | `public/logo.jpg`'den arka planı ayrılarak üretildi. Resmi vektör gelince değişmeli. |
+| Kurucunun unvanı | `about.founder.role` | "Kurucu · Tıp Doktoru"; uzmanlık alanı ya da başka bir unvan varsa eklenmeli. |
+| Kurucu görseli | `src/components/home/FounderMark.tsx` | Stetoskoptan devreye geçen temsili çizim; gerçek portre gelince yerine konabilir. |
+| Su banyosu simülatörü | `content/products/su-banyosu.json` → `assets.simulator.params` | 10 L, 1 kW, kayıp katsayıları, sensör gecikmesi ve hazır ayarlar (37/45/56 °C) **temsili**. Ekranda "temsili simülasyon" notu var. Gerçek değerler gelince yalnız JSON değişir. |
+| Su banyosunun zamanlayıcısı | `products/simulator/waterBathPhysics.ts` → `TIMER_STEPS_MIN` | Ürünün gerçekten zamanlayıcısı var mı **onaylanmalı** (pompa özellik listesinde var, zamanlayıcı yok). 30/60/90 dk adımları ve "ayara ulaşınca başlar" davranışı temsili. |
+| Su banyosu 3B çizimi | `src/components/device/WaterBathModel.tsx` | Gerçek ürün fotoğrafı değil, oranları temsili; ön panelde Ahtapot logosu. |
+| Yetkinlik araç ekranları | `src/components/home/capability/{CadViewport,PcbLayout,FirmwareIde,FieldService}.tsx` | CAD gövdesi, kart yerleşimi, C kodu ve saha sahnesi **temsili**; belirli bir ürünün ölçüsü, devresi, kodu ya da kurulu cihaz parkı değil (her sahnenin altında "örnek/temsili" yazıyor). Gerçek CAD/PCB ekran görüntüleri gelirse onlarla zenginleştirilebilir. |
+| Yetkinlik başlıkları ve arayüz etiketleri | `content/*.json` → `capability.items.*.deliverables`, `capability.visuals` | Genel disiplin başlıkları ve araç arayüzü etiketleri; onay bekliyor. |
+| Saha hizmet kapsamı | `capability.items.saha` | Kurulum, eğitim, bakım/kalibrasyon ve yazılım güncellemesi; gerçekten verilen hizmetlerle eşleşmeli. |
+| Ürün açıklamaları ve özellikler | `content/*.json` → `products.<slug>` | Nitel, sayı/tolerans yok. Gerçek liste gelmeli. |
+| Hakkımızda metni ve ilkeler | `content/*.json` → `about` | Yerlileştirme odağıyla kurumsal dilde yazıldı; "yurt dışından tedarik edilen tıbbi cihazların Türkiye'de tasarlanıp üretilmesi", "tasarım, yazılım ve üretim dokümantasyonu bize ait" ve üç ilke onay bekliyor. |
+| Hakkımızda olguları | `about.facts` | "Kuruluş yılı" bilinmediği için yazılmadı. |
+| E-posta | `company.email` | Boş; boşken sayfada görünmez. |
+| Referanslar | — | Gerçek referans yok, bölüm yok. |
+| Sertifikalar | — | Hiçbiri yazılmadı (CE / ISO 13485 / ÜTS). |
+| Durum etiketi "Piyasada" | `product.statusAvailable` | Su banyosu için `status: available`'dan türüyor; doğru ifade mi onaylanmalı. |
+| Dönüş süresi sözü | `contact.promptLine2`, `contact.success.body` | "İki iş günü içinde dönüş" bir taahhüt; ekip bunu karşılayabiliyor mu onaylanmalı. |
+| Mikroskop ↔ dijital karşılaştırması | `src/components/products/ScopeCompare.tsx`, `content/products/dijital-patoloji.json` → `assets.compare` | İki taraf da aynı gerçek WSI posterinden; oküler görünümü (daire, büyütme, sıcak ışık) **temsili**. İşaretleme poligonu klinik bir bölgeyi göstermiyor. Ölçek çubuğu gerçek µm/px'ten (`assets.compare.umPerPx`). |
+| Görüntüleyicideki örnek işaretlemeler | `src/components/products/DeepZoom.tsx` → `DEMO_POLYGONS`, `DEMO_RULER` | Temsili; ölçümler gerçek µm/px'ten hesaplanıyor ama işaretlenen bölgeler klinik anlam taşımıyor. |
+| Hakkımızda metni ve ilkeler (yeniden yazıldı) | `about.lead`, `about.body`, `about.pillars` | Kullanıcı isteğiyle daha akıcı yazıldı; içerik onay bekliyor. |
+| Hero modüllerindeki mini çizimler | `src/components/home/HeroNetwork.tsx` → `ModuleArt` | Disiplinlerin temsili çizimleri (açılmış gövde, kart, kontrol yanıtı, işaretleme). |
 
-**Turntable/DeepZoom artık sayfa scroll'una bağlı değil.** İlk sürüm
-ScrollTrigger scrub kullanıyordu (sayfayı kaydırınca dönüyor/yakınlaşıyordu)
-— bu hem sayfanın kendi scroll'uyla çakışıyordu hem de "görsele
-odaklanınca hiçbir şey olmuyor" şikayetine yol açtı. Artık ikisi de kendi
-üzerine gelip tekerlek çevirince/sürükleyince tepki veriyor (deepzoom için
-OpenSeadragon'un kendi native mouseNavEnabled'ı, turntable için elle
-yazılmış pointer-drag + wheel handler), sayfa scroll'una hiç dokunmuyor.
-Ayrıca "fancy" etkileşim artık ana sayfada değil, `/urunler/[slug]` detay
-sayfasında — ana sayfadaki kart sakin bir statik önizleme.
+## Görseller ve atıf
 
-## Mock veriler — gerçeğiyle değiştirilmeli
+Sitede şu an açık lisanslı fotoğraf yok; atıf zorunluluğu da yok (`content/media.json` → `credits` boş, `/kaynaklar` sayfası ve footer bağlantısı bu yüzden görünmüyor). Gerçek atölye/ekip/ürün fotoğrafları geldiğinde `content/media.json`'a eklenebilir.
 
-### Turntable kare seti (su banyosu)
-`public/products/su-banyosu/turntable/frame-01..36.jpg` — **gerçek ürün
-fotoğrafı değil**, kod ile üretilmiş soyut/düz "dönen kutu" illüstrasyonu
-(marka renkleriyle, fotogerçekçi olmaya çalışmıyor — bilinçli, sahte fotoya
-göre daha dürüst). Gerçek su banyosunun 360° çekilmiş 36 karesi gelince
-`content/products/su-banyosu.json` → `assets.turntable.framesPath` aynı
-kalabilir, dosyalar yer değiştirir; `Turntable.tsx`'te kod değişikliği
-gerekmez.
+## İletişim formu ortam değişkenleri
 
-### Ekip (Team bölümü) — dolduruldu, MOCK (isimler dahil)
-`TeamSection.tsx` `content/tr.json`/`en.json` → `team.members` içindeki 4
-kaydı render ediyor: **Kaan Aydın** (Kurucu — Hekim), **Efe Demir**
-(Mekanik Mühendisi), **Cem Şahin** (Elektronik Mühendisi), **Ada Kaya**
-(Yazılım Mühendisi) — her biri bir cümlelik bio ile. **İsimler UYDURMA —
-gerçek kişi adları değil** (kurucunun soyadı gerçek isimle karışmasın diye
-bilinçli olarak "Yıldız" kullanılmadı). Gerçek fotoğraf da yok — avatar
-bilinçli olarak sahte bir fotoğraf gibi durmayan düz bir harf-kutusu
-(adın ilk harfi). Gerçek isim/rol/bio/fotoğraf geldiğinde `team.members`
-gerçek verilerle, avatar kutuları gerçek fotoğrafla değiştirilmeli.
-
-### Hakkımızda — dolduruldu, GERÇEK çerçeve
-`AboutSection.tsx`'teki paragraf (`content/tr.json` → `about.paragraph`)
-kullanıcının verdiği gerçek bilgilerden yazıldı (kurucu hekim + teknik,
-ekip mühendis arkadaşları, Ankara, yeni kuruldu) — **mock değil**, ama
-uydurma bir "kuruluş hikâyesi" (ör. "bir ihtiyaçtan doğdu" gibi) EKLENMEDİ,
-yalnız doğrulanmış gerçekler var.
-
-### Ürün detay sayfası açıklama + özellikler — MOCK
-`content/tr.json`/`en.json` → `products.<slug>.description` ve `.features`
-— `/urunler/[slug]` sayfasında gösteriliyor. **Gerçek spesifikasyon değil**:
-su banyosu için nitel özellikler (dijital sıcaklık kontrolü, paslanmaz
-gövde vb.) — kasıtlı olarak kesin sayı/tolerans YAZILMADI (ör. "±0.1°C"
-gibi bir değer uydurmak CLAUDE.md'nin mevzuat kuralına aykırı olurdu).
-Dijital patoloji için özellikler gerçek ekran görüntülerinden gözlemlenen
-işlevlere dayanıyor (annotasyon araçları, karşılaştırma görünümü, vaka
-listesi) — bunlar da mock ama en azından gerçek arayüzden gözlemlendi.
-Gerçek spesifikasyon/özellik listesi geldiğinde bu iki alan değiştirilmeli.
-
-### Kariyer — dolduruldu
-"Şu an açık pozisyonumuz yok, büyüdükçe duyururuz" mesajı + iletişime
-yönlendirme. Gerçek açık pozisyon olduğunda `content/tr.json`/`en.json` →
-`career.message` değişmeli, gerekirse gerçek bir pozisyon listesi
-eklenmeli.
-
-### Referanslar
-Gerçek referans verilmedi — bölüm bilinçli olarak hiç render edilmiyor
-(`src/app/[locale]/page.tsx` → `references: []`).
-
-### Sertifikalar
-CE / ISO 13485 / TİTCK-ÜTS — hiçbiri kullanılmadı (ne gerçek ne mock;
-belge numarasız sertifika kullanma kuralı gereği hiç yazılmadı).
-
-### İletişim formu — kuruldu, GÖNDERİM env değişkenleri EKSİK
-`ContactForm.tsx` (client) + `app/api/contact/route.ts` (server) canlı test
-edildi: client-side zod validasyonu, server-side zod validasyonu, honeypot
-(`hp` doluysa sessizce `{ok:true}`, mail gönderilmez), rate limit (aynı IP
-için 10 dakikada 6. istekte `429`) — hepsi gerçek isteklerle doğrulandı.
-**Eksik olan gerçek veri, kod değil, ortam değişkenleri:**
-- `RESEND_API_KEY` — ayarlanmadı, şu an her gönderim `500 send_failed`
-  ile düşüyor (kullanıcıya "Şu anda gönderilemedi" gösteriliyor, çökmüyor).
-- `CONTACT_EMAIL_TO` — talep e-postalarının gideceği gerçek kutu adresi
-  henüz yok.
-- `CONTACT_EMAIL_FROM` (opsiyonel) — verilmezse `onboarding@resend.dev`'e
-  düşüyor, Resend hesabında doğrulanmış bir gönderen alanı olduğunda
-  gerçek adresle değiştirilmeli.
-Bu üçü Vercel proje ayarlarında (ya da yerelde `.env.local`) tanımlanınca
-kod tarafında hiçbir değişiklik gerekmiyor.
-
-### Ürün galerisi görselleri
-`content/products/su-banyosu.json` ve `dijital-patoloji.json` →
-`assets.gallery: []` — ikisi de boş (gallery artık birincil etkileşim
-değil, turntable/deepzoom kullanılıyor, ama yedek/ek görsel yok).
-
-### Katman beat'leri (MEKANİK / ELEKTRONİK / GÖMÜLÜ / UYGULAMA / SAHA)
-Kullanıcı talebiyle ("burada screenshot kullanmana gerek yok") UYGULAMA
-satırındaki AhtaPatoloji ekran görüntüsü kaldırıldı — `LayerBeats.tsx`
-artık hiçbir katmanda görsel desteklemiyor (`LayerBeatItem.image` alanı
-tamamen silindi), 5 katman da simetrik: mini meander glyph + tek cümle.
-`annotasyon.png` hâlâ `public/products/dijital-patoloji/` altında duruyor,
-başka hiçbir yerde kullanılmıyor (gerekirse ürün detay sayfasına taşınabilir).
+`RESEND_API_KEY`, `CONTACT_EMAIL_TO`, isteğe bağlı `CONTACT_EMAIL_FROM` — tanımlı değilken form "Şu anda gönderilemedi" mesajı gösterir, çökmez. Cloudflare'de nasıl girileceği: `docs/deploy-cloudflare.md`.

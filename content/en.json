@@ -1,169 +1,426 @@
 {
   "meta": {
     "siteTitle": "Ahtapot Medical Technologies",
-    "siteDescription": "From mechanics to application software, one team builds the device end to end."
+    "siteDescription": "We turn a need described in the clinic into a medical device that works in the field, end to end."
   },
   "company": {
-    "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
-    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul, Türkiye"
+    "legalName": "Ahtapot Tıbbi Teknolojileri A.Ş.",
+    "shortName": "Ahtapot",
+    "brandSub": "Medical Technologies",
+    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul, Türkiye",
+    "email": "",
+    "phone": "+90 535 770 66 49"
   },
   "nav": {
-    "layers": {
-      "mekanik": "Mechanical",
-      "elektronik": "Electronics",
-      "gomulu": "Embedded software",
-      "uygulama": "Application",
-      "saha": "Field"
-    },
-    "sections": {
-      "katmanlar": "Capability",
-      "urunler": "Products",
-      "hakkimizda": "About",
-      "ekip": "Team",
-      "referanslar": "References",
-      "kariyer": "Careers",
-      "iletisim": "Contact"
-    }
-  },
-  "layerSentences": {
-    "mekanik": "We design the enclosure, the moving parts, and the tolerances ourselves.",
-    "elektronik": "We design the circuit board from scratch and prepare it for production ourselves.",
-    "gomulu": "We write the software running inside the device, end to end, ourselves.",
-    "uygulama": "We design the imaging and review interface together with the people who use it.",
-    "saha": "We stay with you after installation — maintenance and support included."
+    "kabiliyet": "Capabilities",
+    "urunler": "Products",
+    "hakkimizda": "About",
+    "iletisim": "Contact",
+    "cta": "Book a meeting",
+    "menu": "Menu",
+    "close": "Close",
+    "skip": "Skip to content",
+    "home": "Ahtapot home",
+    "localeLabel": "Change language",
+    "localeName": "Türkçe",
+    "navLabel": "Main menu"
   },
   "hero": {
-    "eyebrow": "Ankara — medical device development",
-    "heading": "We build a device's mechanics, electronics, and software in one room. Our founder is a doctor."
+    "title": "Medical devices, end to end.",
+    "lead": "We turn a need described in the clinic into a device that works in the field, end to end.",
+    "primaryCta": "Book a meeting",
+    "secondaryCta": "Explore the products",
+    "visualAlt": "The meander mark from the Ahtapot logo, its four arms reaching into mechanics, electronics, firmware and software.",
+    "callouts": {
+      "mekanik": "Enclosure and mechanism",
+      "elektronik": "Circuits and sensors",
+      "gomulu": "Control and safety",
+      "uygulama": "Interface and data"
+    }
   },
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "toggleLabel": "Switch theme"
+  "layers": {
+    "mekanik": "Mechanical",
+    "elektronik": "Electronics",
+    "gomulu": "Firmware",
+    "uygulama": "Software",
+    "saha": "Field"
   },
-  "locale": {
-    "tr": "Türkçe",
-    "en": "English",
-    "switchLabel": "Switch language"
+  "capability": {
+    "heading": "From concept to field, five layers in one team",
+    "progressLabel": "Layer",
+    "items": {
+      "mekanik": {
+        "title": "Mechanical design",
+        "sentence": "We design enclosures, mechanisms and tolerances with manufacturability in mind from day one, from 3D model to drawing to prototype.",
+        "deliverables": [
+          "3D CAD modelling",
+          "Drawings and tolerancing",
+          "Prototyping and production readiness"
+        ],
+        "caption": "3D CAD model and dimensioning (sample enclosure)",
+        "alt": "A wireframe model of a device enclosure rotating in a CAD workspace, with dimension lines, a model tree and a command line."
+      },
+      "elektronik": {
+        "title": "Electronics design",
+        "sentence": "We design the electronics from schematic to board layout, shaping the sensing, power and control stages around what the device needs.",
+        "deliverables": [
+          "Schematic design",
+          "PCB layout",
+          "Prototype boards and testing"
+        ],
+        "caption": "Board layout and routing (sample board)",
+        "alt": "Component placement on two copper layers in a board design tool, with routed traces and a design rule check."
+      },
+      "gomulu": {
+        "title": "Firmware",
+        "sentence": "We write the software that runs on the device: sensor acquisition, control algorithms and the interlocks that keep it safe.",
+        "deliverables": [
+          "Control algorithms",
+          "Hardware drivers",
+          "Safety interlocks"
+        ],
+        "caption": "Control firmware, debugging and live data (sample)",
+        "alt": "A control loop stepping through a code editor, a watch panel, a serial terminal and a live temperature plot."
+      },
+      "uygulama": {
+        "title": "Application software",
+        "sentence": "From the device screen to the web application, we design user interfaces together with the people who will use them.",
+        "deliverables": [
+          "Device interface",
+          "Web application",
+          "Data and case management"
+        ],
+        "caption": "AhtaPatolog: gallery, review and compare screens",
+        "alt": "Three AhtaPatolog screens: the slide gallery, a tissue section open with annotation tools, and two slides compared side by side."
+      },
+      "saha": {
+        "title": "Field support",
+        "sentence": "Installation, user training, scheduled maintenance and software updates: we support the device throughout its service life.",
+        "deliverables": [
+          "Installation",
+          "Training",
+          "Maintenance",
+          "Updates"
+        ],
+        "caption": "Devices in the field: remote monitoring, maintenance and updates (illustrative)",
+        "alt": "Different medical devices in a healthcare facility, with monitoring links to a service centre, calibration and a software update."
+      }
+    },
+    "visuals": {
+      "cad": {
+        "tree": "Model tree",
+        "parts": [
+          "Base housing",
+          "Sloped front panel",
+          "Display bezel",
+          "Button openings",
+          "Vents",
+          "Section A-A"
+        ],
+        "commands": [
+          "EXTRUDE  profile_1  220 mm",
+          "SHELL  wall 2.5 mm",
+          "OFFSET  display bezel 4 mm",
+          "HOLE  Ø22  button opening",
+          "PATTERN  vents 5 × 8 mm",
+          "SECTION  A-A  X axis"
+        ],
+        "units": "Units: mm",
+        "view": "Isometric"
+      },
+      "pcb": {
+        "layers": "Layers",
+        "layerNames": [
+          "Top copper",
+          "Bottom copper",
+          "Silkscreen",
+          "Board edge"
+        ],
+        "nets": [
+          "SPI_SCK",
+          "SPI_MOSI",
+          "SENS_IN",
+          "HEATER_PWM",
+          "USB_D±",
+          "3V3"
+        ],
+        "net": "Net",
+        "drc": "Design rule check: 0 errors",
+        "drcRunning": "Design rule check…",
+        "board": "Sample board · 2 layers"
+      },
+      "ide": {
+        "files": [
+          "control.c",
+          "pid.h",
+          "safety.c"
+        ],
+        "watch": "Watch",
+        "terminal": "Serial terminal",
+        "plot": "Temperature and setpoint",
+        "build": "Building",
+        "flash": "Flashing the board",
+        "running": "Running · stepping",
+        "ok": "Build succeeded · 0 warnings"
+      },
+      "field": {
+        "center": "Ahtapot service",
+        "devices": [
+          "Lab instrument",
+          "Imaging workstation",
+          "Clinical device"
+        ],
+        "online": "Online",
+        "installing": "Installing",
+        "installed": "Installed",
+        "training": "Training",
+        "trained": "Training done",
+        "calibrating": "Calibrating",
+        "calibrated": "Calibrated",
+        "updating": "Updating",
+        "updated": "Up to date"
+      }
+    }
   },
   "product": {
+    "heading": "Products",
+    "intro": "Two products from the same team: a device that works on the lab bench and an imaging application that runs in the browser.",
+    "statusAvailable": "On the market",
     "inDevelopmentBadge": "In development",
-    "detailsCta": "See details",
-    "backToProducts": "Back to products"
+    "layersLabel": "Layers inside",
+    "detailsCta": "Explore the product",
+    "quoteCta": "Request a quote",
+    "demoCta": "Request a demo",
+    "dragHint": "Drag to rotate",
+    "featuresHeading": "Features",
+    "backToProducts": "Back to products",
+    "screensHeading": "From the interface",
+    "modelAlt": "A rotatable drawing of the laboratory water bath.",
+    "viewer": {
+      "sampleNote": "A 6144 × 6144 pixel crop from a real H&E slide.",
+      "open": "Open the viewer",
+      "engage": "Click the image to enable zoom",
+      "engaged": "Scroll to zoom, drag to pan",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "home": "Show all",
+      "fullscreen": "Full screen",
+      "annotations": "Annotations",
+      "objective": "Magnification",
+      "toolsLabel": "Tools",
+      "toolPan": "Pan and select",
+      "toolPolygon": "Polygon",
+      "toolRect": "Rectangle",
+      "toolRuler": "Measure distance",
+      "deleteSelected": "Delete selected",
+      "clearAll": "Clear all",
+      "hintPan": "Drag to pan; click an annotation to select it.",
+      "hintPolygon": "Click to add vertices; click the first point or press Enter to finish.",
+      "hintRect": "Click two opposite corners.",
+      "hintRuler": "Click two points to measure the distance between them.",
+      "measureNote": "Measurements use the slide's real pixel size (µm/px)."
+    },
+    "simulator": {
+      "power": "Start",
+      "stop": "Stop",
+      "setpoint": "Set",
+      "actual": "Water",
+      "heater": "Heater",
+      "decrease": "Lower setpoint",
+      "increase": "Raise setpoint",
+      "presets": "Presets",
+      "lid": "Lid",
+      "lidOpen": "Open",
+      "lidClosed": "Closed",
+      "water": "Water level",
+      "waterOk": "Normal",
+      "waterLow": "Low",
+      "explode": "Show inside",
+      "assemble": "Reassemble",
+      "statusIdle": "Standby",
+      "statusHeating": "Heating",
+      "statusHolding": "Holding temperature",
+      "statusCooling": "Cooling",
+      "statusInterlock": "Low water: heater cut by safety interlock",
+      "statusDone": "Timer finished, heating stopped",
+      "chartTitle": "Last 40 minutes",
+      "chartTemp": "Water",
+      "chartSet": "Set",
+      "timer": "Timer",
+      "timerOff": "Off",
+      "timerWaiting": "starts at setpoint",
+      "minutes": "min",
+      "pump": "Circulation",
+      "pumpOn": "On",
+      "pumpOff": "Off",
+      "panelHint": "Use the front-panel keys, click the lid, drag to rotate.",
+      "disclaimer": "Illustrative simulation based on 10 L of water, a 1 kW heater and a simple heat-loss model; pump and timer behaviour are illustrative too and do not represent the product's specifications. Time runs 90× faster."
+    }
   },
   "products": {
     "su-banyosu": {
       "name": "Laboratory water bath",
-      "tagline": "Mechanical, electronics, and embedded software in one product.",
-      "description": "A laboratory water bath designed to hold samples at a constant temperature. The enclosure, heating control, and interface were all designed by the same team — nothing outsourced, from mechanics to embedded software.",
+      "tagline": "Keeps samples at a set temperature. Mechanics, electronics and firmware designed in-house.",
+      "description": "A laboratory water bath for heating and incubating samples at a constant temperature. The enclosure, heating control and user interface were all designed by the same team. Change the setpoint in the simulation to see how the device responds.",
       "features": [
-        "Digital temperature control and display",
-        "Stainless steel enclosure",
+        "Digital temperature control with display",
+        "Stainless steel housing",
         "Quiet circulation pump",
-        "Overflow-protected water level sensor"
-      ]
+        "Water level sensor with overflow protection"
+      ],
+      "screens": []
     },
     "dijital-patoloji": {
-      "name": "Digital pathology software",
-      "tagline": "Imaging, annotation, and case management for the pathologist's review.",
-      "description": "AhtaPatoloji lets you upload whole-slide images from the scanner and review, annotate, and manage cases. It doesn't make the call — it makes the pathologist's review easier.",
+      "name": "AhtaPatolog",
+      "tagline": "Viewing, annotation and case management for the pathologist's review.",
+      "description": "Opens whole-slide images in the browser so the pathologist can examine tissue at high magnification, annotate it and keep cases organised. Diagnostic decisions remain with the pathologist; the software supports the review.",
       "features": [
-        "Whole-slide image support (SVS, TIFF, NDPI)",
-        "Polygon and point annotation",
+        "Whole-slide images: SVS, TIFF, NDPI",
+        "Polygon, rectangle and point annotations",
         "Case and slide management",
-        "Side-by-side slide comparison view"
-      ]
+        "Synchronised side-by-side comparison of two slides"
+      ],
+      "screens": [
+        "Gallery: uploaded slides and their annotation counts",
+        "Compare: two slides side by side with synchronised navigation"
+      ],
+      "compare": {
+        "heading": "From microscope to screen",
+        "caption": "Today, tissue is mostly examined at the microscope, through the eyepiece. AhtaPatolog brings the same section to the screen.",
+        "microscopeLabel": "Microscope · eyepiece view",
+        "digitalLabel": "AhtaPatolog · digital slide",
+        "microscopeAlt": "An illustrative, circular view of the tissue section as seen through a microscope eyepiece.",
+        "digitalAlt": "The same tissue section in AhtaPatolog: a digital view with an annotation and a scale bar.",
+        "handle": "Comparison divider"
+      }
     }
   },
   "about": {
-    "paragraph": "Our founder is a physician — who also understands software, electronics, and mechanical design, and gets hands-on with the technical side of the device. The team is made up of engineers he's known for a long time. We're based in Ankara, newly founded. We build a device from mechanics to application software in one room, without outsourcing."
-  },
-  "team": {
-    "intro": "We're a small team — every layer has its own engineer.",
-    "members": [
+    "heading": "About",
+    "lead": "Ahtapot Medical Technologies is a medical device company founded by a physician. Our aim is to design and build in Türkiye the medical devices that are sourced from abroad today.",
+    "body": "We develop the mechanics, electronics and software of each device ourselves. Because the design knowledge stays with us, we never wait on anyone to change a part, add a feature or ship an update.",
+    "facts": [
       {
-        "name": "Kaan Aydın",
-        "role": "Founder — Physician",
-        "bio": "Works hands-on on both the clinical and technical side of the device."
+        "label": "Based in",
+        "value": "Istanbul"
       },
       {
-        "name": "Efe Demir",
-        "role": "Mechanical Engineer",
-        "bio": "Designs the enclosure and the moving parts."
+        "label": "Focus",
+        "value": "Localising medical devices"
       },
       {
-        "name": "Cem Şahin",
-        "role": "Electronics Engineer",
-        "bio": "Designs the circuit board from scratch and preps it for production."
-      },
-      {
-        "name": "Ada Kaya",
-        "role": "Software Engineer",
-        "bio": "Writes the code, from embedded software to the application interface."
+        "label": "Disciplines",
+        "value": "Mechanics, electronics, firmware and software"
       }
-    ]
-  },
-  "career": {
-    "message": "No open positions right now. We'll post here as we grow. If you see yourself on the mechanical, electronics, or software side of this team, reach out anyway.",
-    "contactCta": "Get in touch"
+    ],
+    "pillars": [
+      {
+        "title": "Designed and built locally",
+        "text": "Every layer of the device is designed and prepared for production in Türkiye, reducing dependence on imports for spare parts, maintenance and updates."
+      },
+      {
+        "title": "A physician's perspective",
+        "text": "Requirements are defined by a physician who knows the clinic from the inside. Each device is designed around where it will be used and who will use it."
+      },
+      {
+        "title": "End-to-end responsibility",
+        "text": "From the first drawing to maintenance in the field, we run every stage ourselves, so every matter has a single point of contact."
+      }
+    ],
+    "founder": {
+      "label": "Founder",
+      "name": "Dr. Mustafa Can Yılmaz",
+      "role": "Founder · Physician",
+      "bio": "Alongside medicine, works in software, electronics and mechanical design: defines the clinical requirements of each device and takes a hands-on part in its circuit, code and enclosure design.",
+      "areas": [
+        "Clinical requirements",
+        "Software",
+        "Electronics",
+        "Mechanics"
+      ]
+    }
   },
   "contact": {
-    "intro": "Product info, a demo, distribution, or a job — whatever it is, write below.",
+    "heading": "Contact",
+    "promptLine1": "Product information, demos, distribution or partnerships.",
+    "promptLine2": "Send us your request; we reply within two working days.",
+    "next": "Your message is delivered to our team by email and is not stored in a database.",
+    "detailsHeading": "Contact details",
+    "addressLabel": "Address",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
     "fields": {
       "name": "Full name",
       "email": "Email",
-      "organization": "Organization (optional)",
-      "requestType": "Request type",
-      "message": "Message"
+      "organization": "Organisation (optional)",
+      "requestType": "Topic",
+      "message": "Your message"
     },
     "requestTypes": {
-      "urunBilgisi": "Product info",
-      "distributorluk": "Distribution",
+      "urunBilgisi": "Product information",
       "demo": "Demo",
+      "distributorluk": "Distribution",
       "isBasvurusu": "Job application",
       "diger": "Other"
     },
-    "consent": {
-      "label": "I've read the Privacy Notice and agree to the processing of my personal data.",
-      "linkText": "Privacy Notice"
+    "submitByType": {
+      "urunBilgisi": "Request a quote",
+      "demo": "Request a demo",
+      "distributorluk": "Book a meeting",
+      "isBasvurusu": "Send application",
+      "diger": "Send message"
     },
-    "submit": "Send request",
+    "consent": {
+      "label": "I consent to my personal data being processed for this request.",
+      "linkText": "Privacy notice (KVKK)"
+    },
     "submitting": "Sending…",
     "success": {
-      "title": "Your message is in.",
-      "body": "We'll get back to you within 2 business days."
+      "title": "Your request has been received.",
+      "body": "We will get back to you within two working days."
     },
     "errors": {
-      "nameRequired": "Enter your full name.",
-      "emailRequired": "Enter your email address.",
-      "emailInvalid": "Enter a valid email address.",
-      "messageRequired": "Write your message.",
-      "messageTooShort": "Write a bit more — at least 10 characters.",
-      "consentRequired": "Agree to the Privacy Notice to continue.",
-      "rateLimited": "Too many requests in a short time. Try again in a few minutes.",
-      "sendFailed": "Couldn't send right now. Try again shortly.",
-      "generic": "Something went wrong. Try again."
+      "nameRequired": "Please enter your full name.",
+      "emailRequired": "Please enter your email address.",
+      "emailInvalid": "Please enter a valid email address.",
+      "messageRequired": "Please write your message.",
+      "messageTooShort": "Your message should be at least 10 characters.",
+      "consentRequired": "Please tick the consent box to continue.",
+      "rateLimited": "We received too many requests in a short time. Please try again in a few minutes.",
+      "sendFailed": "Your request could not be sent right now. Please try again shortly or write to our address.",
+      "generic": "The message could not be sent. Please try again."
     }
   },
+  "footer": {
+    "tagline": "Medical devices, end to end.",
+    "kvkk": "KVKK notice",
+    "privacy": "Privacy",
+    "backToTop": "Back to top",
+    "credits": "Image credits"
+  },
+  "credits": {
+    "title": "Image credits",
+    "intro": "Product and interface images belong to Ahtapot. The photographs below are openly licensed and shown color-adjusted on this site."
+  },
   "kvkk": {
-    "title": "KVKK Notice",
-    "legalReviewNote": "This is a draft — it must be reviewed by legal counsel before publishing.",
+    "title": "Privacy notice (KVKK)",
+    "legalReviewNote": "This is a draft and must be reviewed by legal counsel before publication.",
     "body": [
-      "This notice is prepared by Ahtapot Tıbbi Teknolojiler A.Ş. (\"the Company\") as the data controller under Turkey's Personal Data Protection Law No. 6698 (\"KVKK\").",
-      "The name, email, organization, and message you share through the contact form are processed to evaluate your request and get back to you.",
-      "Your data isn't stored in a database — the form is delivered directly by email and used only to respond to your request.",
-      "Under Article 11 of the KVKK, you have the right to learn whether your data is processed, learn the purpose of processing, and request correction or deletion.",
-      "You can send these requests in writing to the address in our Contact section."
+      "This notice is issued by Ahtapot Tıbbi Teknolojileri A.Ş. (\"the Company\") as data controller under Turkish Personal Data Protection Law No. 6698 (\"KVKK\").",
+      "The name, email address, organisation and message you share through the contact form are processed to assess your request and get back to you.",
+      "Your data is not stored in a database. The form is delivered directly as an email and used only to answer your request.",
+      "Under Article 11 of KVKK you have the right to learn whether your data is processed and for what purpose, and to request its correction or deletion.",
+      "You can send these requests in writing to the address in the contact section."
     ]
   },
   "privacy": {
     "title": "Privacy",
-    "legalReviewNote": "This is a draft — it must be reviewed by legal counsel before publishing.",
+    "legalReviewNote": "This is a draft and must be reviewed by legal counsel before publication.",
     "body": [
-      "This site doesn't use analytics or tracking cookies.",
-      "Information you share through the contact form isn't stored in a database — it's only sent by email.",
-      "There's no third-party advertising or tracking code on this site.",
-      "For questions, reach us through the Contact section."
+      "This site uses no analytics or tracking cookies.",
+      "Information you share through the contact form is not stored in a database; it is only delivered as an email.",
+      "There is no third-party advertising or tracking code on this site.",
+      "For questions, reach us through the contact section."
     ]
   }
 }

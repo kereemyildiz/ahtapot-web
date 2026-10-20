@@ -1,0 +1,31 @@
+{
+  "images": {
+    "appAnnotation": {
+      "src": "/products/dijital-patoloji/annotasyon.png",
+      "width": 1916,
+      "height": 875
+    },
+    "appCompare": {
+      "src": "/products/dijital-patoloji/karsilastirma.png",
+      "width": 1917,
+      "height": 915
+    },
+    "appGallery": {
+      "src": "/products/dijital-patoloji/galeri.png",
+      "width": 1907,
+      "height": 893
+    }
+  },
+  "capability": {
+    "mekanik": null,
+    "elektronik": null,
+    "gomulu": null,
+    "uygulama": [
+      "appGallery",
+      "appAnnotation",
+      "appCompare"
+    ],
+    "saha": null
+  },
+  "credits": []
+}

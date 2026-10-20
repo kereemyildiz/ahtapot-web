@@ -1,78 +1,83 @@
-import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { fontVariables } from "@/lib/fonts";
-import { THEME_COOKIE, resolveTheme } from "@/lib/theme";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { LocaleSwitcher } from "@/components/ui/LocaleSwitcher";
+import { Header } from "@/components/site/Header";
+import { Footer } from "@/components/site/Footer";
 import "../globals.css";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+export const viewport: Viewport = {
+  themeColor: "#0a0c16",
+  colorScheme: "dark",
+};
+
 export async function generateMetadata(
   props: Omit<LayoutProps<"/[locale]">, "children">
 ): Promise<Metadata> {
   const { locale } = await props.params;
-  const t = await getTranslations({
-    locale: locale as AppLocale,
-    namespace: "meta",
-  });
+  const t = await getTranslations({ locale: locale as AppLocale, namespace: "meta" });
   return {
     title: t("siteTitle"),
     description: t("siteDescription"),
   };
 }
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: LayoutProps<"/[locale]">) {
+// İçerik giriş animasyonlarının başlangıç durumu yalnız JS varken uygulanır.
+const JS_FLAG = "document.documentElement.classList.add('js')";
+
+export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
   setRequestLocale(locale);
 
-  // Tema tercihi cookie'de — SSR'da <html data-theme> doğru değerle
-  // render edilir, client'ta flash olmaz (CLAUDE.md). Aydınlık varsayılan;
-  // sistem prefers-color-scheme'i otomatik uygulanmıyor (bkz. lib/theme.ts).
-  const cookieStore = await cookies();
-  const theme = resolveTheme(cookieStore.get(THEME_COOKIE)?.value);
+  const t = await getTranslations({ locale, namespace: "nav" });
+  const tCompany = await getTranslations({ locale, namespace: "company" });
 
-  const tTheme = await getTranslations({ locale, namespace: "theme" });
-  const tLocale = await getTranslations({ locale, namespace: "locale" });
+  const links = (["kabiliyet", "urunler", "hakkimizda"] as const).map((id) => ({
+    id,
+    label: t(id),
+  }));
 
   return (
-    <html
-      lang={locale}
-      data-theme={theme}
-      className={`${fontVariables} h-full antialiased`}
-    >
+    <html lang={locale} className={`${fontVariables} h-full`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: JS_FLAG }} />
+      </head>
       <body className="min-h-full">
-        <NextIntlClientProvider>
-          <SmoothScrollProvider>
-            {/* Geçici test çubuğu — nihai nav değil, bu round'da yalnız
-                dil/tema geçişinin çalıştığını kanıtlamak için var. */}
-            <div className="fixed top-4 right-4 z-50 flex gap-4 bg-background/80 px-3 py-2 backdrop-blur-sm">
-              <LocaleSwitcher label={tLocale("switchLabel")} />
-              <ThemeToggle
-                initialTheme={theme}
-                labels={{
-                  light: tTheme("light"),
-                  dark: tTheme("dark"),
-                  toggleLabel: tTheme("toggleLabel"),
-                }}
-              />
-            </div>
-            {children}
-          </SmoothScrollProvider>
-        </NextIntlClientProvider>
+        <SmoothScrollProvider>
+          <a
+            href="#icerik"
+            className="sr-only-focusable fixed left-4 top-4 z-[60] btn btn-primary"
+          >
+            {t("skip")}
+          </a>
+          <Header
+            locale={locale}
+            labels={{
+              links,
+              cta: t("cta"),
+              menu: t("menu"),
+              close: t("close"),
+              home: t("home"),
+              localeLabel: t("localeLabel"),
+              localeName: t("localeName"),
+              brand: tCompany("shortName"),
+              brandSub: tCompany("brandSub"),
+              navLabel: t("navLabel"),
+            }}
+          />
+          <div id="icerik">{children}</div>
+          <Footer />
+        </SmoothScrollProvider>
       </body>
     </html>
   );

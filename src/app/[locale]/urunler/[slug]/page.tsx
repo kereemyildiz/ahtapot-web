@@ -1,97 +1,85 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type { AppLocale } from "@/i18n/routing";
-import { routing } from "@/i18n/routing";
+import { routing, type AppLocale } from "@/i18n/routing";
 import { getProductBySlug, getProducts } from "@/content/products";
-import type { ProductLayer } from "@/content/schema";
-import { Link } from "@/i18n/navigation";
-import { LayerStrip } from "@/components/meander/LayerStrip";
-import { ProductInteractionView } from "@/components/products/ProductInteractionView";
+import Link from "next/link";
+import { localeHref } from "@/i18n/href";
+import { PageMotion } from "@/components/motion/PageMotion";
+import { ProductExhibit } from "@/components/products/ProductExhibit";
+import { getExhibitCopy, getExhibitUi } from "@/components/products/productLabels";
 
 export function generateStaticParams() {
-  const products = getProducts();
-  return routing.locales.flatMap((locale) =>
-    products.map((product) => ({ locale, slug: product.slug }))
-  );
+  return routing.locales.flatMap((locale) => getProducts().map((p) => ({ locale, slug: p.slug })));
 }
 
-/**
- * Ürün detay sayfası — "fancy" turntable/deepzoom etkileşimi burada
- * yaşıyor, ana sayfanın küçük kartında değil (spec: ana sayfada sakin bir
- * önizleme + "Detayları gör", asıl etkileşim kendi sayfasında daha çok yer
- * bulsun). Sol rail burada yok — o ana sayfanın 10 bölümlük yolculuğuna
- * özgü bir cihaz, buraya taşınmadı.
- */
-export default async function ProductDetailPage({
-  params,
-}: PageProps<"/[locale]/urunler/[slug]">) {
+export async function generateMetadata({ params }: PageProps<"/[locale]/urunler/[slug]">) {
+  const { locale, slug } = await params;
+  const product = getProductBySlug(slug);
+  if (!product) return {};
+  const t = await getTranslations({ locale: locale as AppLocale, namespace: "products" });
+  const tMeta = await getTranslations({ locale: locale as AppLocale, namespace: "meta" });
+  return { title: `${t(`${slug}.name`)} · ${tMeta("siteTitle")}`, description: t(`${slug}.tagline`) };
+}
+
+export default async function ProductPage({ params }: PageProps<"/[locale]/urunler/[slug]">) {
   const { locale, slug } = await params;
   setRequestLocale(locale as AppLocale);
-
   const product = getProductBySlug(slug);
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
+  const t = await getTranslations("product");
+  const ui = await getExhibitUi();
+  const { screens, ...copy } = await getExhibitCopy(product);
+  const others = getProducts().filter((p) => p.slug !== slug);
   const tProducts = await getTranslations("products");
-  const tLayers = await getTranslations("nav.layers");
-  const tProductUi = await getTranslations("product");
-
-  const layerLabels: Record<ProductLayer, string> = {
-    mekanik: tLayers("mekanik"),
-    elektronik: tLayers("elektronik"),
-    gomulu: tLayers("gomulu"),
-    uygulama: tLayers("uygulama"),
-  };
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16 md:px-10 md:py-24">
-      <Link
-        href="/#urunler"
-        className="font-mono-data text-xs uppercase tracking-[0.06em] text-steel transition-colors hover:text-ahtapot"
-      >
-        ← {tProductUi("backToProducts")}
-      </Link>
+    <main className="frame pb-[clamp(5rem,10vw,9rem)] pt-[calc(var(--header-h)+clamp(2rem,5vw,4rem))]">
+      <PageMotion>
+        <Link href={localeHref(locale as AppLocale, "/#urunler")} className="text-small text-muted transition-colors hover:text-ink">
+          ← {t("backToProducts")}
+        </Link>
 
-      <div className="mt-8 flex flex-col gap-4">
-        <div className="h-6">
-          {product.status === "in-development" && (
-            <span className="w-fit border border-eosin px-2 py-0.5 font-mono-data text-[11px] uppercase tracking-[0.06em] text-eosin">
-              {tProductUi("inDevelopmentBadge")}
-            </span>
-          )}
+        <div className="mt-10">
+          <ProductExhibit
+            locale={locale as AppLocale}
+            product={product}
+            copy={copy}
+            ui={{ ...ui, interaction: { ...ui.interaction, screens } }}
+            headingLevel="h2"
+            showDetailsLink={false}
+          />
         </div>
-        <h1 className="font-display text-3xl font-semibold tracking-[-0.01em] md:text-5xl">
-          {tProducts(`${slug}.name`)}
-        </h1>
-        <p className="max-w-2xl font-body text-lg text-foreground/80">
-          {tProducts(`${slug}.tagline`)}
-        </p>
-        <LayerStrip activeLayers={product.layers} labels={layerLabels} />
-      </div>
 
-      <div className="mt-12">
-        <ProductInteractionView product={product} />
-      </div>
+        {product.assets.gallery.length > 0 && (
+          <section aria-labelledby="ekranlar" className="mt-[clamp(5rem,10vw,9rem)]">
+            <h2 id="ekranlar" data-split="" className="section-title">
+              {t("screensHeading")}
+            </h2>
+            <div className="mt-12 grid gap-10 lg:grid-cols-2">
+              {product.assets.gallery.map((img, i) => (
+                <figure key={img.src} data-reveal="">
+                  <div className="relative overflow-hidden bg-surface" style={{ aspectRatio: `${img.width} / ${img.height}` }}>
+                    <Image src={img.src} alt={screens[i] ?? ""} fill sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover" />
+                  </div>
+                  {screens[i] && <figcaption className="mt-4 text-body text-ink/90">{screens[i]}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          </section>
+        )}
 
-      {/* TODO(mock-data): açıklama + özellik listesi gerçek spesifikasyon
-          değil, ekran görüntülerinden/verilen çerçeveden türetildi — bkz.
-          docs/mock-data-todo.md. */}
-      <div className="mt-16 grid gap-10 md:grid-cols-[3fr_2fr]">
-        <p className="font-body text-lg leading-relaxed text-foreground">
-          {tProducts(`${slug}.description`)}
-        </p>
-        <ul className="flex flex-col gap-3 border-t border-steel/20 pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-8">
-          {(tProducts.raw(`${slug}.features`) as string[]).map((feature) => (
-            <li
-              key={feature}
-              className="font-mono-data text-sm text-foreground/80"
-            >
-              {feature}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+        {others.length > 0 && (
+          <nav aria-label={t("heading")} className="mt-[clamp(5rem,10vw,9rem)] flex flex-wrap gap-3">
+            {others.map((p) => (
+              <Link key={p.slug} href={localeHref(locale as AppLocale, `/urunler/${p.slug}`)} className="btn btn-quiet">
+                {tProducts(`${p.slug}.name`)} →
+              </Link>
+            ))}
+          </nav>
+        )}
+      </PageMotion>
+    </main>
   );
 }
