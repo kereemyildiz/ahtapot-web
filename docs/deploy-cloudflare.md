@@ -1,14 +1,26 @@
 # Cloudflare'e yayın
 
-Durum (20 Ekim 2026): **repo tarafı tamam** (paketler kurulu, build ve lint
-temiz, Cloudflare çalışma zamanında yerelde doğrulandı). Kalan iş **panel
-adımları** (§5): Cloudflare hesabı, GoDaddy nameserver değişikliği, secret'lar.
+Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 
-- Alan adı: **`ahtapot.ink`** (kök birincil, `www` köke yönlenir).
-- Alan adında e-posta yok; MX kaydı korunacak bir şey yok.
-- GoDaddy'de otomatik oluşturulmuş bir Website Builder sitesi var. Nameserver
-  değişince alan adı ona gitmez. Silmek şart değil; yeni site yayına girdikten
-  sonra, ücretli bir paketse yenilemesi kapatılabilir.
+| Ne | Durum |
+|---|---|
+| Alan adı | `ahtapot.ink`, GoDaddy'de kayıtlı; nameserver'lar `kyrie` / `raquel.ns.cloudflare.com`; zone Free planda aktif |
+| Worker | `ahtapot-web`, GitHub `main`'e her push'ta Workers Builds ile otomatik yayın; diğer dallar önizleme sürümü (`upload`) |
+| Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
+| Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
+| DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı |
+| E-posta | Alan adında e-posta yok |
+| Form secret'ları | **Henüz girilmedi** (§5.5); form gönderimi şimdilik hata döner |
+
+- GoDaddy'deki Website Builder sitesi artık alan adından erişilmiyor. Silmek
+  şart değil; ücretli bir paketse yenilemesi kapatılabilir.
+- **`*.workers.dev` bu geliştirme ağından erişilemiyor:** TLS el sıkışmasında
+  bağlantı sıfırlanıyor; aynı Cloudflare IP'sine başka bir alan adıyla gidince
+  sorun yok, yani ağ `workers.dev`'i SNI üzerinden engelliyor. Yayını
+  etkilemiyor; testler `ahtapot.ink` üzerinden yapılır.
+- Cloudflare'in GitHub uygulamasına kurulumda tüm depolara erişim verildi;
+  GitHub → Settings → Applications → Cloudflare Workers and Pages →
+  Configure → "Only select repositories" → `ahtapot-web` ile daraltılmalı.
 
 ---
 
@@ -174,7 +186,10 @@ durur; PATH'te `corepack pnpm`'e yönlenen bir `pnpm` kısayolu gerekir.
 
 ## 5. Panel adımları (hesap sahibi)
 
-Tahmini süre: 30–45 dakika. Nameserver yayılmasını beklemek buna dahil değil.
+**5.1–5.4 ve 5.6 tamamlandı (20 Ekim 2026). Bekleyen: 5.5 (secret'lar) ve
+5.7 (Resend alan adı doğrulama).** Aşağıdaki adımlar kayıt ve yeniden kurulum
+için duruyor. Nameserver değişikliği GoDaddy'de SMS doğrulaması istedi; .ink
+kayıt sunucusu birkaç dakikada güncellendi.
 
 ### 5.1 GoDaddy'de hazırlık
 1. GoDaddy → alan adı → **DNS**: tüm kayıtların ekran görüntüsünü al.

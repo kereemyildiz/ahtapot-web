@@ -32,9 +32,6 @@
   // DEĞİL, panelde "Secret" olarak girilir: repo public, e-posta adresi buraya yazılmaz.
   // Secret'lar her deploy'da korunur.
   //
-  // TODO: alan adı belli olunca özel alan adları buraya eklenecek (panelden de olur):
-  // "routes": [
-  //   { "pattern": "<alan-adı>", "custom_domain": true },
-  //   { "pattern": "www.<alan-adı>", "custom_domain": true }
-  // ]
+  // Özel alan adları (ahtapot.ink, www.ahtapot.ink) panelden bağlandı:
+  // Worker → Domains. www → kök yönlendirmesi zone'daki Redirect Rule ile yapılır.
 }
