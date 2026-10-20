@@ -1,0 +1,6 @@
+# Yerel Cloudflare önizlemesi (`pnpm preview`) için. Kopyalayın: .dev.vars
+# .dev.vars git'e girmez. Canlıdaki değerler Cloudflare panelinde "Secret" olarak durur.
+NEXTJS_ENV=development
+RESEND_API_KEY=
+CONTACT_EMAIL_TO=
+CONTACT_EMAIL_FROM=

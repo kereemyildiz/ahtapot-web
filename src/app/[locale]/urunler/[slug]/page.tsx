@@ -13,6 +13,10 @@ export function generateStaticParams() {
   return routing.locales.flatMap((locale) => getProducts().map((p) => ({ locale, slug: p.slug })));
 }
 
+// Ürünler build sırasında belli; bilinmeyen slug render edilmeden 404 olur.
+// Cloudflare Worker'da dosya sistemi yok: products.ts çalışma anında yüklenirse 500 verir.
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: PageProps<"/[locale]/urunler/[slug]">) {
   const { locale, slug } = await params;
   const product = getProductBySlug(slug);

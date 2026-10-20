@@ -22,8 +22,12 @@ function escapeHtml(value: string): string {
 }
 
 function getClientKey(request: NextRequest): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  return forwardedFor?.split(",")[0]?.trim() || "unknown";
+  // Cloudflare gerçek istemci IP'sini cf-connecting-ip'de verir;
+  // x-forwarded-for yerel geliştirme için yedek.
+  const ip =
+    request.headers.get("cf-connecting-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return ip || "unknown";
 }
 
 export async function POST(request: NextRequest) {
