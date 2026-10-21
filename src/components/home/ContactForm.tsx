@@ -5,19 +5,10 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { LocaleContent } from "@/content/schema";
 import { CONTACT_EVENT } from "@/lib/contact/request";
-import { REQUEST_TYPES as TYPES, isRequestType, validateContact, type FieldCodes, type RequestType } from "@/lib/contact/validate";
+import { REQUEST_TYPES as TYPES, REQUEST_TYPE_KEY as TYPE_KEY, isRequestType, validateContact, type FieldCodes, type RequestType } from "@/lib/contact/validate";
 
 type Labels = LocaleContent["contact"];
 type FieldErrors = Partial<Record<keyof FieldCodes, string>>;
-
-// Talep türü (URL/şema) → içerik anahtarı.
-const TYPE_KEY: Record<RequestType, "urunBilgisi" | "demo" | "distributorluk" | "isBasvurusu" | "diger"> = {
-  "urun-bilgisi": "urunBilgisi",
-  demo: "demo",
-  distributorluk: "distributorluk",
-  "is-basvurusu": "isBasvurusu",
-  diger: "diger",
-};
 
 export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref: string }) {
   const tErr = t.errors;

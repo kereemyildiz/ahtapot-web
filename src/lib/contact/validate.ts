@@ -11,6 +11,15 @@ export const REQUEST_TYPES = [
 ] as const;
 export type RequestType = (typeof REQUEST_TYPES)[number];
 
+// Talep türü (URL/şema) → içerik anahtarı (`contact.requestTypes`).
+export const REQUEST_TYPE_KEY: Record<RequestType, "urunBilgisi" | "demo" | "distributorluk" | "isBasvurusu" | "diger"> = {
+  "urun-bilgisi": "urunBilgisi",
+  demo: "demo",
+  distributorluk: "distributorluk",
+  "is-basvurusu": "isBasvurusu",
+  diger: "diger",
+};
+
 export type ContactValues = {
   name: string;
   email: string;
