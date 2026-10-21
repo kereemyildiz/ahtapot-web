@@ -9,8 +9,8 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 | Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
 | Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
 | DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı |
-| Gelen e-posta | Cloudflare Email Routing: `info@` ve `talep@ahtapot.ink` → a.keremyildiz99@gmail.com (posta kutusu yok, yönlendirme) |
-| Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `talep@ahtapot.ink`, Reply-To formu dolduran kişi |
+| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `info-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/info-yonlendirme.js`); `talep@ahtapot.ink` → a.keremyildiz99@gmail.com |
+| Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `info@ahtapot.ink`, Reply-To formu dolduran kişi |
 | Form secret'ları | `RESEND_API_KEY` (yalnız gönderim yetkili anahtar), `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`; üçü de Secret, yalnız Production |
 | Doğrulama (21 Ekim 2026) | Canlı formdan test: Resend "Delivered", Email Routing "Forwarded" |
 
@@ -256,7 +256,7 @@ Worker → **Settings** → **Variables and Secrets** → **Add**. Üçünün t�
 | Ad | Değer |
 |---|---|
 | `RESEND_API_KEY` | Resend → API keys; izin **Sending access** (yalnız gönderim) |
-| `CONTACT_EMAIL_TO` | `talep@ahtapot.ink` |
+| `CONTACT_EMAIL_TO` | `info@ahtapot.ink` |
 | `CONTACT_EMAIL_FROM` | `Ahtapot Web Sitesi <site@ahtapot.ink>` |
 
 - Ortam olarak yalnız **Production** işaretli; **Previews** bilinçli olarak
@@ -282,7 +282,13 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
 - **Email Routing:** Cloudflare → alan adı → Email → Email Routing →
   "Add missing records" (3 MX, `cf2024-1._domainkey` DKIM, SPF) → Destination
   addresses → Gmail adresi (Cloudflare hesabının adresi olduğu için doğrudan
-  "Verified") → Routing rules: `info@`, `talep@` → Send to an email → Gmail.
+  "Verified") → Routing rules: `talep@` → Send to an email → Gmail;
+  `info@` → Send to a Worker → `info-yonlendirme`.
+- **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. `info@` bu yüzden
+  `workers/info-yonlendirme.js`'teki Email Worker'a bağlı; Worker iletiyi
+  listedeki her adrese `message.forward` ile iletir. Yeni alıcı: önce
+  Destination addresses'e ekle (doğrulama e-postasındaki bağlantı tıklanmalı),
+  sonra `HEDEFLER` listesine ekleyip Worker'ı panelden yeniden yayınla.
 - **Resend:** Domains → Add → `ahtapot.ink`, bölge **Ireland (eu-west-1)**
   (sonradan değişmez), Return-Path `send`, takip kapalı, receiving kapalı
   (gelen posta Email Routing'de). **Auto configure** Cloudflare'in Domain
