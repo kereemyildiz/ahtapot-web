@@ -3,7 +3,11 @@
   "order": 1,
   "status": "available",
   "interaction": "simulator",
-  "layers": ["mekanik", "elektronik", "gomulu"],
+  "layers": [
+    "mekanik",
+    "elektronik",
+    "gomulu"
+  ],
   "assets": {
     "gallery": [],
     "turntable": {
@@ -13,18 +17,33 @@
       "kind": "water-bath",
       "model": "water-bath",
       "params": {
-        "volumeL": 10,
-        "heaterW": 1000,
+        "volumeL": 2,
+        "heaterW": 200,
         "ambientC": 22,
-        "lossLidClosedWK": 6,
-        "lossLidOpenWK": 14,
+        "lossWK": 1.6,
         "minC": 25,
-        "maxC": 95,
+        "maxC": 65,
         "startC": 22,
-        "initialSetC": 37,
-        "timeScale": 90
+        "initialSetC": 40,
+        "timeScale": 90,
+        "sensorTauS": 45,
+        "cutoffC": 150,
+        "resetC": 110
       },
-      "presets": [37, 45, 56]
+      "presets": [
+        {
+          "setC": 40,
+          "label": "presetLowMelt"
+        },
+        {
+          "setC": 47,
+          "label": "presetHighMelt"
+        },
+        {
+          "setC": 41,
+          "label": "presetFatty"
+        }
+      ]
     }
   }
 }

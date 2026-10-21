@@ -110,7 +110,7 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
     if (!running || stage !== 2) return;
     if (!sim.current) {
       sim.current = createState(params.current);
-      sim.current.running = true;
+      sim.current.on = true;
       // Grafik boş başlamasın: soğuk başlangıçtan ısınma eğrisiyle doldur.
       const warm: { T: number; set: number }[] = [];
       for (let i = 0; i < 36; i++) {

@@ -52,12 +52,12 @@ const VIEWER_KEYS = [
 ] as const;
 
 const SIMULATOR_KEYS = [
-  "power", "stop", "setpoint", "actual", "heater", "decrease", "increase",
-  "presets", "lid", "lidOpen", "lidClosed", "water", "waterOk", "waterLow",
-  "explode", "assemble", "statusIdle", "statusHeating", "statusHolding",
-  "statusCooling", "statusInterlock", "statusDone", "chartTitle", "chartTemp",
-  "chartSet", "timer", "timerOff", "timerWaiting", "minutes", "pump", "pumpOn",
-  "pumpOff", "panelHint", "disclaimer",
+  "powerButton", "lightButton", "on", "off", "setpoint", "actual", "heater",
+  "decrease", "increase", "setKey", "presets", "presetLowMelt", "presetHighMelt",
+  "presetFatty", "light", "water", "waterOk", "waterLow", "explode", "assemble",
+  "statusOff", "statusHeating", "statusHolding", "statusCooling", "statusInterlock",
+  "section", "sectionWrinkled", "sectionOpening", "sectionFlat", "sectionTooHot",
+  "chartTitle", "chartTemp", "chartSet", "panelHint", "disclaimer",
 ] as const;
 
 const requestTypeRecord = z
@@ -381,7 +381,8 @@ const productAssetsSchema = z
         kind: z.string(),
         model: z.string(),
         params: z.record(z.string(), z.number()),
-        presets: z.array(z.number()),
+        // Hazır ayar: sıcaklık + simülatör metinlerindeki etiket anahtarı.
+        presets: z.array(z.object({ setC: z.number(), label: z.string() }).strict()),
       })
       .strict()
       .optional(),
