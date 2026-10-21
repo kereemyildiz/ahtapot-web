@@ -125,6 +125,7 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
           {items.map((it, i) => (
             <li
               key={it.id}
+              id={`kabiliyet-${it.id}`}
               data-step={it.id}
               className="flex flex-col justify-center py-10 lg:min-h-[78vh] lg:py-0"
             >
@@ -132,10 +133,12 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
                 <LayerVisual item={it} tools={tools} active />
               </div>
               <h3
-                className={`font-display text-[clamp(1.7rem,1.1rem+1.8vw,2.8rem)] font-medium leading-[1.08] tracking-[-0.03em] transition-colors duration-300 ${
+                className={`relative font-display text-[clamp(1.7rem,1.1rem+1.8vw,2.8rem)] font-medium leading-[1.08] tracking-[-0.03em] transition-colors duration-300 ${
                   i === active ? "text-ink" : "text-ink/55"
                 }`}
               >
+                {/* Hero'daki modülden gelinince beliren varış çizgisi (HeroNetwork → goTo). */}
+                <span data-arrive-bar="" aria-hidden="true" className="invisible absolute -left-3 top-0 h-full w-[3px] origin-top bg-accent" />
                 {it.title}
               </h3>
               <p className="mt-5 max-w-[42ch] text-body text-ink/90">{it.sentence}</p>

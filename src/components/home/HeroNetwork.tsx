@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import { LOGO_BLUES, LOGO_PATHS } from "@/components/brand/LogoMark";
 import type { ProductLayer } from "@/content/constants";
 import { drawDash, pulseDash } from "@/lib/svgPath";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
+import { useLenisContext } from "@/components/providers/LenisContext";
 
 /**
  * Hero görseli: logodaki ahtapot işareti ve dört kolu. Kollar logonun kendi
@@ -139,6 +140,36 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
   useOffscreenPause(root);
 
   const replay = useRef<(() => void) | null>(null);
+  const { scrollToId } = useLenisContext();
+
+  // Modüle tıklayınca: logodan modüle bir sinyal akar, modül basılır, sayfa
+  // o disiplinin yetkinlik adımına kayar; varınca başlığın yanında bir çizgi
+  // belirir. Reduced motion'da efektler atlanır, kaydırma anında olur.
+  const goTo = (i: number, layer: ProductLayer) => (e: ReactMouseEvent) => {
+    e.preventDefault();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const arrive = () => {
+      const bar = document.querySelector(`#kabiliyet-${layer} [data-arrive-bar]`);
+      if (!bar || reduce) return;
+      gsap
+        .timeline()
+        .fromTo(bar, { scaleY: 0, autoAlpha: 1 }, { scaleY: 1, duration: 0.5, ease: "expo.out" })
+        .to(bar, { autoAlpha: 0, duration: 0.6, ease: "power2.out" }, "+=0.9");
+    };
+    if (reduce) {
+      scrollToId(`kabiliyet-${layer}`, arrive);
+      return;
+    }
+    const q = gsap.utils.selector(root);
+    gsap
+      .timeline()
+      .set(q(`[data-arm-burst="${i}"]`), { autoAlpha: 1 })
+      .fromTo(q(`[data-arm-burst="${i}"]`), { drawSVG: "0% 0%" }, { drawSVG: "0% 100%", duration: 0.3, ease: "power2.in" })
+      .fromTo(q(`[data-module="${layer}"]`), { scale: 0.92 }, { scale: 1, transformOrigin: "50% 50%", duration: 0.6, ease: "expo.out" })
+      .to(q(`[data-arm-burst="${i}"]`), { drawSVG: "100% 100%", duration: 0.25, ease: "power2.out" }, "<")
+      .set(q(`[data-arm-burst="${i}"]`), { autoAlpha: 0 })
+      .add(() => scrollToId(`kabiliyet-${layer}`, arrive), 0.28);
+  };
 
   useGSAP(
     () => {
@@ -195,7 +226,8 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
       <div aria-hidden="true" className="hero-glow pointer-events-none absolute inset-0" />
       <div aria-hidden="true" className="hero-pattern pointer-events-none absolute inset-0" />
       <div ref={spot} aria-hidden="true" className="hero-spot pointer-events-none absolute inset-0" />
-      <svg viewBox="0 0 600 760" className="relative h-full w-full max-w-[40rem]" role="img" aria-label={label}>
+      {/* role="group": içinde bağlantılar var; role="img" onları ekran okuyucudan gizlerdi. */}
+      <svg viewBox="0 0 600 760" className="relative h-full w-full max-w-[40rem]" role="group" aria-label={label}>
         <defs>
           <linearGradient id="hero-logo" gradientUnits="userSpaceOnUse" x1="150" y1="130" x2="710" y2="865">
             <stop offset="0" stopColor={LOGO_BLUES.deep} />
@@ -222,6 +254,8 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
                 className="pulse"
                 style={{ ...armPulse.style, animationDuration: on ? "1.4s" : "2.8s", animationDelay: `${i * -0.6}s`, opacity: on ? 1 : 0.55 }}
               />
+              {/* Tıklanınca logodan modüle akan sinyal (goTo). */}
+              <path data-arm-burst={i} d={m.arm} fill="none" stroke="var(--color-accent)" strokeWidth="9" strokeLinecap="square" visibility="hidden" />
             </g>
           );
         })}
@@ -245,14 +279,20 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
           const m = MODULES[n.layer];
           const on = i === current;
           return (
-            <g
+            <a
               key={n.layer}
+              href={`#kabiliyet-${n.layer}`}
+              aria-label={`${n.name}: ${n.detail}`}
+              className="hero-mod cursor-pointer"
+              onClick={goTo(i, n.layer)}
               onPointerEnter={() => setHovered(i)}
               onPointerLeave={() => setHovered(null)}
-              style={{ cursor: "default" }}
+              onFocus={() => setHovered(i)}
+              onBlur={() => setHovered(null)}
             >
-              <g data-module="" transform={`translate(${m.cx} ${m.cy})`}>
+              <g data-module={n.layer} transform={`translate(${m.cx} ${m.cy})`}>
                 <rect x="-70" y="-42" width="140" height="84" fill={on ? "#1d2445" : "#151a33"} style={{ transition: "fill 400ms ease" }} />
+                <rect className="mod-focus" x="-76" y="-48" width="152" height="96" fill="none" stroke="var(--color-accent)" strokeWidth="3" />
                 <g
                   className={on ? "mod-on" : undefined}
                   fill="none"
@@ -272,7 +312,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
                   {n.detail}
                 </text>
               </g>
-            </g>
+            </a>
           );
         })}
       </svg>

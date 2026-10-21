@@ -27,6 +27,26 @@ Aklımıza gelen ama henüz yapılmayan işler. Yeni fikir en alta eklenir; yap�
 - **Nasıl:** Tanıtım filmiyle aynı altyapı (HyperFrames).
 - **Eklendi:** 2026-10-21
 
+## Yol haritası (kullanıcının sırası: A → B → C)
+
+**A** (2026-10-21'de başlandı)
+- Hakkımızda bölümü daha etkileyici olsun.
+- Stetoskop animasyonu yalnız ilk açılışta değil, bölüme her girişte oynasın (hero gibi).
+- Hero'daki 4 disiplin modülüne tıklayınca ilgili yetkinlik adımına güzel bir geçişle gidilsin.
+- Footer üstündeki büyük logo için beyin fırtınası: kaldır ya da başka bir şeye dönüştür.
+
+**B**
+- Su banyosunun SolidWorks çizimi var (asıl ürün): simülatördeki temsili 3B model bununla değiştirilip entegre edilecek.
+- Şirket bilgileri verilecek, genel refactor.
+- Uygun yerlere ikon.
+- Açık tema desteği (şu an CLAUDE.md "tek koyu tema" diyor; bu kural kullanıcı isteğiyle değişecek).
+- Metinler ve açıklamalar yeniden düzenlenecek (kullanıcı mevcut hâlini beğenmiyor).
+- SEO: aramalarda öne çıkma.
+
+**C**
+- Demo videosu (yukarıdaki tanıtım filmi / AhtaPatolog demosu).
+- SEO (B'deki işin devamı/ölçümü).
+
 ## Yapıldı
 
 _(henüz yok)_

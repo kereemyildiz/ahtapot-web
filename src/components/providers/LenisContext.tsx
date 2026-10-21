@@ -8,7 +8,7 @@ type LenisContextValue = {
   /** Rail etiketine tıklayınca ilgili bölüme kaydırır. Lenis kuruluysa onu
    *  kullanır; reduced-motion'da (Lenis hiç kurulmadığında) native
    *  scrollIntoView'e düşer — instant/auto, "smooth" değil. */
-  scrollToId: (id: string) => void;
+  scrollToId: (id: string, onArrive?: () => void) => void;
 };
 
 export const LenisContext = createContext<LenisContextValue | null>(null);

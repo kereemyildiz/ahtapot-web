@@ -267,6 +267,16 @@ html.lenis body {
 .mod-live {
   visibility: hidden;
 }
+/* Hero modülleri bağlantı: klavye odağı modülün çevresinde kare çerçeve. */
+.mod-focus {
+  opacity: 0;
+}
+.hero-mod:focus-visible {
+  outline: none;
+}
+.hero-mod:focus-visible .mod-focus {
+  opacity: 1;
+}
 .mod-on .mod-live {
   visibility: visible;
 }

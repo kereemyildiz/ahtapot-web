@@ -29,7 +29,8 @@ Bu bir jenerik "stack diyagramı" değil — markanın kendi logosundan türetil
 ### Bölüm akışı
 
 ```
-HERO            "Tıbbi cihaz, uçtan uca." + logodaki ahtapot, kolları 4 disipline uzanır (HeroNetwork)
+HERO            "Tıbbi cihaz, uçtan uca." + logodaki ahtapot, kolları 4 disipline uzanır (HeroNetwork);
+                modüle tıklayınca koldan sinyal akar, sayfa o yetkinlik adımına kayar (#kabiliyet-<katman>)
 YETKİNLİKLER    5 katman: solda adımlar, sağda sabit sahne; her katman bir mühendislik aracının çalışma ekranı
                 mekanik (CAD: dönen tel kafes gövde, gizli kenarlar, ölçüler, kesit, model ağacı, komut satırı)
                 → elektronik (kart tasarımı: katmanlar, ayak izleri, 45° izler, net vurgusu, kural denetimi)
@@ -37,8 +38,9 @@ YETKİNLİKLER    5 katman: solda adımlar, sağda sabit sahne; her katman bir m
                 → uygulama (gerçek AhtaPatolog ekranları, sırayla öne gelen pencereler)
                 → saha (izometrik kurum: üç farklı tıbbi cihaz, servis hatları, kurulum/eğitim/kalibrasyon/güncelleme)
 ÜRÜNLER         eşit ağırlıkta, veri odaklı, genişleyebilir (aşağıya bak)
-HAKKIMIZDA      "Hakkımızda" başlığı, yerlileştirme odağı (okudukça yanan paragraf), üç ilke,
-                kurucu (stetoskobun hortumu devre izine dönüşüp çipe bağlanır)
+HAKKIMIZDA      "Hakkımızda" başlığı, yerlileştirme odağı (okudukça yanan paragraf), tek çizgiyle bağlı
+                üç ilke (Pillars: kaydırdıkça uzar, düğümleri yakar), kurucu (stetoskobun hortumu devre
+                izine dönüşüp çipe bağlanır; bölüme her girişte yeniden çizilir)
 REFERANSLAR     yalnızca gerçek referans varsa; yoksa bölüm hiç render edilmez
 İLETİŞİM        talep formu; konuya göre değişen buton metni; logo kendini çizer
 ```
