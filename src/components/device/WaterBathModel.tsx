@@ -1,105 +1,97 @@
 import Image from "next/image";
-import type { CSSProperties, ReactNode, Ref } from "react";
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode, Ref } from "react";
 import type { ProductLayer } from "@/content/schema";
+import { holdRepeat } from "@/lib/holdRepeat";
 import s from "./WaterBathModel.module.css";
 
 /**
- * Laboratuvar su banyosunun CSS 3B çizimi.
- * TODO(mock-data): gerçek ürün fotoğrafı/3B modeli değil, oranları temsili
- * bir çizim. 360° fotoğraf kareleri gelince turntable onları kullanır.
+ * SB-9K doku yüzdürme su banyosunun CSS 3B çizimi. Ölçü ve yerleşimler
+ * ürünün SolidWorks montajından (Prod V4, SB-09) alındı; 1 em = 12 mm.
+ * Gövde 310 × 347 × 91 mm: altta dik bir şerit, üstünde ~49° yatık ön panel
+ * (solda logo, ortada iki ışıklı düğme, sağda kontrolcü), üst yüzeyin
+ * neredeyse tamamı mat siyah teflon kaplı hazne, arka duvarda LED aydınlatma
+ * camı. Hazne altında 150 × 150 mm silikon ısıtıcı; tabanda 12 V güç kaynağı,
+ * SSR ve EMI filtresi.
+ * TODO(mock-data): renkler ve logo yerleşimi temsili; gerçek ürün fotoğrafı değil.
  *
- * Parçalar ürünün katmanlarına bağlı (data-layer): mekanik = kapak, tank,
- * gövde; elektronik = ısıtıcı ve kontrol kartı; gomulu = yazılım düzlemi;
- * uygulama = ekran. `active` verilince diğer katmanlar söner.
+ * Parçalar ürünün katmanlarına bağlı (data-layer): mekanik = gövde, hazne;
+ * elektronik = ısıtıcı, güç kaynağı, SSR, filtre; gomulu = kontrol yazılımı;
+ * uygulama = kontrolcü ekranı. `active` verilince diğer katmanlar söner.
  */
 
-type Tone = "top" | "front" | "side" | "back" | "bottom";
-const STEEL: Record<Tone, string> = {
-  top: s.steelTop,
-  front: s.steelFront,
-  side: s.steelSide,
-  back: s.steelBack,
-  bottom: s.steelBottom,
-};
+// Gövde (em). Orijin gövdenin merkezi; y aşağı, z öne doğru (CSS 3B).
+const W = 25.8;
+const D = 28.9;
+const H = 7.6;
+const hw = W / 2;
+const hd = D / 2;
+const hh = H / 2;
+const LIP = 2.5; // ön alttaki dik şerit
+const RISE = H - LIP; // eğik panelin yüksekliği
+const RUN = 5.9; // eğik panelin derinliği
+const SLANT = Math.hypot(RISE, RUN);
+const TILT = (Math.atan2(RUN, RISE) * 180) / Math.PI;
+// Hazne ağzı ve derinliği
+const OX = 11.6;
+const OZ0 = -13.8;
+const OZ1 = 8.0;
+const OW = OX * 2;
+const OD = OZ1 - OZ0;
+const OCZ = (OZ0 + OZ1) / 2;
+const TOP = -hh + 0.5; // hazne kenarı, üst yüzeyin biraz altında
+const FLOOR = TOP + 4.9;
 
-type FaceName = "front" | "back" | "left" | "right" | "top" | "bottom";
-
-function faceStyle(face: FaceName, w: number, h: number, d: number): CSSProperties {
-  const size = (fw: number, fh: number): CSSProperties => ({
-    width: `${fw}em`,
-    height: `${fh}em`,
-    marginLeft: `${-fw / 2}em`,
-    marginTop: `${-fh / 2}em`,
-  });
-  switch (face) {
-    case "front":
-      return { ...size(w, h), transform: `translateZ(${d / 2}em)` };
-    case "back":
-      return { ...size(w, h), transform: `rotateY(180deg) translateZ(${d / 2}em)` };
-    case "right":
-      return { ...size(d, h), transform: `rotateY(90deg) translateZ(${w / 2}em)` };
-    case "left":
-      return { ...size(d, h), transform: `rotateY(-90deg) translateZ(${w / 2}em)` };
-    case "top":
-      return { ...size(w, d), transform: `rotateX(90deg) translateZ(${h / 2}em)` };
-    case "bottom":
-      return { ...size(w, d), transform: `rotateX(-90deg) translateZ(${h / 2}em)` };
-  }
-}
-
-type SlabProps = {
+type FaceProps = {
   w: number;
   h: number;
-  d: number;
-  classes: Record<FaceName, string>;
-  content?: Partial<Record<FaceName, ReactNode>>;
+  transform: string;
+  className: string;
+  layer?: ProductLayer;
+  style?: CSSProperties;
+  children?: ReactNode;
 };
 
-function Slab({ w, h, d, classes, content = {} }: SlabProps) {
-  const faces: FaceName[] = ["front", "back", "left", "right", "top", "bottom"];
+/** Merkezden konumlanan tek yüz: genişlik/yükseklik em, dönüşüm açık. */
+function Face({ w, h, transform, className, layer, style, children }: FaceProps) {
+  return (
+    <div
+      className={`${s.face} ${className}`}
+      data-layer={layer}
+      style={{ width: `${w}em`, height: `${h}em`, marginLeft: `${-w / 2}em`, marginTop: `${-h / 2}em`, transform, ...style }}
+    >
+      {children}
+    </div>
+  );
+}
+
+const at = (x: number, y: number, z: number) => `translate3d(${x}em, ${y}em, ${z}em)`;
+
+/** Kapalı kutu (6 yüz) — iç parçalar için. */
+function Box({ x, y, z, w, h, d, tone, label }: { x: number; y: number; z: number; w: number; h: number; d: number; tone: string; label?: string }) {
   return (
     <>
-      {faces.map((face) => (
-        <div key={face} className={`${s.face} ${classes[face]}`} style={faceStyle(face, w, h, d)}>
-          {content[face]}
-        </div>
-      ))}
+      <Face w={w} h={h} className={`${tone} ${s.boxFront}`} transform={`${at(x, y, z + d / 2)}`}>
+        {label ? <span className={s.boxLabel}>{label}</span> : null}
+      </Face>
+      <Face w={w} h={h} className={`${tone} ${s.boxBack}`} transform={`${at(x, y, z - d / 2)} rotateY(180deg)`} />
+      <Face w={d} h={h} className={`${tone} ${s.boxSide}`} transform={`${at(x + w / 2, y, z)} rotateY(90deg)`} />
+      <Face w={d} h={h} className={`${tone} ${s.boxSide}`} transform={`${at(x - w / 2, y, z)} rotateY(-90deg)`} />
+      <Face w={w} h={d} className={`${tone} ${s.boxTop}`} transform={`${at(x, y - h / 2, z)} rotateX(90deg)`} />
     </>
   );
 }
 
-const steelFaces = (brushed = false): Record<FaceName, string> => {
-  const b = brushed ? ` ${s.brushed}` : "";
-  return {
-    front: STEEL.front + b,
-    back: STEEL.back + b,
-    left: STEEL.side + b,
-    right: STEEL.side + b,
-    top: STEEL.top,
-    bottom: STEEL.bottom,
-  };
-};
-
 type PartProps = {
   layer: ProductLayer;
-  y0: number;
   y1: number;
   delay: number;
-  /** Ek yukarı kaldırma (em), ör. kapak açılınca. */
-  lift?: string;
-  /** Parçaya tıklanınca (ör. kapağı aç/kapat). */
-  onClick?: () => void;
   children: ReactNode;
 };
 
-function Part({ layer, y0, y1, delay, lift, onClick, children }: PartProps) {
+/** Birleşikte yerinde (y=0), ayrılmış görünümde y1 kadar kayan katman. */
+function Part({ layer, y1, delay, children }: PartProps) {
   return (
-    <div
-      className={`${s.part} ${onClick ? s.clickable : ""}`}
-      data-layer={layer}
-      onClick={onClick}
-      style={{ "--y0": y0, "--y1": y1, ...(lift ? { "--lift": lift } : {}) } as CSSProperties}
-    >
+    <div className={s.part} data-layer={layer} style={{ "--y1": y1 } as CSSProperties}>
       <div className={s.float} style={{ "--delay": `${delay}s` } as CSSProperties}>
         {children}
       </div>
@@ -107,37 +99,12 @@ function Part({ layer, y0, y1, delay, lift, onClick, children }: PartProps) {
   );
 }
 
-function HeaterCoil() {
-  // Isıtıcı rezistans, logodaki meander gibi dik açılarla kıvrılır.
-  const d =
-    "M14 14 H186 V50 H14 V90 H186 V126 H14";
+function HeaterPad() {
+  // Silikon ısıtıcının içindeki direnç teli: logodaki meander gibi dik açılı.
+  const d = "M12 12 H138 V38 H12 V64 H138 V90 H12 V116 H138 V138";
   return (
-    <svg viewBox="0 0 200 140" width="100%" height="100%" aria-hidden="true">
-      <path d={d} fill="none" strokeWidth="9" className={s.coil} />
-    </svg>
-  );
-}
-
-function BoardTraces() {
-  return (
-    <svg viewBox="0 0 170 110" width="100%" height="100%" aria-hidden="true">
-      <g fill="none" stroke="#93a4f4" strokeWidth="1.6" opacity="0.85">
-        <path d="M14 20 H60 V44 H84" />
-        <path d="M14 34 H48 V70 H84" />
-        <path d="M120 56 H150 V20" />
-        <path d="M120 66 H140 V92 H40 V80" />
-        <path d="M100 30 V12 H160" />
-        <path d="M84 84 H20 V98" />
-      </g>
-      <rect x="84" y="36" width="36" height="36" fill="#0a0c16" />
-      <rect x="20" y="72" width="22" height="12" fill="#0a0c16" />
-      <rect x="132" y="70" width="18" height="10" fill="#0a0c16" />
-      <g fill="#d9c27a">
-        <rect x="8" y="16" width="8" height="8" />
-        <rect x="8" y="30" width="8" height="8" />
-        <rect x="146" y="14" width="8" height="8" />
-        <rect x="16" y="96" width="8" height="8" />
-      </g>
+    <svg viewBox="0 0 150 150" width="100%" height="100%" aria-hidden="true">
+      <path d={d} fill="none" strokeWidth="6" className={s.coil} />
     </svg>
   );
 }
@@ -145,16 +112,16 @@ function BoardTraces() {
 function FirmwarePlane() {
   const lines = [
     "void control_tick(void) {",
-    "  float t = read_probe();",
-    "  if (!level_ok()) heater_off();",
-    "  duty = pid_step(&pid, set, t);",
-    "  pwm_write(HEATER, duty);",
+    "  float pv = read_probe();",
+    "  out = pid_step(&pid, sv, pv);",
+    "  ssr_write(out);       // OUT",
+    "  alarm(pv > sv + ALM); // ALM",
     "}",
   ];
   return (
-    <svg viewBox="0 0 150 90" width="100%" height="100%" aria-hidden="true">
-      <rect x="1" y="1" width="148" height="88" fill="rgb(215 248 154 / 0.1)" stroke="#d7f89a" strokeWidth="1.2" />
-      <g fontFamily="var(--font-mono), monospace" fontSize="8.4" fontWeight="600" fill="#d7f89a">
+    <svg viewBox="0 0 160 90" width="100%" height="100%" aria-hidden="true">
+      <rect x="1" y="1" width="158" height="88" fill="rgb(215 248 154 / 0.1)" stroke="#d7f89a" strokeWidth="1.2" />
+      <g fontFamily="var(--font-mono), monospace" fontSize="8.2" fontWeight="600" fill="#d7f89a">
         {lines.map((line, i) => (
           <text key={line} x="8" y={16 + i * 12} xmlSpace="preserve">
             {line}
@@ -165,27 +132,127 @@ function FirmwarePlane() {
   );
 }
 
+/**
+ * Kontrolcünün ön yüzü (ENDA ET2011 kılavuzundaki düzen): tek 4 haneli ekran
+ * (ölçülen değer; ayar yapılırken ayar değeri), üstte °F · C/A2 · SSR ışıkları,
+ * sağda üstte °C ve ▲, altta SET ve ▼. Ekran boşsa kontrolcü enerjisizdir.
+ */
+export function ControllerFace({
+  display,
+  blink = false,
+  ssr = false,
+  alarm = false,
+  keys,
+}: {
+  display: string;
+  blink?: boolean;
+  ssr?: boolean;
+  alarm?: boolean;
+  keys?: { up: ReactNode; set: ReactNode; down: ReactNode };
+}) {
+  return (
+    <div className={s.controller}>
+      <div className={s.window}>
+        <span className={s.lamps} aria-hidden="true">
+          <span className={s.lamp}>°F</span>
+          <span className={s.lamp} data-on={alarm ? "" : undefined}>
+            C/A2
+          </span>
+          <span className={s.lamp} data-on={ssr ? "" : undefined}>
+            SSR
+          </span>
+        </span>
+        <span className={`${s.readout} ${blink ? s.blink : ""}`}>{display}</span>
+      </div>
+      <div className={s.keypad}>
+        <span className={s.unit} aria-hidden="true">
+          °C
+        </span>
+        {keys?.up ?? <span className={s.key} aria-hidden="true">▲</span>}
+        {keys?.set ?? <span className={s.key} aria-hidden="true">SET</span>}
+        {keys?.down ?? <span className={s.key} aria-hidden="true">▼</span>}
+      </div>
+    </div>
+  );
+}
+
+/** Ön paneldeki ışıklı düğme (gerçek <button>); `on` iken içi yanar. */
+export function PushButton({ label, on, tone = "power", onClick }: { label: string; on: boolean; tone?: "power" | "light"; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      aria-pressed={on}
+      onClick={onClick}
+      className={`${s.push} ${tone === "light" ? s.pushLight : ""}`}
+      data-on={on ? "" : undefined}
+    />
+  );
+}
+
+/** Kontrolcünün membran tuşu (gerçek <button>); `repeat` verilirse basılı tutunca hızlanır. */
+export function ControllerKey({
+  label,
+  children,
+  repeat,
+  ...rest
+}: { label: string; children: ReactNode; repeat?: (size: number) => void } & ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type="button" aria-label={label} title={label} className={s.key} {...rest} {...(repeat ? holdRepeat(repeat) : {})}>
+      {children}
+    </button>
+  );
+}
+
+/** Su yüzeyinde yüzen parafin kesiti şeridi (temsili). wrinkle 0..1, tooHot dağılma. */
+function SectionRibbon({ wrinkle, tooHot }: { wrinkle: number; tooHot: boolean }) {
+  // Üç kesitlik şerit; kırışıklık kenarları dalgalandırır ve iç kat izleri çizer.
+  const a = 2.6 * wrinkle;
+  const edge = (y: number, phase: number) => {
+    const pts: string[] = [];
+    for (let x = 8; x <= 152; x += 8) pts.push(`${x} ${(y + Math.sin((x + phase) / 9) * a).toFixed(2)}`);
+    return pts;
+  };
+  // Üst kenar soldan sağa, alt kenar sağdan sola: tek kapalı çevre.
+  const outline = `M${[...edge(10, 0), ...edge(40, 5).reverse()].join(" L")} Z`;
+  return (
+    <svg viewBox="0 0 160 50" width="100%" height="100%" aria-hidden="true" className={tooHot ? s.sectionHot : undefined}>
+      <path d={outline} className={s.paraffin} />
+      {[0, 1, 2].map((i) => (
+        <ellipse key={i} cx={32 + i * 48} cy={25} rx={14 - wrinkle * 2} ry={8 - wrinkle * 2} className={s.tissue} />
+      ))}
+      {wrinkle > 0.05 &&
+        [24, 56, 88, 120].map((x) => (
+          <path key={x} d={`M${x} 12 L${x + 6 * wrinkle} 25 L${x} 38`} className={s.fold} style={{ opacity: wrinkle }} />
+        ))}
+      {[56, 104].map((x) => (
+        <path key={x} d={`M${x} 10 V40`} className={s.seam} />
+      ))}
+    </svg>
+  );
+}
+
 type WaterBathModelProps = {
   className?: string;
   style?: CSSProperties;
   active?: ProductLayer | null;
   label: string;
   ref?: Ref<HTMLDivElement>;
-  /** Modelle aynı em koordinatında, merkezden konumlanan 2B katman (etiketler). */
+  /** Modelle aynı em koordinatında, merkezden konumlanan 2B katman. */
   overlay?: ReactNode;
-  /** Ön paneldeki ekranın içeriği (simülatör canlı değer gösterir). */
-  display?: ReactNode;
-  /** Su seviyesi düşükse yüzey ve dalga değişir. */
+  /** Kontrolcünün yüzü (simülatörde canlı değerler ve gerçek tuşlar). */
+  controller?: ReactNode;
+  /** Ön paneldeki iki ışıklı düğme (simülatörde gerçek düğmeler). */
+  powerButton?: ReactNode;
+  lightButton?: ReactNode;
+  /** Düğme ışıkları ve LED aydınlatma (düğme verilmeyen statik görünüm için). */
+  powerOn?: boolean;
+  lightOn?: boolean;
+  /** Su seviyesi düşükse yüzey aşağı iner. */
   waterLow?: boolean;
-  /** Sirkülasyon pompası çalışıyorsa su yüzeyinde akış görünür. */
-  pumpOn?: boolean;
-  /**
-   * Ön panelin sağındaki tuş alanı (simülatörde gerçek düğmeler). Verilirse
-   * model bir resim değil, kontrol içeren bir grup olur.
-   */
-  panel?: ReactNode;
-  /** Kapağa tıklanınca. */
-  onLidClick?: () => void;
+  /** Su yüzeyindeki parafin kesiti (verilmezse çizilmez). */
+  section?: { wrinkle: number; tooHot: boolean };
 };
 
 export function WaterBathModel({
@@ -195,17 +262,24 @@ export function WaterBathModel({
   label,
   ref,
   overlay,
-  display,
+  controller,
+  powerButton,
+  lightButton,
+  powerOn = true,
+  lightOn = true,
   waterLow,
-  pumpOn,
-  panel,
-  onLidClick,
+  section,
 }: WaterBathModelProps) {
-  // Ölçüler (em). y0 = birleşik, y1 = ayrılmış konum.
-  const base = { w: 26, h: 6, d: 18 };
-  const tank = { w: 24, h: 9, d: 16 };
-  const lid = { w: 25, h: 1.2, d: 17 };
-  const pcb = { w: 16, h: 0.6, d: 10.5 };
+  const interactive = Boolean(controller || powerButton || lightButton);
+  const water = waterLow ? FLOOR - 0.75 : TOP + 1.5;
+  // Eğik panelin merkezi ve üstündeki yerleşim (panelin kendi koordinatında, em).
+  const slantY = hh - LIP - RISE / 2;
+  const slantZ = hd - RUN / 2;
+  const sideClipR = `polygon(0% ${((hh + hh - LIP) / H) * 100}%, 0% 100%, 100% 100%, 100% 0%, ${(RUN / D) * 100}% 0%)`;
+  const sideClipL = `polygon(100% ${((hh + hh - LIP) / H) * 100}%, 100% 100%, 0% 100%, 0% 0%, ${100 - (RUN / D) * 100}% 0%)`;
+  const deck = (x: number, z: number, w: number, d: number) => (
+    <Face w={w} h={d} className={s.steelTop} transform={`${at(x, -hh, z)} rotateX(90deg)`} />
+  );
 
   return (
     <div
@@ -213,148 +287,100 @@ export function WaterBathModel({
       className={`${s.scene} ${className ?? ""}`}
       style={style}
       data-active={active ?? undefined}
-      data-water={waterLow ? "low" : undefined}
-      data-pump={pumpOn ? "on" : undefined}
-      role={panel ? "group" : "img"}
+      data-light={lightOn && powerOn ? "on" : undefined}
+      role={interactive ? "group" : "img"}
       aria-label={label}
     >
       <div className={s.stage}>
         <div className={s.rig}>
-          {/* Kapak */}
-          <Part layer="mekanik" y0={-5.2} y1={-19} delay={0} lift="calc(var(--lid, 0) * 5.5)" onClick={onLidClick}>
-            <Slab {...lid} classes={steelFaces()} />
-            <div style={{ transform: "translateY(-1.1em)", transformStyle: "preserve-3d" }}>
-              <Slab
-                w={9}
-                h={0.9}
-                d={1.4}
-                classes={{
-                  front: s.steelSide,
-                  back: s.steelBack,
-                  left: s.steelBack,
-                  right: s.steelBack,
-                  top: s.steelFront,
-                  bottom: s.steelBottom,
-                }}
-              />
-            </div>
-          </Part>
-
-          {/* Tank + su */}
-          <Part layer="mekanik" y0={0} y1={-8.5} delay={0.6}>
-            <Slab
-              {...tank}
-              classes={{ ...steelFaces(true), top: s.water }}
-              content={{
-                top: (
-                  <>
-                    <span className={s.ripple} style={{ "--delay": "0s" } as CSSProperties} />
-                    <span className={s.ripple} style={{ "--delay": "1.5s" } as CSSProperties} />
-                    <span className={s.ripple} style={{ "--delay": "3s" } as CSSProperties} />
-                  </>
-                ),
-              }}
-            />
-          </Part>
-
-          {/* Isıtıcı */}
-          <Part layer="elektronik" y0={4} y1={-1.2} delay={1.1}>
-            <div
-              className={`${s.face} ${s.plane}`}
-              style={{
-                width: "20em",
-                height: "13em",
-                marginLeft: "-10em",
-                marginTop: "-6.5em",
-                transform: "rotateX(90deg)",
-              }}
-            >
-              <HeaterCoil />
-            </div>
-          </Part>
-
-          {/* Kontrol kartı */}
-          <Part layer="elektronik" y0={7.5} y1={4.2} delay={1.6}>
-            <Slab
-              {...pcb}
-              classes={{
-                front: s.pcbEdge,
-                back: s.pcbEdge,
-                left: s.pcbEdge,
-                right: s.pcbEdge,
-                top: s.pcbTop,
-                bottom: s.pcbEdge,
-              }}
-              content={{ top: <BoardTraces /> }}
-            />
-          </Part>
-
-          {/* Gömülü yazılım */}
-          <Part layer="gomulu" y0={7.5} y1={9} delay={2.1}>
-            <div
-              className={`${s.face} ${s.plane}`}
-              style={{
-                width: "15em",
-                height: "9em",
-                marginLeft: "-7.5em",
-                marginTop: "-4.5em",
-                transform: "rotateX(90deg)",
-              }}
-            >
-              <FirmwarePlane />
-            </div>
-          </Part>
-
-          {/* Gövde + ön panel */}
-          <Part layer="mekanik" y0={7.5} y1={15.5} delay={2.6}>
-            <div className={s.floor} style={{ transform: `rotateX(90deg) translateZ(${-(base.h / 2 + 0.05)}em)` }} aria-hidden="true" />
-            <Slab
-              {...base}
-              classes={steelFaces()}
-              content={{
-                front: (
-                  <>
-                    {/* Ön panelde Ahtapot logosu (public/logo.jpg'den, arka planı şeffaf). */}
-                    <span className={s.logo} style={{ left: "1.1em", bottom: "0.85em", width: "5.6em", height: "1.62em" }}>
-                      <Image src="/brand/logo-full.png" alt="" fill sizes="120px" className="object-contain" />
-                    </span>
-                    {panel ? (
-                      <>
-                        {/* Isıtma ve pompa göstergeleri, logonun üstünde. */}
-                        <span className={s.led} style={{ left: "1.2em", top: "0.9em" }} />
-                        <span className={`${s.led} ${s.pumpLed}`} style={{ left: "2.3em", top: "0.9em" }} />
-                        <div className={s.panel}>{panel}</div>
-                      </>
-                    ) : (
-                      <>
-                        <span className={s.led} style={{ right: "6.35em", top: "0.9em" }} />
-                        <span className={s.knob} style={{ right: "2.2em", top: "1.6em", width: "2.8em", height: "2.8em" }} />
-                        <span className={s.button} style={{ right: "6.2em", top: "2.1em" }} />
-                        <span className={s.button} style={{ right: "6.2em", top: "3.3em" }} />
-                      </>
-                    )}
-                  </>
-                ),
-              }}
-            />
-            {/* Ekran ayrı bir yüz: uygulama katmanı vurgulanınca tek başına parlasın. */}
-            <div
-              className={`${s.face} ${s.display}`}
-              data-layer="uygulama"
-              style={{
-                width: "8em",
-                height: "3.6em",
-                marginLeft: "-4em",
-                marginTop: "-1.8em",
-                transform: `translateZ(${base.d / 2 + 0.02}em)`,
-              }}
-            >
-              {display ?? (
-                <span className={s.digits}>
-                  37.0<span className={s.unit}>°C</span>
+          {/* Hazne: mat siyah teflon, su ve arka duvardaki LED camı. */}
+          <Part layer="mekanik" y1={-12} delay={0}>
+            {/* Dış yüzler (ayrılınca kutu olarak görünsün) */}
+            <Face w={OW} h={FLOOR - TOP} className={s.trayOut} transform={`${at(0, (TOP + FLOOR) / 2, OZ1)}`} />
+            <Face w={OW} h={FLOOR - TOP} className={s.trayOut} transform={`${at(0, (TOP + FLOOR) / 2, OZ0)} rotateY(180deg)`} />
+            <Face w={OD} h={FLOOR - TOP} className={s.trayOutSide} transform={`${at(OX, (TOP + FLOOR) / 2, OCZ)} rotateY(90deg)`} />
+            <Face w={OD} h={FLOOR - TOP} className={s.trayOutSide} transform={`${at(-OX, (TOP + FLOOR) / 2, OCZ)} rotateY(-90deg)`} />
+            <Face w={OW} h={OD} className={s.trayOutBottom} transform={`${at(0, FLOOR, OCZ)} rotateX(-90deg)`} />
+            {/* İç yüzler */}
+            <Face w={OW} h={FLOOR - TOP} className={s.teflon} transform={`${at(0, (TOP + FLOOR) / 2, OZ0 + 0.02)}`}>
+              <span className={s.ledGlass} />
+            </Face>
+            <Face w={OW} h={FLOOR - TOP} className={s.teflonDark} transform={`${at(0, (TOP + FLOOR) / 2, OZ1 - 0.02)} rotateY(180deg)`} />
+            <Face w={OD} h={FLOOR - TOP} className={s.teflonSide} transform={`${at(-OX + 0.02, (TOP + FLOOR) / 2, OCZ)} rotateY(90deg)`} />
+            <Face w={OD} h={FLOOR - TOP} className={s.teflonSide} transform={`${at(OX - 0.02, (TOP + FLOOR) / 2, OCZ)} rotateY(-90deg)`} />
+            <Face w={OW} h={OD} className={s.teflonFloor} transform={`${at(0, FLOOR - 0.02, OCZ)} rotateX(90deg)`} />
+            <Face w={OW - 0.1} h={OD - 0.1} className={s.water} transform={`${at(0, water, OCZ)} rotateX(90deg)`}>
+              <span className={s.ripple} style={{ "--delay": "0s" } as CSSProperties} />
+              <span className={s.ripple} style={{ "--delay": "2.2s" } as CSSProperties} />
+              {section ? (
+                <span className={s.section}>
+                  <SectionRibbon wrinkle={section.wrinkle} tooHot={section.tooHot} />
                 </span>
-              )}
-            </div>
+              ) : null}
+            </Face>
+          </Part>
+
+          {/* Isıtıcı: haznenin altında 150 × 150 mm silikon rezistans */}
+          <Part layer="elektronik" y1={-6} delay={0.5}>
+            <Face w={12.5} h={12.5} className={`${s.heater} ${s.plane}`} transform={`${at(0, FLOOR + 0.25, -1.6)} rotateX(90deg)`}>
+              <HeaterPad />
+            </Face>
+          </Part>
+
+          {/* Tabandaki güç elektroniği */}
+          <Part layer="elektronik" y1={-1.5} delay={1}>
+            <Box x={-7.6} y={hh - 2.2} z={10.6} w={7.5} h={4.2} d={2.4} tone={s.module} label="12 V" />
+            <Box x={7.4} y={hh - 0.8} z={0} w={4.6} h={1.6} d={4.6} tone={s.ssr} label="SSR" />
+            <Box x={-6} y={hh - 0.8} z={-9} w={5.2} h={1.6} d={3.6} tone={s.module} label="EMI" />
+          </Part>
+
+          {/* Kontrol yazılımı */}
+          <Part layer="gomulu" y1={4} delay={1.5}>
+            <Face w={13} h={7.4} className={`${s.firmware} ${s.plane}`} transform={`${at(0, hh - 0.4, -2)} rotateX(90deg)`}>
+              <FirmwarePlane />
+            </Face>
+          </Part>
+
+          {/* Gövde, ön panel ve kontroller */}
+          <Part layer="mekanik" y1={10} delay={2}>
+            <div className={s.floor} style={{ transform: `${at(0, hh + 0.05, 0)} rotateX(90deg)` }} aria-hidden="true" />
+            {/* Ön alttaki dik şerit: model adı */}
+            <Face w={W} h={LIP} className={s.steelFront} transform={at(0, hh - LIP / 2, hd)}>
+              <span className={s.engraving} style={{ right: "1.2em", top: "0.85em" }}>
+                SB-9K
+              </span>
+            </Face>
+            {/* Eğik ön panel */}
+            <Face w={W} h={SLANT} className={s.steelPanel} transform={`${at(0, slantY, slantZ)} rotateX(${TILT}deg)`}>
+              {/* Logo panelin solunda (TODO(mock-data): gerçek yerleşim teyit edilmeli). */}
+              <span className={s.logo} style={{ left: "2.2em", top: "2.9em", width: "8.4em", height: "2.45em" }}>
+                <Image src="/brand/logo-full.png" alt="" fill sizes="160px" loading="eager" className="object-contain" />
+              </span>
+              {/* Işıklı düğmeler: güç ve LED aydınlatma (çizimde Ø21 mm) */}
+              <span className={s.pushSlot} style={{ left: `${hw + 0.3 - 0.9}em` }}>
+                {powerButton ?? <span className={s.push} data-on={powerOn ? "" : undefined} />}
+              </span>
+              <span className={s.pushSlot} style={{ left: `${hw + 2.8 - 0.9}em` }}>
+                {lightButton ?? <span className={`${s.push} ${s.pushLight}`} data-on={lightOn && powerOn ? "" : undefined} />}
+              </span>
+              {/* Kontrolcü: 77 mm genişlik, panelin sağında */}
+              <span className={s.controllerSlot} data-layer="uygulama" style={{ left: `${hw + 4.7}em` }}>
+                {controller ?? <ControllerFace display="40.0" ssr />}
+              </span>
+            </Face>
+            {/* Üst yüzey, hazne ağzının çevresi */}
+            {deck(0, (-hd + OZ0) / 2, W, OZ0 + hd)}
+            {deck(0, (OZ1 + hd - RUN) / 2, W, hd - RUN - OZ1)}
+            {deck(-(hw + OX) / 2, OCZ, hw - OX, OD)}
+            {deck((hw + OX) / 2, OCZ, hw - OX, OD)}
+            {/* Yanlar (önde eğik kesik), arka, alt */}
+            <Face w={D} h={H} className={s.steelSide} transform={`rotateY(90deg) translateZ(${hw}em)`} style={{ clipPath: sideClipR }} />
+            <Face w={D} h={H} className={s.steelSide} transform={`rotateY(-90deg) translateZ(${hw}em)`} style={{ clipPath: sideClipL }} />
+            <Face w={W} h={H} className={s.steelBack} transform={`rotateY(180deg) translateZ(${hd}em)`}>
+              {/* Arka panelde güç girişi (IEC) */}
+              <span className={s.inlet} style={{ left: "1.75em", top: "4.3em" }} />
+            </Face>
+            <Face w={W} h={D} className={s.steelBottom} transform={`rotateX(-90deg) translateZ(${hh}em)`} />
           </Part>
         </div>
         {overlay ? <div className={s.overlay}>{overlay}</div> : null}
@@ -363,26 +389,7 @@ export function WaterBathModel({
   );
 }
 
-/** Ön panel ekranının içeriği: büyük değer + alt satır; uyarıda yanıp söner. */
-export function WaterBathDisplay({ value, unit, sub, alert = false, dim = false }: {
-  value: string;
-  unit?: string;
-  sub?: string;
-  alert?: boolean;
-  dim?: boolean;
-}) {
-  return (
-    <>
-      <span className={`${s.digits} ${alert ? s.blink : ""}`} style={dim ? { opacity: 0.45 } : undefined}>
-        {value}
-        {unit ? <span className={s.unit}>{unit}</span> : null}
-      </span>
-      {sub ? <span className={s.subline}>{sub}</span> : null}
-    </>
-  );
-}
-
-/** Açık kapaktan yükselen buhar (modelle aynı em koordinatında, 2B). */
+/** Haznenin üstünde, fazla sıcakta yükselen buhar (modelle aynı em koordinatında, 2B). */
 export function WaterBathSteam({ intensity }: { intensity: number }) {
   if (intensity <= 0) return null;
   return (

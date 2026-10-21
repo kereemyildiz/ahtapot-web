@@ -36,14 +36,13 @@ Aklımıza gelen ama henüz yapılmayan işler. Yeni fikir en alta eklenir; yap�
 - Footer üstündeki büyük logo için beyin fırtınası: kaldır ya da başka bir şeye dönüştür. → Seçenek 2: logo iletişim bilgilerinin başına geçti, kolları satırlara uzanıyor.
 
 **B**
-- Su banyosunun SolidWorks çizimi var (asıl ürün): simülatördeki temsili 3B model bununla değiştirilip entegre edilecek.
-- Şirket bilgileri verilecek, genel refactor.
+- Su banyosunun SolidWorks çizimi var (asıl ürün): simülatördeki temsili 3B model bununla değiştirilip entegre edilecek. → Yapıldı (2026-10-21): simülatörde montajdan üretilen gerçek 3B model (WebGL), ENDA ET2011 kontrolcü davranışı, lamlama, fotoğraftaki renkler; `feature/sb9k-cad-3d` → `develop`.
 - Uygun yerlere ikon.
 - Açık tema desteği (şu an CLAUDE.md "tek koyu tema" diyor; bu kural kullanıcı isteğiyle değişecek).
-- Metinler ve açıklamalar yeniden düzenlenecek (kullanıcı mevcut hâlini beğenmiyor).
-
 
 **C**
+- Şirket bilgileri verilecek, genel refactor.
+- Metinler ve açıklamalar yeniden düzenlenecek (kullanıcı mevcut hâlini beğenmiyor).
 - Demo videosu (yukarıdaki tanıtım filmi / AhtaPatolog demosu).
 - SEO: aramalarda öne çıkma.
 

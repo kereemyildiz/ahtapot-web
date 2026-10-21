@@ -1,39 +1,38 @@
 /**
- * Su banyosunun çalışma prensibi, sadeleştirilmiş fizik modeliyle:
+ * SB-9K doku yüzdürme su banyosunun çalışma prensibi, sadeleştirilmiş fizik
+ * modeliyle:
  *
  *   C · dT/dt = P_ısıtıcı · duty − k · (T − T_ortam)
  *
- * C: suyun ısı kapasitesi (≈ 4186 J/K her litre için), k: kayıp katsayısı
- * (kapak açıkken büyür, yüksek sıcaklıkta buharlaşma eklenir). Gömülü
- * yazılımdaki PI kontrolcü ayar ile *sensörün okuduğu* sıcaklık arasındaki
- * farka göre ısıtıcı gücünü (duty, 0..1) belirler. Su seviyesi düşükse
- * güvenlik kilidi ısıtıcıyı keser; bu karar kontrolcüden önce gelir.
+ * C: suyun ısı kapasitesi (≈ 4186 J/K her litre için), k: açık haznenin ısı
+ * kaybı. Kontrolcü (ön paneldeki PV/SV ekranı) ayar ile *sensörün okuduğu*
+ * sıcaklık arasındaki farka göre ısıtıcı gücünü (duty, 0..1) belirler; sensör
+ * hazne tabanında olduğu için suyun ortalamasını gecikmeyle görür.
  *
- * Sirkülasyon pompası suyu karıştırır: sensör suyun gerçek sıcaklığını
- * çabuk görür. Pompa kapalıyken ısı katmanlaşır, sensör geç algılar ve
- * kontrolcü ayarı aşıp salınır (birinci dereceden sensör gecikmesi).
+ * Güvenlik (kullanım kılavuzu §2.2.2): rezistansın gövde sıcaklığı ayrıca
+ * izlenir. Su azsa ısı suya geçemez, rezistans hızla ısınır; 150 °C'de ikincil
+ * (mekanik) termostat elektriği keser ve rezistans soğuyana kadar ısıtma geri
+ * gelmez. Kontrolcü bunu bilmez: ekranda ısıtma komutu (OUT) yanmaya devam eder.
  *
- * Zamanlayıcı ayar sıcaklığına ulaşılınca saymaya başlar; süre dolunca
- * ısıtma durur.
- *
- * TODO(mock-data): parametreler ve pompa/zamanlayıcı davranışı temsili
- * (content/products/su-banyosu.json), ürünün gerçek değerleri değil.
+ * TODO(mock-data): sayısal parametreler temsili (content/products/su-banyosu.json),
+ * ürünün ölçülmüş değerleri değil.
  */
 
 export type WaterBathParams = {
   volumeL: number;
   heaterW: number;
   ambientC: number;
-  lossLidClosedWK: number;
-  lossLidOpenWK: number;
+  lossWK: number;
   minC: number;
   maxC: number;
   startC: number;
   initialSetC: number;
   timeScale: number;
-  /** Sensör zaman sabiti (s): pompa açık / kapalı. */
-  sensorTauPumpS: number;
-  sensorTauStillS: number;
+  /** Sensör zaman sabiti (s). */
+  sensorTauS: number;
+  /** İkincil termostatın kesme ve yeniden bağlama sıcaklıkları (°C). */
+  cutoffC: number;
+  resetC: number;
 };
 
 export type Sample = { T: number; set: number };
@@ -41,33 +40,33 @@ export type Sample = { T: number; set: number };
 export type WaterBathState = {
   /** Suyun gerçek (ortalama) sıcaklığı. */
   T: number;
-  /** Sensörün okuduğu sıcaklık: kontrolcü ve ekran bunu görür. */
+  /** Sensörün okuduğu sıcaklık: kontrolcü ve ekran (PV) bunu görür. */
   Ts: number;
+  /** Rezistans gövde sıcaklığı (ikincil termostat bunu izler). */
+  Th: number;
   setC: number;
+  /** Kontrolcünün istediği güç (OUT). */
   duty: number;
+  /** Rezistansa gerçekten giden güç (termostat kestiyse 0). */
+  power: number;
   integral: number;
-  running: boolean;
-  lidOpen: boolean;
+  on: boolean;
+  light: boolean;
   waterLow: boolean;
-  pumpOn: boolean;
-  /** Zamanlayıcı süresi (simülasyon saniyesi); 0 = kapalı. */
-  timerS: number;
-  timerLeftS: number;
-  /** Ayar sıcaklığına ulaşıldı, süre sayılıyor. */
-  timerCounting: boolean;
-  timerDone: boolean;
+  cutoff: boolean;
   /** Son örnekten bu yana geçen simülasyon süresi (s). */
   sinceSample: number;
   history: Sample[];
 };
 
-export type Status = "idle" | "heating" | "holding" | "cooling" | "interlock" | "done";
+export type Status = "off" | "heating" | "holding" | "cooling" | "interlock";
+
+/** Su yüzeyindeki parafin kesitinin durumu (temsili; bkz. sectionOf). */
+export type SectionState = "wrinkled" | "opening" | "flat" | "tooHot";
 
 export const SAMPLE_EVERY_S = 10;
 export const HISTORY_S = 40 * 60;
 const HISTORY_LEN = HISTORY_S / SAMPLE_EVERY_S;
-/** Zamanlayıcının ön paneldeki adımları (dk); 0 = kapalı. */
-export const TIMER_STEPS_MIN = [0, 30, 60, 90] as const;
 
 const KP = 0.35; // 1/K: 3 K fark ≈ tam güç
 const KI = 0.0009; // 1/(K·s)
@@ -75,18 +74,18 @@ const KI = 0.0009; // 1/(K·s)
 export function readParams(raw: Record<string, number>): WaterBathParams {
   const get = (key: keyof WaterBathParams, fallback: number) => (typeof raw[key] === "number" ? raw[key] : fallback);
   return {
-    volumeL: get("volumeL", 10),
-    heaterW: get("heaterW", 1000),
+    volumeL: get("volumeL", 2),
+    heaterW: get("heaterW", 200),
     ambientC: get("ambientC", 22),
-    lossLidClosedWK: get("lossLidClosedWK", 6),
-    lossLidOpenWK: get("lossLidOpenWK", 14),
+    lossWK: get("lossWK", 1.6),
     minC: get("minC", 25),
-    maxC: get("maxC", 95),
+    maxC: get("maxC", 65),
     startC: get("startC", 22),
-    initialSetC: get("initialSetC", 37),
+    initialSetC: get("initialSetC", 40),
     timeScale: get("timeScale", 90),
-    sensorTauPumpS: get("sensorTauPumpS", 15),
-    sensorTauStillS: get("sensorTauStillS", 240),
+    sensorTauS: get("sensorTauS", 45),
+    cutoffC: get("cutoffC", 150),
+    resetC: get("resetC", 110),
   };
 }
 
@@ -94,37 +93,18 @@ export function createState(p: WaterBathParams): WaterBathState {
   return {
     T: p.startC,
     Ts: p.startC,
+    Th: p.startC,
     setC: p.initialSetC,
     duty: 0,
+    power: 0,
     integral: 0,
-    running: false,
-    lidOpen: false,
+    on: false,
+    light: true,
     waterLow: false,
-    pumpOn: true,
-    timerS: 0,
-    timerLeftS: 0,
-    timerCounting: false,
-    timerDone: false,
+    cutoff: false,
     sinceSample: 0,
     history: Array.from({ length: HISTORY_LEN }, () => ({ T: p.startC, set: p.initialSetC })),
   };
-}
-
-function lossCoefficient(s: WaterBathState, p: WaterBathParams) {
-  let k = s.lidOpen ? p.lossLidOpenWK : p.lossLidClosedWK;
-  // Açık kapakta yüksek sıcaklıkta buharlaşma kaybı hızla artar.
-  if (s.lidOpen && s.T > 50) k += 0.3 * (s.T - 50);
-  return k;
-}
-
-/** Zamanlayıcıyı bir sonraki adıma geçirir (kapalı → 30 → 60 → 90 → kapalı). */
-export function cycleTimer(s: WaterBathState) {
-  const current = TIMER_STEPS_MIN.indexOf((s.timerS / 60) as (typeof TIMER_STEPS_MIN)[number]);
-  const next = TIMER_STEPS_MIN[(current + 1) % TIMER_STEPS_MIN.length];
-  s.timerS = next * 60;
-  s.timerLeftS = s.timerS;
-  s.timerCounting = false;
-  s.timerDone = false;
 }
 
 /** Durumu simülasyon süresi kadar ilerletir (yerinde değiştirir). */
@@ -135,8 +115,7 @@ export function advance(s: WaterBathState, p: WaterBathParams, simSeconds: numbe
     const dt = Math.min(1, remaining);
     remaining -= dt;
 
-    // Güvenlik kilidi kontrolcüden önce: su azsa ısıtıcı kapalı.
-    if (!s.running || s.waterLow) {
+    if (!s.on) {
       s.duty = 0;
       s.integral = 0;
     } else {
@@ -148,24 +127,21 @@ export function advance(s: WaterBathState, p: WaterBathParams, simSeconds: numbe
       s.duty = Math.min(1, Math.max(0, p0 + s.integral));
     }
 
-    const k = lossCoefficient(s, p);
-    s.T += ((p.heaterW * s.duty - k * (s.T - p.ambientC)) / C) * dt;
-    const tau = s.pumpOn ? p.sensorTauPumpS : p.sensorTauStillS;
-    s.Ts += ((s.T - s.Ts) / tau) * dt;
+    // İkincil termostat kontrolcüden bağımsız: keserse rezistansa güç gitmez.
+    if (s.cutoff && s.Th <= p.resetC) s.cutoff = false;
+    if (!s.cutoff && s.Th >= p.cutoffC) s.cutoff = true;
+    s.power = s.cutoff ? 0 : s.duty;
 
-    // Zamanlayıcı: ayara ulaşınca sayar, dolunca ısıtmayı durdurur.
-    if (s.running && s.timerS > 0) {
-      if (!s.timerCounting && Math.abs(s.setC - s.Ts) < 0.5) s.timerCounting = true;
-      if (s.timerCounting) {
-        s.timerLeftS -= dt;
-        if (s.timerLeftS <= 0) {
-          s.timerLeftS = 0;
-          s.timerCounting = false;
-          s.timerDone = true;
-          s.running = false;
-        }
-      }
-    }
+    // Rezistans: su yeterliyse suyun birkaç derece üstünde kalır; su azsa
+    // ısı suya geçemez ve tam güçte yüzlerce dereceye tırmanır.
+    const rise = s.waterLow ? 240 : 10;
+    const tauH = s.waterLow ? 25 : 40;
+    s.Th += ((s.T + s.power * rise - s.Th) / tauH) * dt;
+
+    // Su azsa ısının ancak küçük bir kısmı suya geçer.
+    const transfer = s.waterLow ? 0.2 : 1;
+    s.T += ((p.heaterW * s.power * transfer - p.lossWK * (s.T - p.ambientC)) / C) * dt;
+    s.Ts += ((s.T - s.Ts) / p.sensorTauS) * dt;
 
     s.sinceSample += dt;
     if (s.sinceSample >= SAMPLE_EVERY_S) {
@@ -176,11 +152,22 @@ export function advance(s: WaterBathState, p: WaterBathParams, simSeconds: numbe
   }
 }
 
-export function statusOf(s: WaterBathState, p: WaterBathParams): Status {
-  if (s.timerDone) return "done";
-  if (s.running && s.waterLow) return "interlock";
-  if (!s.running) return s.Ts > p.ambientC + 1 ? "cooling" : "idle";
+export function statusOf(s: WaterBathState): Status {
+  if (!s.on) return "off";
+  if (s.cutoff) return "interlock";
   const e = s.setC - s.Ts;
   if (Math.abs(e) < 0.4) return "holding";
   return e > 0 ? "heating" : "cooling";
+}
+
+/**
+ * Parafin kesiti su yüzeyinde (temsili): soğuk suda kırışık kalır, ısındıkça
+ * açılır, parafinin erime noktasının ~8–10 °C altında gergin ve düz olur;
+ * fazla sıcakta dağılma riski başlar (kılavuz, Ek-1). `wrinkle` 0..1.
+ */
+export function sectionOf(T: number): { state: SectionState; wrinkle: number } {
+  if (T >= 54) return { state: "tooHot", wrinkle: 0 };
+  if (T >= 38) return { state: "flat", wrinkle: 0 };
+  if (T >= 30) return { state: "opening", wrinkle: (38 - T) / 8 };
+  return { state: "wrinkled", wrinkle: 1 };
 }

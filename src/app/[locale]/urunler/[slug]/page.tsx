@@ -51,7 +51,7 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/urunl
             product={product}
             copy={copy}
             ui={{ ...ui, interaction: { ...ui.interaction, screens } }}
-            headingLevel="h2"
+            headingLevel="h1"
             showDetailsLink={false}
           />
         </div>

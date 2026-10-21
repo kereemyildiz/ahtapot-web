@@ -46,7 +46,7 @@ type ProductExhibitProps = {
   copy: ExhibitCopy;
   ui: ExhibitUi;
   flip?: boolean;
-  headingLevel?: "h2" | "h3";
+  headingLevel?: "h1" | "h2" | "h3";
   showDetailsLink?: boolean;
 };
 
