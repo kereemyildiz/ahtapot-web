@@ -110,7 +110,7 @@ Yan yana duran çalışan bir cihaz ve yakınlaşılan bir doku, "hem donanım h
 - **Lenis** — smooth scroll, root layout'ta global
 - **OpenSeadragon** — yalnızca `deepzoom` etkileşimli ürünlerde, lazy yüklenir
 - **Cloudflare Workers + OpenNext** — hosting kararı (Vercel Hobby ticari kullanıma kapalı). Plan ve açık sorular: `docs/deploy-cloudflare.md`. Alan adı GoDaddy'de kalır, nameserver'lar Cloudflare'e taşınır.
-- **Geliştirme:** `pnpm dev` Turbopack ile çalışır. Webpack dev her yeniden derlemede belleği büyütüyordu (12 derlemede 1,3 → 2,6 GB); Turbopack 0,5 GB civarında kalıyor. `build` şimdilik `--webpack`.
+- **Geliştirme:** `pnpm dev` Turbopack ile çalışır. Webpack dev her yeniden derlemede belleği büyütüyordu (12 derlemede 1,3 → 2,6 GB); Turbopack 0,5 GB civarında kalıyor. `build` şimdilik `--webpack`. Telefondan test: aynı ağda `http://<bilgisayarın IP'si>:3000`; `next.config.ts` → `allowedDevOrigins: ["192.168.*.*"]` olmadan Next 16 dev kaynaklarını engeller ve telefonda JS çalışmaz (yalnız geliştirmeyi etkiler).
 - **Resend + Zod** — iletişim/talep formu, `app/api/contact/route.ts`. Zod yalnız sunucuda; istemci ön doğrulaması `lib/contact/validate.ts` (zod'suz, aynı kurallar).
 
 İstemci bileşenleri zod şemasını (`content/schema.ts`) değer olarak import etmez; sabitler `content/constants.ts`'te.
