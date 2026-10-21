@@ -29,9 +29,6 @@ export async function generateMetadata(
   };
 }
 
-// İçerik giriş animasyonlarının başlangıç durumu yalnız JS varken uygulanır.
-const JS_FLAG = "document.documentElement.classList.add('js')";
-
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
@@ -49,9 +46,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 
   return (
     <html lang={locale} className={`${fontVariables} h-full`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: JS_FLAG }} />
-      </head>
       <body className="min-h-full">
         <SmoothScrollProvider>
           <a
