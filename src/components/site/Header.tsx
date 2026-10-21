@@ -164,37 +164,44 @@ export function Header({ locale, labels }: HeaderProps) {
         </button>
       </div>
 
-      {open && (
-        <nav
-          id="mobile-menu"
-          aria-label={labels.navLabel}
-          className="frame flex h-[calc(100svh-var(--header-h))] flex-col gap-2 bg-ground pb-10 pt-6 lg:hidden"
-        >
-          {labels.links.map((link) => (
-            <a
-              key={link.id}
-              href={`/${locale}#${link.id}`}
-              onClick={onAnchor(link.id)}
-              className="display py-2 text-[2rem] text-ink"
-            >
-              {link.label}
-            </a>
-          ))}
-          <div className="mt-auto flex flex-wrap items-center gap-4">
-            <a href={`/${locale}#iletisim`} onClick={onAnchor("iletisim")} className="btn btn-primary">
-              {labels.cta}
-              <Icon name="arrowRight" className="size-4" strokeWidth={2} />
-            </a>
-            <LocaleSwitch
-              locale={locale}
-              href={otherHref}
-              label={labels.localeLabel}
-              otherName={labels.localeName}
-              className="ml-auto"
-            />
-          </div>
-        </nav>
-      )}
+      {/* Mobil menü hep DOM'da: kapanırken de perdeyle çekilir. Kapalıyken
+          inert (odaklanılamaz, ekran okuyucuda yok) ve görünmez. Başlığın
+          altında mutlak durur; header yüksekliğini değiştirmez. */}
+      <nav
+        id="mobile-menu"
+        aria-label={labels.navLabel}
+        inert={!open}
+        className={`frame absolute inset-x-0 top-full flex h-[calc(100svh-var(--header-h))] flex-col gap-2 bg-ground pb-10 pt-6 transition-[clip-path,visibility] ease-out-expo lg:hidden ${
+          open ? "visible duration-300 [clip-path:inset(0)]" : "invisible duration-200 [clip-path:inset(0_0_100%_0)]"
+        }`}
+      >
+        {labels.links.map((link, i) => (
+          <a
+            key={link.id}
+            href={`/${locale}#${link.id}`}
+            onClick={onAnchor(link.id)}
+            className={`display py-2 text-[2rem] text-ink transition-[opacity,transform] ease-out-expo ${
+              open ? "translate-y-0 opacity-100 duration-500" : "-translate-y-2 opacity-0 duration-150"
+            }`}
+            style={{ transitionDelay: open ? `${80 + i * 40}ms` : "0ms" }}
+          >
+            {link.label}
+          </a>
+        ))}
+        <div className="mt-auto flex flex-wrap items-center gap-4">
+          <a href={`/${locale}#iletisim`} onClick={onAnchor("iletisim")} className="btn btn-primary">
+            {labels.cta}
+            <Icon name="arrowRight" className="size-4" strokeWidth={2} />
+          </a>
+          <LocaleSwitch
+            locale={locale}
+            href={otherHref}
+            label={labels.localeLabel}
+            otherName={labels.localeName}
+            className="ml-auto"
+          />
+        </div>
+      </nav>
     </header>
   );
 }

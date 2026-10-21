@@ -137,13 +137,18 @@ export function WaterBathSimulator({
     io.observe(area);
     let acc = 0;
     let accChart = 0;
+    // Isı 0,05 adımlarla ve yalnız değişince yazılır: model kökündeki değişken
+    // her yazımda bütün modelin stilini yeniden hesaplatır.
+    let lastHeat = "";
     const tick = (_time: number, deltaMs: number) => {
       if (!visible) return;
       const dt = Math.min(deltaMs, 100) / 1000;
       advance(sim.current, params, dt * params.timeScale);
       const el = model.current;
-      if (el) {
-        el.style.setProperty("--heat", sim.current.duty.toFixed(3));
+      const heat = (Math.round(sim.current.duty * 20) / 20).toFixed(2);
+      if (el && heat !== lastHeat) {
+        lastHeat = heat;
+        el.style.setProperty("--heat", heat);
         el.style.setProperty("--heat-on", sim.current.duty > 0.02 ? "1" : "0");
       }
       acc += dt;

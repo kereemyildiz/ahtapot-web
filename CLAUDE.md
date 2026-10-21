@@ -192,9 +192,13 @@ gsap.ticker.lagSmoothing(0)
 - **LCP adayı gizlenmez:** hero metni opaklıkla değil yalnız transform ile girer (`.hero-rise`).
 - **Scroll-jack yok:** kullanıcı scroll kontrolünü asla kaybetmez. Tekerlek olayını yakalayan etkileşimler (deepzoom) yalnız kullanıcı tıklayınca ya da Ctrl/⌘ ile yakalar ve o sırada `data-lenis-prevent` taşır; imleç çıkınca bırakır. Turntable/simülatör tekerleğe hiç dokunmaz, yalnız sürükleme.
 - GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz, hex kullan.
-- Yolda akan darbe/işaret için `pathLength` + CSS `stroke-dashoffset` kullanma: Chrome CSS'teki dashoffset'i pathLength'e göre ölçeklemiyor. `lib/svgPath.ts` → `pulseDash` gerçek uzunluğu (`--len`) verir.
+- Yolda akan darbe/işaret için `pathLength` + CSS `stroke-dashoffset` kullanma: Chrome CSS'teki dashoffset'i pathLength'e göre ölçeklemiyor. `lib/svgPath.ts` → `pulseDash` (akan darbe) ve `drawDash` (kendini çizen yol) gerçek uzunluğu (`--len`) verir.
 - `useGSAP` içindeki "bir kez oldu" bayraklarını `useRef`'te değil, efektin içinde tut: StrictMode ikinci kurulumda başlangıç durumunu yeniden uygular, ref'teki bayrak ise animasyonu atlatır.
 - Hover mikro-etkileşimleri 150–250ms. Bölüm reveal'ları 400–600ms.
+- Yerleşim tetikleyen özellik (`left`, `width`, `font-size`) animasyonla sürülmez; `transform` kullanılır. Karşılaştırma ayracı tam genişlikte bir taşıyıcıyla `translateX`, su banyosu modelinin yakınlaşması `scale` ile (eski `font-size` yöntemi 1 sn'de ~140 ms yerleşim harcıyordu).
+- Sık değişen CSS değişkeni büyük bir alt ağacın köküne her karede yazılmaz: kullanan elemana yazılır (hero imleç ışığı → `.hero-spot`) ya da adımlanıp yalnız değişince yazılır (simülatör `--heat`, 0,05 adım). Çalışan bir animasyonun `animation-duration`'ı değişkene bağlanmaz; ilerleme sıçrar.
+- Hover rengi değiştiren özel kurallar `@media (hover: hover)` içinde (Tailwind `hover:` bunu kendisi yapar); yoksa dokunmatikte dokunulan buton hover renginde kalır.
+- Easing: giriş/geçişte CSS `--ease-out-expo` (`ease-out-expo` utility), GSAP `expo.out` / `power3.out`; çizgi çizimlerinde `power2.inOut`. Zıplayan eğri (`back.out`, bounce) kullanılmaz: ciddi bir tıbbi cihaz markasına uymuyor.
 
 ---
 

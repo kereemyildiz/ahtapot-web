@@ -118,20 +118,25 @@ html.lenis body {
   }
 }
 
+/* Hover yalnız gerçek imleçte: dokunmatikte dokunulan buton hover renginde takılı kalıyordu. */
 @utility btn-primary {
   background: var(--color-accent);
   color: var(--color-accent-ink);
-  &:hover {
-    background: var(--color-ink);
+  @media (hover: hover) {
+    &:hover {
+      background: var(--color-ink);
+    }
   }
 }
 
 @utility btn-quiet {
   background: var(--color-surface-2);
   color: var(--color-ink);
-  &:hover {
-    background: var(--color-ink);
-    color: var(--color-ground);
+  @media (hover: hover) {
+    &:hover {
+      background: var(--color-ink);
+      color: var(--color-ground);
+    }
   }
 }
 
@@ -249,9 +254,10 @@ html.lenis body {
 .mod-on .mod-draw {
   animation: mod-draw 2.4s ease-in-out infinite;
 }
+/* --len: yolun gerçek uzunluğu (lib/svgPath → drawDash); pathLength kullanılmaz. */
 @keyframes mod-draw {
   0% {
-    stroke-dashoffset: 100;
+    stroke-dashoffset: var(--len, 100);
   }
   60%,
   100% {
