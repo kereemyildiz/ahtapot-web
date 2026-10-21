@@ -159,8 +159,10 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
               key={it.id}
               data-stage-visual={it.id}
               aria-hidden={i !== active}
-              className={`absolute inset-0 transition-[opacity,transform] duration-700 ease-out ${
-                i === active ? "opacity-100" : "pointer-events-none scale-[0.985] opacity-0"
+              // Asimetrik geçiş: giden çabuk söner, gelen biraz bekleyip açılır;
+              // iki yoğun araç ekranı üst üste binmesin.
+              className={`absolute inset-0 transition-[opacity,transform] ease-out-expo ${
+                i === active ? "opacity-100 delay-[120ms] duration-[450ms] motion-reduce:delay-0" : "pointer-events-none scale-[0.985] opacity-0 duration-200"
               }`}
             >
               <LayerVisual item={it} tools={tools} active={i === active} eager={i === 0} />

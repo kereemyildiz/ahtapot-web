@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import { LOGO_BLUES, LOGO_PATHS } from "@/components/brand/LogoMark";
 import type { ProductLayer } from "@/content/constants";
-import { pulseDash } from "@/lib/svgPath";
+import { drawDash, pulseDash } from "@/lib/svgPath";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 
 /**
@@ -55,6 +55,8 @@ const SCOPE_CURVE = (() => {
   return pts.join(" ");
 })();
 const SCOPE_PULSE = pulseDash(SCOPE_CURVE, 0.04);
+const MARK = "M-8 -4 L8 -8 L18 2 L12 14 L-4 14 L-12 6 Z";
+const MARK_DRAW = drawDash(MARK);
 
 function ModuleArt({ layer }: { layer: ProductLayer }) {
   switch (layer) {
@@ -122,7 +124,7 @@ function ModuleArt({ layer }: { layer: ProductLayer }) {
           <rect x="-46" y="-30" width="92" height="60" />
           <path d="M-46 -19 H46" strokeWidth="2" />
           <path d="M-34 14 L-24 -6 L-4 -12 L18 -6 L36 6 L28 20 L-2 22 L-26 22 Z" strokeWidth="1.5" opacity="0.55" />
-          <path d="M-8 -4 L8 -8 L18 2 L12 14 L-4 14 L-12 6 Z" stroke="var(--color-eosin)" pathLength={100} strokeDasharray="100" className="mod-draw" />
+          <path d={MARK} stroke="var(--color-eosin)" strokeDasharray={MARK_DRAW.strokeDasharray} style={MARK_DRAW.style} className="mod-draw" />
         </g>
       );
   }
@@ -145,7 +147,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
         const tl = gsap.timeline({ delay: 0.2, onComplete: () => setCycling(true) });
         tl.from("[data-logo-path]", { drawSVG: "0%", duration: 0.9, stagger: 0.14, ease: "power2.inOut" })
           .from("[data-arm]", { drawSVG: "0%", duration: 0.8, stagger: 0.1, ease: "power2.inOut" }, "-=0.3")
-          .from("[data-module]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.08, ease: "back.out(1.6)" }, "-=0.4")
+          .from("[data-module]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.08, ease: "expo.out" }, "-=0.4")
           .from("[data-node-label]", { autoAlpha: 0, y: 8, duration: 0.4, stagger: 0.06 }, "-=0.3");
 
         // Giriş yalnız ilk açılışta değil: hero'ya geri dönülünce ve logonun
@@ -171,10 +173,13 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
   }, [cycling, hovered, nodes.length]);
 
   // İmleç ışığı: React'i yeniden çizdirmeden CSS değişkeni olarak taşınır.
+  // Değişkenler yalnız ışık katmanına yazılır; köke yazılsa her harekette
+  // bütün SVG'nin stili yeniden hesaplanırdı.
+  const spot = useRef<HTMLDivElement>(null);
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse") return;
-    const el = e.currentTarget;
-    const r = el.getBoundingClientRect();
+    const el = spot.current;
+    if (e.pointerType !== "mouse" || !el) return;
+    const r = e.currentTarget.getBoundingClientRect();
     el.style.setProperty("--mx", `${e.clientX - r.left}px`);
     el.style.setProperty("--my", `${e.clientY - r.top}px`);
     el.style.setProperty("--spot", "1");
@@ -185,11 +190,11 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
       ref={root}
       className="absolute inset-0 flex items-center justify-center overflow-hidden p-[4%]"
       onPointerMove={onPointerMove}
-      onPointerLeave={(e) => e.currentTarget.style.setProperty("--spot", "0")}
+      onPointerLeave={() => spot.current?.style.setProperty("--spot", "0")}
     >
       <div aria-hidden="true" className="hero-glow pointer-events-none absolute inset-0" />
       <div aria-hidden="true" className="hero-pattern pointer-events-none absolute inset-0" />
-      <div aria-hidden="true" className="hero-spot pointer-events-none absolute inset-0" />
+      <div ref={spot} aria-hidden="true" className="hero-spot pointer-events-none absolute inset-0" />
       <svg viewBox="0 0 600 760" className="relative h-full w-full max-w-[40rem]" role="img" aria-label={label}>
         <defs>
           <linearGradient id="hero-logo" gradientUnits="userSpaceOnUse" x1="150" y1="130" x2="710" y2="865">

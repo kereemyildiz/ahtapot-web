@@ -23,7 +23,11 @@
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: calc(min(2.3cqw, 1.85cqh) * var(--zoom, 1));
+  /* Yakınlaşma transform ile: --zoom font-size'ı sürünce animasyon boyunca
+     bütün model her karede yeniden yerleşiyordu. Taban en büyük yakınlıkta
+     (1.9) çizilir, ölçek hep ≤ 1 kalır; küçülen görüntü bulanıklaşmaz. */
+  font-size: calc(min(2.3cqw, 1.85cqh) * 1.9);
+  transform: scale(calc(var(--zoom, 1) / 1.9));
   perspective: 120em;
   perspective-origin: 50% 40%;
 }
@@ -150,9 +154,11 @@
   width: 3em;
   height: 3em;
   margin: -1.5em 0 0 -1.5em;
-  border: 0.12em solid rgb(147 164 244 / 0.7);
+  /* Isı süreyi değil yoğunluğu değiştirir: süre değişince çalışan
+     animasyonun ilerlemesi sıçrıyor, halkalar zıplıyordu. */
+  border: 0.12em solid rgb(147 164 244 / calc(0.4 + var(--heat, 0) * 0.5));
   border-radius: 50%;
-  animation: ripple calc(4.5s / (1 + var(--heat, 0) * 1.5)) ease-out infinite;
+  animation: ripple 4.5s ease-out infinite;
   animation-delay: var(--delay, 0s);
 }
 

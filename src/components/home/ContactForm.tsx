@@ -4,6 +4,7 @@ import { useEffect, useId, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "@/components/brand/Icon";
+import { ContactSuccess } from "./ContactSuccess";
 import type { LocaleContent } from "@/content/schema";
 import { CONTACT_EVENT } from "@/lib/contact/request";
 import { REQUEST_TYPES as TYPES, REQUEST_TYPE_KEY as TYPE_KEY, isRequestType, validateContact, type FieldCodes, type RequestType } from "@/lib/contact/validate";
@@ -107,14 +108,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
   }
 
   if (status === "success") {
-    return (
-      <div role="status" className="bg-surface p-[clamp(1.5rem,4vw,3rem)]">
-        <p className="font-display text-[clamp(1.6rem,1.1rem+1.5vw,2.6rem)] font-medium tracking-[-0.03em]">
-          {t.success.title}
-        </p>
-        <p className="mt-3 text-lead text-ink/90">{t.success.body}</p>
-      </div>
-    );
+    return <ContactSuccess title={t.success.title} body={t.success.body} />;
   }
 
   const field = "h-14 w-full bg-field px-4 text-[1.0625rem] text-field-ink outline-none transition-shadow duration-200 placeholder:text-field-ink/50 focus-visible:shadow-[inset_0_0_0_3px_var(--color-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
