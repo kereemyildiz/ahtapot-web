@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsapSetup";
 import { replayOnView } from "@/lib/replayOnView";
 import { LogoMark, LOGO_BLUES } from "@/components/brand/LogoMark";
@@ -17,7 +18,7 @@ export type ReachRow = { icon: IconName; label: string; lines: string[]; href?: 
  * her girişte logo ve kollar yeniden çizilir; kollarda sinyal akar, bir
  * satırın üstüne gelince (ya da bağlantısı odaklanınca) o kol yanar.
  */
-export function ContactReach({ rows }: { rows: ReachRow[] }) {
+export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name: string; sub: string } }) {
   const root = useRef<HTMLDivElement>(null);
   const logo = useRef<HTMLDivElement>(null);
   const dots = useRef<(HTMLSpanElement | null)[]>([]);
@@ -61,6 +62,7 @@ export function ContactReach({ rows }: { rows: ReachRow[] }) {
         const tl = gsap
           .timeline({ paused: true })
           .from("[data-logo-path]", { drawSVG: "0%", duration: 0.8, stagger: 0.1, ease: "power2.inOut" })
+          .from("[data-reach-brand]", { autoAlpha: 0, x: -12, duration: 0.6, ease: "expo.out" }, "-=0.4")
           .from("[data-reach-arm]", { drawSVG: "0%", duration: 0.6, stagger: 0.12, ease: "power2.inOut" }, "-=0.25")
           .from("[data-reach-dot]", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%", duration: 0.35, stagger: 0.12, ease: "expo.out" }, "-=0.45")
           .from("[data-reach-pulse]", { autoAlpha: 0, duration: 0.3 });
@@ -96,8 +98,23 @@ export function ContactReach({ rows }: { rows: ReachRow[] }) {
           })}
       </svg>
 
-      <div ref={logo} className="w-fit">
-        <LogoMark className="h-[clamp(6.5rem,5rem+3vw,8.5rem)] w-auto" strokeWidth={30} gradientId="logo-reach" />
+      {/* Logo ve adı yan yana (header'daki kilitle aynı: mavi yazı + altında küçük satır).
+          Kollar yalnız işaretten çıkar; ölçüm `logo` ref'inden. */}
+      <div className="flex items-center gap-[clamp(1rem,2vw,1.5rem)]">
+        <div ref={logo} className="w-fit shrink-0">
+          <LogoMark className="h-[clamp(6.5rem,5rem+3vw,8.5rem)] w-auto" strokeWidth={30} gradientId="logo-reach" />
+        </div>
+        <div data-reach-brand="" className="flex flex-col items-start gap-2">
+          <Image
+            src="/brand/wordmark.png"
+            alt={brand.name}
+            width={679}
+            height={175}
+            sizes="160px"
+            style={{ height: "clamp(1.9rem, 1.5rem + 1vw, 2.5rem)", width: "auto" }}
+          />
+          <span className="text-[0.75rem] font-semibold uppercase leading-none tracking-[0.16em] text-periwinkle">{brand.sub}</span>
+        </div>
       </div>
 
       <dl className="relative mt-10 grid gap-8 pl-[clamp(6rem,4.5rem+3vw,8rem)] text-body">

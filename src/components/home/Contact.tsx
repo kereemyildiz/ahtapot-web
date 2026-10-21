@@ -38,6 +38,7 @@ export async function Contact() {
           <div className="mt-8">
             {/* Ahtapotun kolları iletişim satırlarına uzanır (hero'nun kapanışı). */}
             <ContactReach
+              brand={{ name: tCompany("shortName"), sub: tCompany("brandSub") }}
               rows={[
                 { icon: "pin", label: t("addressLabel"), lines: [tCompany("legalName"), tCompany("address")] },
                 // TODO: gerçek e-posta content/*.json → company.email'e girilince görünür.
