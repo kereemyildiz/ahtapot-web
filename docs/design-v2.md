@@ -16,7 +16,7 @@ uzanır; aynı çizgi yetkinlikler bölümünde ilerleme göstergesi olur.
 - **ui-ux-pro-max** (skill-issue.in): tasarım sistemi sorgusu, erişilebilirlik ve
   hareket kuralları. Önerdiği teal/yeşil "medikal" paleti alınmadı.
 - **taste-skill** (skill-issue.in): "The dark room" sanat yönü; tipografi kurası
-  Unbounded / Onest. Ev kurallarından: dolu bölümler, gerçek görseller, eşit
+  Unbounded / Onest (başlık fontu sonradan Instrument Sans oldu). Ev kurallarından: dolu bölümler, gerçek görseller, eşit
   kenar boşlukları, her bölümde başlık, eyebrow yok.
 - **gsap-skills** (resmi): useGSAP, ScrollTrigger, matchMedia, reduced motion.
 - **dataviz**: simülatör grafiği — tek eksen (sıcaklık) + ayrı güç şeridi,

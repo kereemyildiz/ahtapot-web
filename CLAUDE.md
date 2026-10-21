@@ -1,8 +1,8 @@
-# Ahtapot Tıbbi Teknolojileri — Kurumsal Web Sitesi
+# Ahtapot Tıbbi Teknolojiler — Kurumsal Web Sitesi
 
 ## Proje
 
-Ahtapot Tıbbi Teknolojileri A.Ş. için tek sayfalık (scroll-driven) kurumsal tanıtım sitesi.
+Ahtapot Tıbbi Teknolojiler A.Ş. için tek sayfalık (scroll-driven) kurumsal tanıtım sitesi.
 Şirket bir **tıbbi cihaz üreticisi**: mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı — hepsi ekip içinde. **Odağı tıbbi cihazları yerlileştirmek**: yurt dışından tedarik edilen cihazların Türkiye'de tasarlanıp üretilmesi. Su banyosu ve SVS görüntüleyici bugünkü ürünler; site şirketi bu ikisine indirgememeli. **İstanbul** merkezli (Pendik), yeni kurulmuş. Kurucu **Dr. Mustafa Can Yılmaz**, bir hekim — aynı zamanda yazılım, elektronik ve mekanikten de anlıyor, işin teknik tarafına bizzat giriyor. Ekip, kurucunun uzun süredir tanıdığı mühendislerden oluşuyor. Ekip büyüklüğü sayıyla yazılmaz ("4 kişilik ekip" ifadesi yanlıştı). Telefon: +90 535 770 66 49 (`company.phone`).
 
 **Hedef kitle (öncelik sırasıyla)**
@@ -150,11 +150,18 @@ Kesindir. Yeni renk uydurma, yeni font ekleme. Tanım: `src/app/globals.css`.
 
 | Rol | Font | Kullanım |
 |---|---|---|
-| Display | **Unbounded** | Başlıklar, 500 ağırlık, sıkı harf aralığı |
+| Display | **Instrument Sans** | Başlıklar, 500–600 ağırlık, sıkı harf aralığı |
 | Gövde | **Onest** | Paragraf, liste, buton, etiket |
 | Kod | **JetBrains Mono** | Yalnızca gerçek kod bloklarında |
 
+Unbounded kullanıcı isteğiyle bırakıldı ("d" eğik, geniş yuvarlak formlar kurumsal durmuyordu); yerine dik ve sakin bir grotesk olan Instrument Sans geldi. Geri alma.
+
 Üçü de `next/font/google`, `subsets: ['latin', 'latin-ext']` — **latin-ext zorunlu**. Büyük harf CSS ile ve doğru `lang` altında uygulanır (Türkçe i→İ). `µm` gibi birimler uppercase'e sokulmaz.
+
+### İkonlar
+Tek set: `components/brand/Icon.tsx` (24'lük ızgara, 1.75 çizgi, kare uç, sivri köşe — meander diliyle aynı). Bağımlılık yok; yeni ikon gerekirse oraya path olarak eklenir. Ölçülü kullanılır: birincil aksiyonlarda ok, yeni sekmede açılan bağlantıda çapraz ok, iletişim ayrıntılarında (adres/e-posta/telefon), menü düğmesi, dil seçicide küre. İkon tek başına anlam taşımaz; yanında metin ya da `aria-label` olur.
+
+Dil seçici nav bağlantılarından ayrı durur: küre + `TR | EN` anahtarı, etkin dil dolu. Ürün adı logodaki mavi çubukla tabela gibi durur (`ProductExhibit`).
 
 ### Yasaklı liste
 Inter. Mor/menekşe gradyan. Glassmorphism. `rounded-2xl` + `p-6` + `shadow-lg` üçlü kart ızgarası. Emoji ikon. Stok "iş insanları el sıkışıyor" görseli. Sebepsiz 01/02/03 numaralandırma. Jenerik 3D küre/parçacık arka planı. Eyebrow etiketleri (başlık üstü küçük etiket). Sayfayı kaplayan dekoratif dev yazılar. Gerçek ürün/ekip fotoğrafıymış gibi sunulan stok görsel. Katman anlatısını jenerik bir infografiğe çevirme — logodaki çizgiden türemeli.
@@ -224,7 +231,7 @@ Pazarlık konusu değil. Chrome DevTools MCP ile ölç, tahmin etme.
 - ❌ "Tıbbi cihazları yerlileştiriyoruz: …" (kullanıcı önceki cümleyi daha iyi buldu)
 - ✅ "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir cihaza uçtan uca dönüştürüyoruz."
 
-Şirketin adı **Ahtapot Tıbbi Teknolojileri** (Teknolojiler değil); footer'da logonun yanında yazar.
+Şirketin adı **Ahtapot Tıbbi Teknolojiler** (“Teknolojileri” değil); footer'da logonun yanında yazar.
 
 Ürün adı **AhtaPatolog** (AhtaPatoloji değil). Türkçe eklerde ünlü uyumuna dikkat: AhtaPatolog'da, AhtaPatolog'un.
 

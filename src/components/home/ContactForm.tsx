@@ -3,6 +3,7 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Icon } from "@/components/brand/Icon";
 import type { LocaleContent } from "@/content/schema";
 import { CONTACT_EVENT } from "@/lib/contact/request";
 import { REQUEST_TYPES as TYPES, REQUEST_TYPE_KEY as TYPE_KEY, isRequestType, validateContact, type FieldCodes, type RequestType } from "@/lib/contact/validate";
@@ -227,19 +228,28 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
 
       <div>
         <label className="flex cursor-pointer items-start gap-3 text-body text-ink/90">
-          <input
-            id={`${uid}-consent`}
-            type="checkbox"
-            name="consent"
-            required
-            aria-invalid={!!errors.consent}
-            aria-describedby={errors.consent ? `${uid}-consent-err` : undefined}
-            className="mt-1 size-5 shrink-0 cursor-pointer appearance-none bg-field checked:bg-accent checked:shadow-[inset_0_0_0_4px_var(--color-field)]"
-          />
+          {/* İşaretli hâl tek bakışta okunmalı: fosfor dolgu + koyu tik, boşken açık kutu. */}
+          <span className="relative mt-0.5 grid size-6 shrink-0 place-items-center">
+            <input
+              id={`${uid}-consent`}
+              type="checkbox"
+              name="consent"
+              required
+              aria-invalid={!!errors.consent}
+              aria-describedby={errors.consent ? `${uid}-consent-err` : undefined}
+              className="peer size-6 cursor-pointer appearance-none border-2 border-field bg-field transition-colors duration-150 checked:border-accent checked:bg-accent aria-invalid:border-eosin"
+            />
+            <Icon
+              name="check"
+              strokeWidth={3}
+              className="pointer-events-none absolute size-4 text-accent-ink opacity-0 scale-50 transition-[opacity,transform] duration-150 peer-checked:scale-100 peer-checked:opacity-100"
+            />
+          </span>
           <span>
             {t.consent.label}{" "}
-            <Link href={kvkkHref} target="_blank" className="link">
+            <Link href={kvkkHref} target="_blank" className="link inline-flex items-baseline gap-1">
               {t.consent.linkText}
+              <Icon name="arrowUpRight" className="size-[0.85em] self-center" />
             </Link>
           </span>
         </label>
@@ -257,9 +267,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
       <div className="flex flex-wrap items-center gap-5">
         <button type="submit" disabled={status === "submitting"} className="btn btn-primary min-h-14 px-7 text-[1.0625rem] disabled:opacity-60">
           {status === "submitting" ? t.submitting : t.submitByType[TYPE_KEY[type]]}
-          <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M2 8h11M9 4l4 4-4 4" />
-          </svg>
+          <Icon name="arrowRight" className="size-[1.1rem]" strokeWidth={2} />
         </button>
         <p className="max-w-[36ch] text-small text-muted">{t.next}</p>
       </div>

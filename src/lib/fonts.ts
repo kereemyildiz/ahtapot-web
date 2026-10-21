@@ -1,11 +1,12 @@
-import { Unbounded, Onest, JetBrains_Mono } from "next/font/google";
+import { Instrument_Sans, Onest, JetBrains_Mono } from "next/font/google";
 
 // latin-ext zorunlu: Türkçe ğ ş ı İ ç ö ü glifleri oradan geliyor.
-// Unbounded: başlıklar — köşeleri yuvarlatılmış kare formlar, logodaki
-// wordmark ve meander'ın dik açılı diliyle akraba.
-export const unbounded = Unbounded({
+// Instrument Sans: başlıklar — dik, sakin bir grotesk; "d", "a", "g" gibi
+// harflerde kıvrım/eğiklik yok, bu yüzden büyük boyda da kurumsal durur.
+// Unbounded kullanıcı isteğiyle bırakıldı (geniş, yuvarlak formlar fazla oyuncaktı).
+export const instrumentSans = Instrument_Sans({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-unbounded",
+  variable: "--font-instrument-sans",
   display: "swap",
 });
 
@@ -24,4 +25,4 @@ export const jetbrainsMono = JetBrains_Mono({
   preload: false,
 });
 
-export const fontVariables = `${unbounded.variable} ${onest.variable} ${jetbrainsMono.variable}`;
+export const fontVariables = `${instrumentSans.variable} ${onest.variable} ${jetbrainsMono.variable}`;
