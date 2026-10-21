@@ -272,3 +272,9 @@ Bir metin bu sınırda mı diye tereddüt edersen yaz ama işaretle, kullanıcı
 5. Uydurma yapma: teknik spesifikasyon, sertifika, müşteri adı, referans, sayı — verilmediyse `TODO` bırak.
 6. Emin olmadığın kütüphane API'si için Context7 MCP'ye bak. GSAP için resmi gsap-skills'i kullan.
 7. **Genişleyebilirliği koru.** Ürüne özel mantığı bileşene gömme; `interaction`, `status` ve `assets` alanlarından türet. Üçüncü ürün bir JSON dosyasıyla eklenebilmeli.
+
+### Git akışı
+- `main` = canlı site (`ahtapot.ink`). Her push Cloudflare Workers Builds ile **otomatik yayınlanır**. Doğrudan `main`'e commit atma.
+- `develop` = entegrasyon dalı. Push'ları canlıya dokunmaz, Cloudflare önizleme sürümü üretir.
+- Yeni iş: `develop`'tan `feature/<kısa-ad>` (hata düzeltmesi `fix/<kısa-ad>`) aç → bitince `develop`'a merge → önizlemede kontrol → kullanıcı onaylayınca `develop`'u `main`'e merge.
+- `main`'e merge ve push yalnız kullanıcı açıkça istediğinde.
