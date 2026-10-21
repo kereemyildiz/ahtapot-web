@@ -7,6 +7,17 @@ import { ContactForm } from "./ContactForm";
 import { DrawnMark } from "@/components/motion/DrawnMark";
 import { SectionRule } from "@/components/motion/SectionRule";
 import { Words } from "@/components/motion/Words";
+import { Icon, type IconName } from "@/components/brand/Icon";
+
+// Ayrıntı satırı: ikon terimin yanında, değer altında aynı hizadan başlar.
+function Term({ icon, children }: { icon: IconName; children: string }) {
+  return (
+    <dt className="flex items-center gap-2 text-small text-muted">
+      <Icon name={icon} className="size-4 text-periwinkle" />
+      {children}
+    </dt>
+  );
+}
 
 export async function Contact() {
   const locale = (await getLocale()) as AppLocale;
@@ -37,7 +48,7 @@ export async function Contact() {
           <p className="font-display text-[1.25rem] font-medium tracking-[-0.02em]">{t("detailsHeading")}</p>
           <dl className="mt-6 grid gap-6 text-body">
             <div>
-              <dt className="text-small text-muted">{t("addressLabel")}</dt>
+              <Term icon="pin">{t("addressLabel")}</Term>
               <dd className="mt-1 text-ink">
                 {tCompany("legalName")}
                 <br />
@@ -47,7 +58,7 @@ export async function Contact() {
             {/* TODO: gerçek e-posta / telefon content/*.json → company'ye girilince görünür. */}
             {email && (
               <div>
-                <dt className="text-small text-muted">{t("emailLabel")}</dt>
+                <Term icon="mail">{t("emailLabel")}</Term>
                 <dd className="mt-1">
                   <a href={`mailto:${email}`} className="link">
                     {email}
@@ -57,7 +68,7 @@ export async function Contact() {
             )}
             {phone && (
               <div>
-                <dt className="text-small text-muted">{t("phoneLabel")}</dt>
+                <Term icon="phone">{t("phoneLabel")}</Term>
                 <dd className="mt-1">
                   <a href={`tel:${phone.replace(/\s/g, "")}`} className="link">
                     {phone}

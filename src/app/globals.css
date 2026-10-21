@@ -21,7 +21,7 @@
   --color-field: #e9ecf4;
   --color-field-ink: #0a0c16;
 
-  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular",
     monospace;

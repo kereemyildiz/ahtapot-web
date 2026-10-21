@@ -7,6 +7,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { localeHref, swapLocale } from "@/i18n/href";
 import Image from "next/image";
 import { LogoMark } from "@/components/brand/LogoMark";
+import { Icon } from "@/components/brand/Icon";
 import { useLenisContext } from "@/components/providers/LenisContext";
 
 type HeaderProps = {
@@ -24,6 +25,52 @@ type HeaderProps = {
     navLabel: string;
   };
 };
+
+const LOCALES: AppLocale[] = ["tr", "en"];
+
+/**
+ * Dil seçici: nav bağlantılarından ayrı duran küre + TR/EN anahtarı.
+ * Etkin dil düz yazı (aria-current), diğeri o sayfanın karşılığına gider.
+ */
+function LocaleSwitch({
+  locale,
+  href,
+  label,
+  otherName,
+  className = "",
+}: {
+  locale: AppLocale;
+  href: string;
+  label: string;
+  otherName: string;
+  className?: string;
+}) {
+  return (
+    <div role="group" aria-label={label} className={`flex items-center gap-2 text-muted ${className}`}>
+      <Icon name="globe" className="size-[1.05rem]" />
+      <span className="flex border border-surface-2 p-[3px] text-[0.75rem] font-semibold leading-none tracking-[0.08em]">
+        {LOCALES.map((code) =>
+          code === locale ? (
+            <span key={code} aria-current="true" className="bg-surface-2 px-3 py-3 text-ink lg:px-2 lg:py-1.5">
+              {code.toUpperCase()}
+            </span>
+          ) : (
+            <Link
+              key={code}
+              href={href}
+              lang={code}
+              hrefLang={code}
+              aria-label={otherName}
+              className="px-3 py-3 transition-colors duration-200 hover:text-ink lg:px-2 lg:py-1.5"
+            >
+              {code.toUpperCase()}
+            </Link>
+          ),
+        )}
+      </span>
+    </div>
+  );
+}
 
 export function Header({ locale, labels }: HeaderProps) {
   const pathname = usePathname();
@@ -93,20 +140,15 @@ export function Header({ locale, labels }: HeaderProps) {
               {link.label}
             </a>
           ))}
-          <Link
-            href={otherHref}
-            aria-label={labels.localeLabel}
-            lang={otherLocale}
-            className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
-          >
-            {labels.localeName}
-          </Link>
+          <span className="h-5 w-px bg-surface-2" aria-hidden="true" />
+          <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
           <a
             href={`/${locale}#iletisim`}
             onClick={onAnchor("iletisim")}
-            className="btn btn-primary min-h-0 py-3 text-[0.95rem]"
+            className="btn btn-primary group min-h-0 py-3 text-[0.95rem]"
           >
             {labels.cta}
+            <Icon name="arrowRight" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
           </a>
         </nav>
 
@@ -117,6 +159,7 @@ export function Header({ locale, labels }: HeaderProps) {
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
         >
+          <Icon name={open ? "close" : "menu"} className="size-[1.1rem]" />
           {open ? labels.close : labels.menu}
         </button>
       </div>
@@ -140,15 +183,15 @@ export function Header({ locale, labels }: HeaderProps) {
           <div className="mt-auto flex flex-wrap items-center gap-4">
             <a href={`/${locale}#iletisim`} onClick={onAnchor("iletisim")} className="btn btn-primary">
               {labels.cta}
+              <Icon name="arrowRight" className="size-4" strokeWidth={2} />
             </a>
-            <Link
+            <LocaleSwitch
+              locale={locale}
               href={otherHref}
-              lang={otherLocale}
-              aria-label={labels.localeLabel}
-              className="btn btn-quiet"
-            >
-              {labels.localeName}
-            </Link>
+              label={labels.localeLabel}
+              otherName={labels.localeName}
+              className="ml-auto"
+            />
           </div>
         </nav>
       )}

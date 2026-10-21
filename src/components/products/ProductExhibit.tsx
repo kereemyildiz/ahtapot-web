@@ -2,6 +2,7 @@
 
 import { useState, type MouseEvent } from "react";
 import Link from "next/link";
+import { Icon } from "@/components/brand/Icon";
 import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
 import { PRODUCT_LAYERS, type ProductLayer } from "@/content/constants";
@@ -98,10 +99,12 @@ export function ProductExhibit({
                 {ui.statusAvailable}
               </span>
             )}
-            <Heading className="mt-5 font-display text-[clamp(1.75rem,1.2rem+1.6vw,2.75rem)] font-medium leading-[1.05] tracking-[-0.03em] text-balance">
-              {copy.name}
-            </Heading>
-            <p className="mt-4 text-lead leading-snug text-ink/90">{copy.tagline}</p>
+            <div className="mt-6 border-l-[3px] border-brand pl-5">
+              <Heading className="font-display text-[clamp(2.1rem,1.4rem+2vw,3.25rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-balance">
+                {copy.name}
+              </Heading>
+              <p className="mt-4 text-lead leading-snug text-muted">{copy.tagline}</p>
+            </div>
           </div>
 
           <div data-reveal="" className="mt-8">
@@ -158,13 +161,15 @@ export function ProductExhibit({
             <Link
               href={localeHref(locale, `/?tur=${requestType}#iletisim`)}
               onClick={onRequest}
-              className="btn btn-primary"
+              className="btn btn-primary group"
             >
               {inDevelopment ? ui.demoCta : ui.quoteCta}
+              <Icon name="arrowRight" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
             </Link>
             {showDetailsLink && (
               <Link href={localeHref(locale, `/urunler/${product.slug}`)} className="btn btn-quiet">
                 {ui.detailsCta}
+                <Icon name="arrowUpRight" className="size-4" strokeWidth={2} />
               </Link>
             )}
           </div>
