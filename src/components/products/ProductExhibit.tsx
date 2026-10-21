@@ -2,7 +2,7 @@
 
 import { useState, type MouseEvent } from "react";
 import Link from "next/link";
-import { Icon } from "@/components/brand/Icon";
+import { Icon, LAYER_ICON } from "@/components/brand/Icon";
 import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
 import { PRODUCT_LAYERS, type ProductLayer } from "@/content/constants";
@@ -127,11 +127,12 @@ export function ProductExhibit({
                           active === layer ? "bg-accent text-accent-ink" : "bg-surface-2 text-ink hover:bg-ink hover:text-ground"
                         }`}
                       >
-                        <span className={`size-2 ${active === layer ? "bg-accent-ink" : "bg-accent"}`} aria-hidden="true" />
+                        <Icon name={LAYER_ICON[layer]} className={`size-4 ${active === layer ? "text-accent-ink" : "text-accent"}`} />
                         {ui.layerNames[layer]}
                       </button>
                     ) : (
                       <span className="inline-flex items-center gap-2 px-3 py-2 text-small text-muted line-through decoration-muted/60">
+                        <Icon name={LAYER_ICON[layer]} className="size-4 opacity-60" />
                         {ui.layerNames[layer]}
                       </span>
                     )}

@@ -8,6 +8,7 @@ import { ControllerFace, ControllerKey, PushButton, WaterBathModel, WaterBathSte
 import type { InteractionLabels } from "../ProductInteractionView";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 import { MiniTrend } from "./MiniTrend";
+import { Icon } from "@/components/brand/Icon";
 import type { MountResult, SectionLook, ViewerState } from "@/components/device/SB9KViewer";
 
 // Gerçek CAD modeli (three.js) yalnız simülatör yaklaşınca yüklenir.
@@ -456,18 +457,24 @@ export function WaterBathSimulator({
           <p className="mt-1 text-small text-muted">
             {t.section}: <span className="text-ink">{sectionShown ? sectionText[sectionShown] : t.sectionNone}</span>
           </p>
-          <p aria-live="polite" className="mt-1 max-w-[16rem] text-small text-ink">
-            {mounted ? mountedText[mounted] : null}
+          <p aria-live="polite" className="mt-1 flex max-w-[16rem] items-start gap-1.5 text-small text-ink">
+            {mounted ? (
+              <>
+                <Icon name={mounted === "flat" ? "check" : "alert"} className={`mt-[0.2em] size-[1em] ${mounted === "flat" ? "text-accent" : "text-[#ff9db8]"}`} />
+                {mountedText[mounted]}
+              </>
+            ) : null}
           </p>
         </div>
 
         <div className="pointer-events-none absolute right-4 top-4 flex max-w-[55%] flex-col items-end gap-3">
           <p
             aria-live="polite"
-            className={`px-3 py-1.5 text-right text-small font-semibold ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-right text-small font-semibold ${
               snap.status === "interlock" ? alertTone : snap.on ? "bg-accent text-accent-ink" : "bg-surface-2 text-ink"
             }`}
           >
+            {snap.status === "interlock" ? <Icon name="alert" className="size-[1em]" strokeWidth={2} /> : null}
             {statusText[snap.status]}
           </p>
           <div className="hidden bg-ground/70 px-3 py-2 sm:block">
@@ -481,6 +488,7 @@ export function WaterBathSimulator({
             {webgl === "ready" ? t.panelHintSlides : t.panelHint}
           </p>
           <button type="button" onClick={() => setExploded((v) => !v)} aria-pressed={exploded} className="btn btn-quiet min-h-0 py-2.5 text-small">
+            <Icon name="layers" className="size-4" />
             {exploded ? t.assemble : t.explode}
           </button>
         </div>
@@ -488,7 +496,10 @@ export function WaterBathSimulator({
 
       {/* Hazır ayarlar (parafin türüne göre) ve senaryolar; çalıştırma ön panelde. */}
       <div className="flex flex-wrap items-center gap-2 bg-surface p-3">
-        <span className="mr-1 text-small text-muted">{t.presets}</span>
+        <span className="mr-1 inline-flex items-center gap-1.5 text-small text-muted">
+          <Icon name="thermometer" className="size-4" />
+          {t.presets}
+        </span>
         {presets.map((p) => (
           <button
             key={p.label}
@@ -503,6 +514,7 @@ export function WaterBathSimulator({
         ))}
         <span className="mx-1 hidden h-6 w-px bg-muted/30 sm:block" aria-hidden="true" />
         <button type="button" onClick={() => set((s) => (s.light = !s.light))} aria-pressed={snap.light} className={`${chip} ${quiet}`}>
+          <Icon name="bulb" className="size-4" />
           {t.light}: <strong className="font-semibold">{snap.light ? t.on : t.off}</strong>
         </button>
         <button
@@ -511,6 +523,7 @@ export function WaterBathSimulator({
           aria-pressed={snap.waterLow}
           className={`${chip} ${snap.waterLow ? alertTone : quiet}`}
         >
+          <Icon name={snap.waterLow ? "alert" : "drop"} className="size-4" />
           {t.water}: <strong className="font-semibold">{snap.waterLow ? t.waterLow : t.waterOk}</strong>
         </button>
       </div>

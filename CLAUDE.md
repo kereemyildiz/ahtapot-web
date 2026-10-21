@@ -163,7 +163,7 @@ Unbounded kullanıcı isteğiyle bırakıldı ("d" eğik, geniş yuvarlak formla
 Üçü de `next/font/google`, `subsets: ['latin', 'latin-ext']` — **latin-ext zorunlu**. Büyük harf CSS ile ve doğru `lang` altında uygulanır (Türkçe i→İ). `µm` gibi birimler uppercase'e sokulmaz.
 
 ### İkonlar
-Tek set: `components/brand/Icon.tsx` (24'lük ızgara, 1.75 çizgi, kare uç, sivri köşe — meander diliyle aynı). Bağımlılık yok; yeni ikon gerekirse oraya path olarak eklenir. Ölçülü kullanılır: birincil aksiyonlarda ok, yeni sekmede açılan bağlantıda çapraz ok, iletişim ayrıntılarında (adres/e-posta/telefon), menü düğmesi, dil seçicide küre. İkon tek başına anlam taşımaz; yanında metin ya da `aria-label` olur.
+Tek set: `components/brand/Icon.tsx` (24'lük ızgara, 1.75 çizgi, kare uç, sivri köşe — meander diliyle aynı). Bağımlılık yok; yeni ikon gerekirse oraya path olarak eklenir. Ölçülü kullanılır: birincil aksiyonlarda ok, geri bağlantılarında sol ok, yeni sekmede açılan bağlantıda çapraz ok, iletişim ayrıntılarında (adres/e-posta/telefon), menü düğmesi, dil seçicide küre. Disiplin ikonları (`LAYER_ICON`: küp, devre, kod, pencere, harita) hem yetkinlik adımı başlığında hem ürün kartının katman çiplerinde aynıdır: aynı ekip, farklı katmanlar. Uyarı ikonu durumu renkten bağımsız da anlatır (form hataları, su az, ikincil termostat, kırışık/dağılmış kesit); başarıda onay işareti. Simülatör kontrollerinde ampul, damla, katmanlar, termometre. İlkeler bölümüne ikon konmaz (üç sütun × ikon kalıbı jeneriktir). İkon tek başına anlam taşımaz; yanında metin ya da `aria-label` olur.
 
 Dil seçici nav bağlantılarından ayrı durur: küre + `TR | EN` anahtarı, etkin dil dolu. Ürün adı logodaki mavi çubukla tabela gibi durur (`ProductExhibit`).
 

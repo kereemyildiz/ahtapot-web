@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import type { LayerId } from "@/content/constants";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 import { LayerVisual, type ToolLabels, type VisualItem } from "./visuals";
+import { Icon, LAYER_ICON } from "@/components/brand/Icon";
 
 type StageItem = VisualItem & {
   layer: string;
@@ -139,6 +140,13 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
               >
                 {/* Hero'daki modülden gelinince beliren varış çizgisi (HeroNetwork → goTo). */}
                 <span data-arrive-bar="" aria-hidden="true" className="invisible absolute -left-3 top-0 h-full w-[3px] origin-top bg-accent" />
+                <Icon
+                  name={LAYER_ICON[it.id]}
+                  strokeWidth={1.5}
+                  className={`mr-[0.3em] inline-block size-[0.78em] align-[-0.06em] transition-colors duration-300 ${
+                    i === active ? "text-periwinkle" : "text-muted/60"
+                  }`}
+                />
                 {it.title}
               </h3>
               <p className="mt-5 max-w-[42ch] text-body text-ink/90">{it.sentence}</p>

@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
 import { getMedia } from "@/content/media";
+import { Icon } from "@/components/brand/Icon";
 
 /**
  * Görsel kaynakları: açık lisanslı her fotoğrafın adı, yazarı ve lisansı
@@ -21,8 +22,9 @@ export default async function CreditsPage({ params }: PageProps<"/[locale]/kayna
   return (
     <main className="frame pb-24 pt-[calc(var(--header-h)+clamp(2rem,5vw,4rem))]">
       <div className="max-w-3xl">
-        <Link href={localeHref(locale as AppLocale, "/")} className="text-small text-muted transition-colors hover:text-ink">
-          ← {tCompany("shortName")}
+        <Link href={localeHref(locale as AppLocale, "/")} className="inline-flex items-center gap-1.5 text-small text-muted transition-colors hover:text-ink">
+          <Icon name="arrowLeft" className="size-4" strokeWidth={2} />
+          {tCompany("shortName")}
         </Link>
         <h1 className="section-title mt-8">{t("title")}</h1>
         <p className="mt-8 text-body text-ink/90">{t("intro")}</p>
