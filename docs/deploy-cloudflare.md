@@ -9,8 +9,10 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 | Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
 | Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
 | DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı |
-| E-posta | Alan adında e-posta yok |
-| Form secret'ları | **Henüz girilmedi** (§5.5); form gönderimi şimdilik hata döner |
+| Gelen e-posta | Cloudflare Email Routing: `info@` ve `talep@ahtapot.ink` → a.keremyildiz99@gmail.com (posta kutusu yok, yönlendirme) |
+| Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `talep@ahtapot.ink`, Reply-To formu dolduran kişi |
+| Form secret'ları | `RESEND_API_KEY` (yalnız gönderim yetkili anahtar), `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`; üçü de Secret, yalnız Production |
+| Doğrulama (21 Ekim 2026) | Canlı formdan test: Resend "Delivered", Email Routing "Forwarded" |
 
 - GoDaddy'deki Website Builder sitesi artık alan adından erişilmiyor. Silmek
   şart değil; ücretli bir paketse yenilemesi kapatılabilir.
@@ -18,9 +20,12 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
   bağlantı sıfırlanıyor; aynı Cloudflare IP'sine başka bir alan adıyla gidince
   sorun yok, yani ağ `workers.dev`'i SNI üzerinden engelliyor. Yayını
   etkilemiyor; testler `ahtapot.ink` üzerinden yapılır.
-- Cloudflare'in GitHub uygulamasına kurulumda tüm depolara erişim verildi;
-  GitHub → Settings → Applications → Cloudflare Workers and Pages →
-  Configure → "Only select repositories" → `ahtapot-web` ile daraltılmalı.
+- Cloudflare'in GitHub uygulaması yalnız `ahtapot-web` deposunu görüyor.
+- Önizleme build'leri açık: `main` dışındaki dallar (`develop`, `feature/*`)
+  canlıya dokunmadan `*-ahtapot-web.a-keremyildiz99.workers.dev` önizleme
+  sürümü üretir. Secret'lar önizlemelere verilmedi; önizlemede form bilinçli
+  olarak "gönderilemedi" döner, test talepleri gelen kutusuna düşmez.
+  `workers.dev` bu ağda engelli olduğu için önizlemeler başka bir ağdan açılır.
 
 ---
 
@@ -41,14 +46,20 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 | Kaynak | Ücretsiz sınır | Bu site |
 |---|---|---|
 | Worker istekleri | Günde 100.000 | Statik dosyalar (JS, CSS, görsel, patoloji karoları) bu sayıya girmez |
-| Worker boyutu | 3 MiB (gzip) | **1,72 MiB** webpack / **1,83 MiB** Turbopack (ölçüldü) |
+| Worker boyutu | 64 MiB (sıkıştırılmamış; Ekim 2026'da sıkıştırılmış sınır kalktı) | **1,72 MiB** gzip webpack / **1,83 MiB** Turbopack (ölçüldü) |
 | Statik dosya | Sürüm başına 20.000, dosya başına 25 MiB | 941 dosya, 29 MB |
 | CPU | İstek başına 10 ms | Sayfalar önceden üretilmiş; yayından sonra panelden ölçülmeli (§6) |
 | Görsel optimizasyonu | Ayda 5.000 benzersiz dönüşüm | Birkaç yüz. Aşılırsa yeni dönüşüm hata verir, **ücret çıkmaz** |
-| Resend | Ayda 3.000, günde 100 e-posta | Talep formu |
+| Email Routing | Ücretsiz | Gelen e-postaların yönlendirmesi |
+| Resend | Ayda 3.000, günde 100 e-posta, 3 alan adı | Talep formu |
 
-Sınır aşılırsa Cloudflare kendiliğinden ücretli plana geçirmez; Workers Paid
-ayda 5 $'dır ve elle seçilir.
+Sınır aşılırsa ücret çıkmaz:
+- **Cloudflare:** hesapta kart yok; kendiliğinden ücretli plana geçmez. Günlük
+  istek sınırı aşılırsa o gün TSİ 03:00'e kadar sayfalar 1027 hatası verir.
+  Workers Paid ayda 5 $'dır ve elle seçilir. Son 24 saat (21 Ekim 2026):
+  3.190 çağrı, 0 hata, ortalama 6 ms CPU.
+- **Resend:** ücretsiz planda aşım faturalanmaz; kullanıcıya bildirim gelir ve
+  yükseltme seçeneği sunulur. Kotadaki fazla gönderimler gönderilmez.
 
 ---
 
@@ -186,9 +197,8 @@ durur; PATH'te `corepack pnpm`'e yönlenen bir `pnpm` kısayolu gerekir.
 
 ## 5. Panel adımları (hesap sahibi)
 
-**5.1–5.4 ve 5.6 tamamlandı (20 Ekim 2026). Bekleyen: 5.5 (secret'lar) ve
-5.7 (Resend alan adı doğrulama).** Aşağıdaki adımlar kayıt ve yeniden kurulum
-için duruyor. Nameserver değişikliği GoDaddy'de SMS doğrulaması istedi; .ink
+**Hepsi tamamlandı (5.1–5.6: 20 Ekim, 5.5 ve 5.7: 21 Ekim 2026).**
+Aşağıdaki adımlar kayıt ve yeniden kurulum için duruyor. Nameserver değişikliği GoDaddy'de SMS doğrulaması istedi; .ink
 kayıt sunucusu birkaç dakikada güncellendi.
 
 ### 5.1 GoDaddy'de hazırlık
@@ -245,13 +255,16 @@ Worker → **Settings** → **Variables and Secrets** → **Add**. Üçünün t�
 
 | Ad | Değer |
 |---|---|
-| `RESEND_API_KEY` | https://resend.com/api-keys |
-| `CONTACT_EMAIL_TO` | Talepleri alacak gerçek gelen kutusu |
-| `CONTACT_EMAIL_FROM` | `Ahtapot <talep@alan-adi>`: alan adı Resend'de doğrulandıktan sonra. O zamana kadar boş bırak; kod `onboarding@resend.dev`'e düşer. |
+| `RESEND_API_KEY` | Resend → API keys; izin **Sending access** (yalnız gönderim) |
+| `CONTACT_EMAIL_TO` | `talep@ahtapot.ink` |
+| `CONTACT_EMAIL_FROM` | `Ahtapot Web Sitesi <site@ahtapot.ink>` |
 
-Resend'de alan adı doğrulanmadan, test göndericisi yalnız **Resend hesabının
-sahibi olan adrese** e-posta gönderebilir. Başlangıçta `CONTACT_EMAIL_TO` o
-adres olursa form hemen çalışır.
+- Ortam olarak yalnız **Production** işaretli; **Previews** bilinçli olarak
+  boş (bkz. durum notları).
+- Panelden eklenen **düz** değişkenler bir sonraki `wrangler deploy`'da silinir;
+  bu yüzden üçü de **Secret**.
+- Resend'de alan adı doğrulanmadan test göndericisi (`onboarding@resend.dev`)
+  yalnız Resend hesabının sahibine e-posta gönderebilir.
 
 ### 5.6 Alan adını Worker'a bağlama
 1. Worker → **Settings** → **Domains & Routes** → **Add** → **Custom Domain**:
@@ -265,14 +278,20 @@ adres olursa form hemen çalışır.
 Alternatif: alan adı belli olunca `wrangler.jsonc`'deki `routes` TODO'su
 doldurulur, her deploy aynı alan adlarını kodla tanımlar.
 
-### 5.7 E-posta (önerilir)
-- **Resend alan adı doğrulama:** Resend → Domains → Add → kayıtları
-  **Cloudflare DNS**'e gir (GoDaddy'ye değil). Kayıtlar "DNS only" (gri bulut)
-  olmalı.
-- **Gelen kutusu yoksa:** Cloudflare **Email Routing** (ücretsiz) ile
-  `talep@alan-adi` → kişisel posta kutusuna yönlendirilebilir.
-  **Alan adında zaten e-posta varsa** (GoDaddy/Microsoft 365, Google
-  Workspace) Email Routing'i açma: mevcut MX kayıtlarını değiştirir.
+### 5.7 E-posta
+- **Email Routing:** Cloudflare → alan adı → Email → Email Routing →
+  "Add missing records" (3 MX, `cf2024-1._domainkey` DKIM, SPF) → Destination
+  addresses → Gmail adresi (Cloudflare hesabının adresi olduğu için doğrudan
+  "Verified") → Routing rules: `info@`, `talep@` → Send to an email → Gmail.
+- **Resend:** Domains → Add → `ahtapot.ink`, bölge **Ireland (eu-west-1)**
+  (sonradan değişmez), Return-Path `send`, takip kapalı, receiving kapalı
+  (gelen posta Email Routing'de). **Auto configure** Cloudflare'in Domain
+  Connect onay penceresini açar; kayıtlar: `resend._domainkey` TXT, `send` ve
+  `rsend` CNAME (DNS only). Birkaç dakikada "verified".
+- Resend'in gönderim kayıtları (`send`, `rsend`) alt alan adında olduğu için
+  kök alandaki Email Routing MX'leriyle çakışmaz.
+- Alan adında ileride gerçek posta kutusu (Microsoft 365, Google Workspace)
+  açılırsa Email Routing kapatılır; MX kayıtlarını o sağlayıcınınkiler alır.
 
 ---
 
