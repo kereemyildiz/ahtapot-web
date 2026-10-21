@@ -4,20 +4,9 @@ import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
 import { getLocaleContent } from "@/content";
 import { ContactForm } from "./ContactForm";
-import { DrawnMark } from "@/components/motion/DrawnMark";
+import { ContactReach } from "./ContactReach";
 import { SectionRule } from "@/components/motion/SectionRule";
 import { Words } from "@/components/motion/Words";
-import { Icon, type IconName } from "@/components/brand/Icon";
-
-// Ayrıntı satırı: ikon terimin yanında, değer altında aynı hizadan başlar.
-function Term({ icon, children }: { icon: IconName; children: string }) {
-  return (
-    <dt className="flex items-center gap-2 text-small text-muted">
-      <Icon name={icon} className="size-4 text-periwinkle" />
-      {children}
-    </dt>
-  );
-}
 
 export async function Contact() {
   const locale = (await getLocale()) as AppLocale;
@@ -46,38 +35,17 @@ export async function Contact() {
 
         <aside data-reveal="" className="lg:col-span-4 lg:col-start-9" aria-label={t("detailsHeading")}>
           <p className="font-display text-[1.25rem] font-medium tracking-[-0.02em]">{t("detailsHeading")}</p>
-          <dl className="mt-6 grid gap-6 text-body">
-            <div>
-              <Term icon="pin">{t("addressLabel")}</Term>
-              <dd className="mt-1 text-ink">
-                {tCompany("legalName")}
-                <br />
-                {tCompany("address")}
-              </dd>
-            </div>
-            {/* TODO: gerçek e-posta / telefon content/*.json → company'ye girilince görünür. */}
-            {email && (
-              <div>
-                <Term icon="mail">{t("emailLabel")}</Term>
-                <dd className="mt-1">
-                  <a href={`mailto:${email}`} className="link">
-                    {email}
-                  </a>
-                </dd>
-              </div>
-            )}
-            {phone && (
-              <div>
-                <Term icon="phone">{t("phoneLabel")}</Term>
-                <dd className="mt-1">
-                  <a href={`tel:${phone.replace(/\s/g, "")}`} className="link">
-                    {phone}
-                  </a>
-                </dd>
-              </div>
-            )}
-          </dl>
-          <DrawnMark className="mt-16 hidden h-[clamp(14rem,24vw,22rem)] lg:block" />
+          <div className="mt-8">
+            {/* Ahtapotun kolları iletişim satırlarına uzanır (hero'nun kapanışı). */}
+            <ContactReach
+              rows={[
+                { icon: "pin", label: t("addressLabel"), lines: [tCompany("legalName"), tCompany("address")] },
+                // TODO: gerçek e-posta content/*.json → company.email'e girilince görünür.
+                ...(email ? [{ icon: "mail" as const, label: t("emailLabel"), lines: [email], href: `mailto:${email}` }] : []),
+                ...(phone ? [{ icon: "phone" as const, label: t("phoneLabel"), lines: [phone], href: `tel:${phone.replace(/\s/g, "")}` }] : []),
+              ]}
+            />
+          </div>
         </aside>
       </div>
     </section>

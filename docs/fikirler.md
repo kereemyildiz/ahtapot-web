@@ -41,11 +41,12 @@ Aklımıza gelen ama henüz yapılmayan işler. Yeni fikir en alta eklenir; yap�
 - Uygun yerlere ikon.
 - Açık tema desteği (şu an CLAUDE.md "tek koyu tema" diyor; bu kural kullanıcı isteğiyle değişecek).
 - Metinler ve açıklamalar yeniden düzenlenecek (kullanıcı mevcut hâlini beğenmiyor).
-- SEO: aramalarda öne çıkma.
+
 
 **C**
 - Demo videosu (yukarıdaki tanıtım filmi / AhtaPatolog demosu).
-- SEO (B'deki işin devamı/ölçümü).
+- SEO: aramalarda öne çıkma.
+
 
 ## Yapıldı
 

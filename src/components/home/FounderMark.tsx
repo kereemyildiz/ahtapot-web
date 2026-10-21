@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
+import { gsap, useGSAP } from "@/lib/gsapSetup";
+import { replayOnView } from "@/lib/replayOnView";
 import { pulseDash } from "@/lib/svgPath";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 
@@ -37,20 +38,8 @@ export function FounderMark({ label }: { label: string }) {
           .from("[data-founder-chip]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.45, ease: "expo.out" }, "-=0.2")
           .from("[data-founder-pulse]", { autoAlpha: 0, duration: 0.3 });
 
-        // Hero gibi: yalnız ilk açılışta değil, bölüme her girişte (aşağıdan
-        // da yukarıdan da) yeniden çizilir. Tamamen ekran dışına çıkınca başa
-        // sarılır; böylece geri gelince boş kareden başlar, sıçramaz.
-        const play = () => {
-          if (!tl.isActive()) tl.restart();
-        };
-        ScrollTrigger.create({ trigger: root.current, start: "top 75%", end: "bottom 25%", onEnter: play, onEnterBack: play });
-        ScrollTrigger.create({
-          trigger: root.current,
-          start: "top bottom",
-          end: "bottom top",
-          onLeave: () => tl.pause(0),
-          onLeaveBack: () => tl.pause(0),
-        });
+        // Hero gibi: yalnız ilk açılışta değil, bölüme her girişte yeniden çizilir.
+        return root.current ? replayOnView(root.current, tl) : undefined;
       });
       return () => mm.revert();
     },

@@ -22,7 +22,7 @@ Ahtapot Tıbbi Teknolojiler A.Ş. için tek sayfalık (scroll-driven) kurumsal t
 Logodaki meander işareti bir ahtapottur: bir baş (elmas) ve dik açılarla kıvrılan kollar. Sitenin görsel dili bundan türer.
 
 - **Karanlık oda:** sayfa baştan sona tek bir mavi-siyah zeminde akar; cihazlar, çizimler ve fotoğraflar bu zeminde ışıklı sergi objeleri gibi durur. Açık/koyu tema düğmesi yok, tek koyu tema.
-- **Tek çizgi:** logonun meander çizgisi sitenin her yerinde aynı dille devam eder. Hero'da ahtapotun dört kolu dört disipline uzanır; yetkinlikler bölümünde aynı çizgi ilerleme göstergesi olarak kaydırdıkça uzar; iletişimde logo kendini çizer.
+- **Tek çizgi:** logonun meander çizgisi sitenin her yerinde aynı dille devam eder. Hero'da ahtapotun dört kolu dört disipline uzanır; yetkinlikler bölümünde aynı çizgi ilerleme göstergesi olarak kaydırdıkça uzar; iletişimde aynı ahtapotun kolları iletişim satırlarına uzanır (açılış disiplinlere, kapanış size).
 
 Bu bir jenerik "stack diyagramı" değil — markanın kendi logosundan türetilmiş, başka hiçbir şirkete uymayan bir yapı. Yeni ürün eklendiğinde metafor bozulmaz.
 
@@ -42,7 +42,8 @@ HAKKIMIZDA      "Hakkımızda" başlığı, yerlileştirme odağı (okudukça ya
                 üç ilke (Pillars: kaydırdıkça uzar, düğümleri yakar), kurucu (stetoskobun hortumu devre
                 izine dönüşüp çipe bağlanır; bölüme her girişte yeniden çizilir)
 REFERANSLAR     yalnızca gerçek referans varsa; yoksa bölüm hiç render edilmez
-İLETİŞİM        talep formu; konuya göre değişen buton metni; logo kendini çizer
+İLETİŞİM        talep formu; konuya göre değişen buton metni; logo kendini çizer ve kolları adres/telefon/
+                e-posta satırlarına uzanır (ContactReach; kollar satırların gerçek konumundan hesaplanır)
 ```
 
 Ekip bölümü kullanıcı isteğiyle kaldırıldı; yalnız kurucu anlatılır (Hakkımızda içinde). Kişi listesi geri eklenmez.
@@ -195,6 +196,7 @@ gsap.ticker.lagSmoothing(0)
 - **Scroll-jack yok:** kullanıcı scroll kontrolünü asla kaybetmez. Tekerlek olayını yakalayan etkileşimler (deepzoom) yalnız kullanıcı tıklayınca ya da Ctrl/⌘ ile yakalar ve o sırada `data-lenis-prevent` taşır; imleç çıkınca bırakır. Turntable/simülatör tekerleğe hiç dokunmaz, yalnız sürükleme.
 - GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz, hex kullan.
 - Yolda akan darbe/işaret için `pathLength` + CSS `stroke-dashoffset` kullanma: Chrome CSS'teki dashoffset'i pathLength'e göre ölçeklemiyor. `lib/svgPath.ts` → `pulseDash` (akan darbe) ve `drawDash` (kendini çizen yol) gerçek uzunluğu (`--len`) verir.
+- "Bölüme her girişte yeniden çiz" için `lib/replayOnView` (IntersectionObserver): ScrollTrigger'ın onLeave/onLeaveBack ile başa sarma, refresh sırasında tetiklenip çizimi başa sarılı bırakıyordu (mobilde hiç görünmüyordu).
 - `useGSAP` içindeki "bir kez oldu" bayraklarını `useRef`'te değil, efektin içinde tut: StrictMode ikinci kurulumda başlangıç durumunu yeniden uygular, ref'teki bayrak ise animasyonu atlatır.
 - Hover mikro-etkileşimleri 150–250ms. Bölüm reveal'ları 400–600ms.
 - Yerleşim tetikleyen özellik (`left`, `width`, `font-size`) animasyonla sürülmez; `transform` kullanılır. Karşılaştırma ayracı tam genişlikte bir taşıyıcıyla `translateX`, su banyosu modelinin yakınlaşması `scale` ile (eski `font-size` yöntemi 1 sn'de ~140 ms yerleşim harcıyordu).
