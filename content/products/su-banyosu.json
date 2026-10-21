@@ -49,19 +49,19 @@
         "anchors": "/models/sb9k.anchors.json",
         "parts": [
           {
-            "match": "ANA_SASE",
-            "color": "#dfe2e7",
+            "match": "govde",
+            "color": "#86379b",
             "finish": "paint",
             "layer": "mekanik"
           },
           {
-            "match": "KABIN_IC_DUVAR",
-            "color": "#dfe2e7",
+            "match": "ic-duvar",
+            "color": "#86379b",
             "finish": "paint",
             "layer": "mekanik"
           },
           {
-            "match": "SU_KABI",
+            "match": "hazne",
             "color": "#1c1f25",
             "finish": "teflon",
             "layer": "mekanik",
@@ -73,8 +73,8 @@
             "role": "container"
           },
           {
-            "match": "derlin",
-            "color": "#e9e7e1",
+            "match": "tutamak",
+            "color": "#1d1e22",
             "finish": "plastic",
             "layer": "mekanik",
             "explode": [
@@ -84,7 +84,7 @@
             ]
           },
           {
-            "match": "TEPSİ_AYDINLATMA",
+            "match": "led-cami",
             "color": "#dfe8ff",
             "finish": "glass",
             "layer": "elektronik",
@@ -96,7 +96,7 @@
             "role": "ledGlass"
           },
           {
-            "match": "ALT_TEPSI",
+            "match": "alt-tepsi",
             "color": "#c9ced5",
             "finish": "metal",
             "layer": "mekanik",
@@ -107,7 +107,7 @@
             ]
           },
           {
-            "match": "ISI_TRANSFER",
+            "match": "isi-plakasi",
             "color": "#c4c8cf",
             "finish": "metal",
             "layer": "mekanik",
@@ -118,7 +118,7 @@
             ]
           },
           {
-            "match": "HEATER-PAD",
+            "match": "isitici",
             "color": "#4c4c4c",
             "finish": "rubber",
             "layer": "elektronik",
@@ -130,7 +130,7 @@
             "role": "heater"
           },
           {
-            "match": "PROP_SOKET",
+            "match": "prob-soketi",
             "color": "#868686",
             "finish": "metal",
             "layer": "elektronik",
@@ -141,7 +141,7 @@
             ]
           },
           {
-            "match": "PROP BA",
+            "match": "prob-baglantisi",
             "color": "#895956",
             "finish": "metal",
             "layer": "elektronik",
@@ -152,7 +152,7 @@
             ]
           },
           {
-            "match": "ARALAYICI",
+            "match": "aralayici",
             "color": "#9aa0aa",
             "finish": "metal",
             "layer": "mekanik",
@@ -163,7 +163,7 @@
             ]
           },
           {
-            "match": "TABAN_PLAKASI",
+            "match": "taban",
             "color": "#c9ced5",
             "finish": "metal",
             "layer": "mekanik",
@@ -174,7 +174,7 @@
             ]
           },
           {
-            "match": "SSR",
+            "match": "ssr",
             "color": "#e5eaed",
             "finish": "plastic",
             "layer": "elektronik",
@@ -185,7 +185,7 @@
             ]
           },
           {
-            "match": "POWER-SUPPLY",
+            "match": "guc-kaynagi",
             "color": "#a59e96",
             "finish": "metal",
             "layer": "elektronik",
@@ -196,33 +196,33 @@
             ]
           },
           {
-            "match": "EMI-FILTER",
+            "match": "emi-filtre",
             "color": "#a59e96",
             "finish": "metal",
             "layer": "elektronik"
           },
           {
-            "match": "TEMPERATURE-CONTROLLER",
-            "color": "#1e2026",
+            "match": "kontrolcu",
+            "color": "#2c2f35",
             "finish": "plastic",
             "layer": "gomulu",
             "role": "controller"
           },
           {
-            "match": "PUSHBUTTON",
+            "match": "dugme",
             "color": "#b9bec6",
             "finish": "metal",
             "layer": "elektronik",
             "role": "button"
           },
           {
-            "match": "IEC-AC-INLET",
+            "match": "guc-girisi",
             "color": "#1e2026",
             "finish": "plastic",
             "layer": "elektronik"
           },
           {
-            "match": "POWER-CORD",
+            "match": "kablo",
             "color": "#15171b",
             "finish": "rubber",
             "layer": "elektronik"

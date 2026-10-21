@@ -57,7 +57,8 @@ const SIMULATOR_KEYS = [
   "presetFatty", "light", "water", "waterOk", "waterLow", "explode", "assemble",
   "statusOff", "statusHeating", "statusHolding", "statusCooling", "statusInterlock",
   "section", "sectionWrinkled", "sectionOpening", "sectionFlat", "sectionTooHot",
-  "chartTitle", "chartTemp", "chartSet", "panelHint", "disclaimer",
+  "sectionNone", "slideTake", "slideRefill", "slideFlat", "slideWrinkled", "slideTooHot",
+  "chartTitle", "chartTemp", "chartSet", "panelHint", "panelHintSlides", "disclaimer",
 ] as const;
 
 const requestTypeRecord = z
@@ -392,7 +393,7 @@ const productAssetsSchema = z
             parts: z.array(
               z
                 .object({
-                  // Parça adında geçen metin (SolidWorks parça adı, büyük/küçük harf duyarlı)
+                  // Parçanın web kimliğinde geçen metin (tools/cad → WEB_PARTS; ör. "govde", "dugme")
                   match: z.string(),
                   color: z.string().regex(/^#[0-9a-f]{6}$/i),
                   finish: z.enum(["paint", "metal", "plastic", "teflon", "glass", "rubber"]).default("paint"),

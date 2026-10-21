@@ -7,12 +7,30 @@ gerekmez. CAD dosyaları repo'ya girmez (`Su Isıtıcı SB-9K/`, `.git/info/excl
 ## Yeniden üretmek
 
 ```bash
-# 1) Montajı GLB'ye çevir (ham, ~6 MB) + çapalar
+# 0) Bir kez: numpy ve earcut (delikli yüzeylerin üçgenlenmesi)
+pip install numpy mapbox_earcut==2.1.0
+# 1) Montajı GLB'ye çevir (ham, ~3 MB) + çapalar
 python -I tools/cad/build_sb9k.py "Su Isıtıcı SB-9K/Prod V4" /tmp/sb9k-raw.glb
-# 2) Sıkıştır: nicemleme + meshopt + %50 sadeleştirme (sapma ≤ %0,1); adlar ve extras korunur
-npx -y gltfpack@0.25.0 -i /tmp/sb9k-raw.glb -o public/models/sb9k.glb -kn -km -ke -cc -si 0.5 -se 0.001
+# 2) Sıkıştır: konum 12 bit (~0,14 mm), meshopt, %50 sadeleştirme (sapma ≤ %0,1); adlar ve extras korunur
+npx -y gltfpack@0.25.0 -i /tmp/sb9k-raw.glb -o public/models/sb9k.glb -kn -km -ke -cc -si 0.5 -se 0.001 -vp 12
 cp /tmp/sb9k-raw.anchors.json public/models/sb9k.anchors.json
 ```
+
+`mapbox_earcut` yoksa kendi kulak kırpmamıza düşer; o, birden çok deliği olan
+yüzeylerde ters üçgen üretebiliyor (ön paneldeki iki düğme deliği arasında
+"köprü" görünüyordu).
+
+## Web modeli üretim verisi değildir
+
+- Parça adları `WEB_PARTS` tablosuyla nötr kimliklere çevrilir (`govde`, `hazne`,
+  `dugme-1`…); dosya adı, revizyon, tedarikçi parça numarası modele girmez.
+  Tabloda olmayan parça (vidalar vb.) atılır.
+- `PROXY_BOX`: kontrolcünün tedarikçi modeli (iç devreleriyle ~83 bin üçgen)
+  yerine sınır kutusu konur; ön yüzü sitede çizilir.
+- Konum 12 bit nicemlenir; modelde yalnız iki ortak malzeme vardır (renkler ürün
+  verisinde).
+- Kenar çizgileri (sınır + 32°'den keskin kenarlar) burada hesaplanır ve her
+  parçaya LINES ilkeli olarak gömülür; tarayıcıda `EdgesGeometry` çalışmaz.
 
 Renkler, katmanlar ve "İçini gösterin" hareketleri burada değil, ürün
 verisinde: `content/products/su-banyosu.json` → `assets.simulator.model3d.parts`.

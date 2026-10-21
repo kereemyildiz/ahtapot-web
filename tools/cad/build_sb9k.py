@@ -2,6 +2,12 @@
 SolidWorks ekran listelerinden (B-yüzeyler, satın alınmış parçalar) tam ağ.
 
 Kullanım: python -I tools/cad/build_sb9k.py <Prod V4 dizini> <çıktı.glb> [rapor.json]
+
+Web çıktısı kasıtlı olarak üretim verisi değildir: parça adları nötr kimliklere
+çevrilir (dosya adı, revizyon, tedarikçi yazmaz), WEB_PARTS'ta olmayan parça
+atılır, kontrolcünün tedarikçi modeli (iç devreleriyle) yerine sınır kutusu
+konur. Kenar çizgileri (SolidWorks görünümü) burada hesaplanıp GLB'ye çizgi
+olarak gömülür; tarayıcı hesaplamaz.
 """
 import importlib.util
 import json
@@ -29,6 +35,92 @@ xr = load("xtread")
 xm = load("xtmesh")
 xc = load("xtcurved")
 NS = "{http://www.solidworks.com/sw2003/schema}"
+
+# CAD parça adı (düzenli ifade) → web kimliği. Sıra önemli: ilk eşleşen.
+# Listede olmayan parça web modeline girmez.
+WEB_PARTS = [
+    (r"ANA_SASE", "govde"),
+    (r"KABIN_IC_DUVAR_LEVHA_A", "ic-duvar-a"),
+    (r"KABIN_IC_DUVAR_LEVHA_B", "ic-duvar-b"),
+    (r"TEMPERATURE-CONTROLLER", "kontrolcu"),
+    (r"PUSHBUTTON", "dugme"),
+    (r"IEC-AC-INLET", "guc-girisi"),
+    (r"EMI-FILTER", "emi-filtre"),
+    (r"TABAN_PLAKASI", "taban"),
+    (r"SSR", "ssr"),
+    (r"POWER-SUPPLY", "guc-kaynagi"),
+    (r"ALT_TEPSI", "alt-tepsi"),
+    (r"ISI_TRANSFER", "isi-plakasi"),
+    (r"ARALAYICI", "aralayici"),
+    (r"HEATER-PAD", "isitici"),
+    (r"PROP_SOKET", "prob-soketi"),
+    (r"PROP BA", "prob-baglantisi"),
+    (r"POWER-CORD", "kablo"),
+    (r"SU_KABI", "hazne"),
+    (r"derlin", "tutamak"),
+    (r"AYDINLATMA_CAMI", "led-cami"),
+]
+# Görünmeyen içi yerine sınır kutusu konan parçalar (ön yüzü sitede çizilir).
+PROXY_BOX = {"kontrolcu"}
+EDGE_ANGLE_DEG = 32  # three.js EdgesGeometry ile aynı eşik
+
+
+def web_id(pname):
+    for pat, wid in WEB_PARTS:
+        if re.search(pat, pname):
+            return wid
+    return None
+
+
+def box_mesh(v):
+    lo, hi = v.min(0), v.max(0)
+    c = np.array([[lo[0], lo[1], lo[2]], [hi[0], lo[1], lo[2]], [hi[0], hi[1], lo[2]], [lo[0], hi[1], lo[2]],
+                  [lo[0], lo[1], hi[2]], [hi[0], lo[1], hi[2]], [hi[0], hi[1], hi[2]], [lo[0], hi[1], hi[2]]])
+    quads = [((0, 3, 2, 1), (0, 0, -1)), ((4, 5, 6, 7), (0, 0, 1)), ((0, 1, 5, 4), (0, -1, 0)),
+             ((3, 7, 6, 2), (0, 1, 0)), ((0, 4, 7, 3), (-1, 0, 0)), ((1, 2, 6, 5), (1, 0, 0))]
+    V, N, T = [], [], []
+    for q, n in quads:
+        b = len(V)
+        V += [c[i] for i in q]
+        N += [n] * 4
+        T += [(b, b + 1, b + 2), (b, b + 2, b + 3)]
+    return np.array(V, float), np.array(N, float), np.array(T, np.int64)
+
+
+def feature_edges(v, t, angle_deg=EDGE_ANGLE_DEG):
+    """Sınır kenarları + iki yüz arasındaki açısı eşikten büyük kenarlar.
+    Köşeler 1 µm ızgarada birleştirilir (yüzler ayrı üçgenlendiği için)."""
+    key = np.round(v / 1e-6).astype(np.int64)
+    uniq, inv = np.unique(key, axis=0, return_inverse=True)
+    inv = inv.reshape(-1)
+    pos = np.zeros((len(uniq), 3))
+    pos[inv] = v
+    tw = inv[t]
+    a, b, c = pos[tw[:, 0]], pos[tw[:, 1]], pos[tw[:, 2]]
+    fn = np.cross(b - a, c - a)
+    area = np.linalg.norm(fn, axis=1)
+    ok = (area > 1e-14) & (tw[:, 0] != tw[:, 1]) & (tw[:, 1] != tw[:, 2]) & (tw[:, 0] != tw[:, 2])
+    tw, fn = tw[ok], fn[ok] / area[ok, None]
+    e = np.vstack([tw[:, [0, 1]], tw[:, [1, 2]], tw[:, [2, 0]]])
+    e.sort(axis=1)
+    f = np.tile(np.arange(len(tw)), 3)
+    k = e[:, 0] * len(uniq) + e[:, 1]
+    order = np.argsort(k, kind="stable")
+    k, e, f = k[order], e[order], f[order]
+    start = np.r_[True, k[1:] != k[:-1]]
+    gid = np.cumsum(start) - 1
+    count = np.bincount(gid)
+    first = np.flatnonzero(start)
+    draw = count != 2
+    two = np.flatnonzero(count == 2)
+    i0 = first[two]
+    cos = (fn[f[i0]] * fn[f[i0 + 1]]).sum(1)
+    draw[two] = cos < np.cos(np.radians(angle_deg))
+    edges = e[first[draw]]
+    if not len(edges):
+        return np.zeros((0, 3)), np.zeros((0, 2), np.int64)
+    used, rel = np.unique(edges.reshape(-1), return_inverse=True)
+    return pos[used], rel.reshape(-1, 2)
 
 
 def partition_stream(sec):
@@ -307,10 +399,38 @@ def main():
     json.dump(anchors, open(os.path.splitext(out_path)[0] + ".anchors.json", "w", encoding="utf-8"), indent=1)
     print("çapalar:", {k: (v if k != "buttons" else len(v)) for k, v in anchors.items() if k in ("controller", "logo", "buttons")})
 
+    # --- Web modeli: nötr adlar, listede olmayanı at, tedarikçi içini kutuya çevir ---
+    web_instances = []
+    counts = {}
+    for full, sub, path, m, short, pname in instances:
+        wid = web_id(pname)
+        if wid is None:
+            print("  web modeline alınmadı:", pname)
+            continue
+        counts[wid] = counts.get(wid, 0) + 1
+        web_instances.append((wid, path, m))
+    seen = {}
+    for i, (wid, path, m) in enumerate(web_instances):
+        seen[wid] = seen.get(wid, 0) + 1
+        name = wid if counts[wid] == 1 else f"{wid}-{seen[wid]}"
+        web_instances[i] = (name, wid, path, m)
+    web_mesh_id = {}
+    for name, wid, path, m in web_instances:
+        if not meshes.get(path):
+            continue
+        web_mesh_id.setdefault(path, wid)
+        if wid in PROXY_BOX and not meshes[path][2].startswith("proxy:"):
+            (v, n, t), color, pname = meshes[path]
+            meshes[path] = (box_mesh(v), color, "proxy:" + pname)
+
     # --- GLB ---
     bin_chunks = bytearray()
     buffer_views, accessors, gl_meshes, materials, nodes = [], [], [], [], []
     mesh_index = {}
+    edge_count = {}
+    materials += [{"name": "parca", "pbrMetallicRoughness": {"baseColorFactor": [0.75, 0.75, 0.78, 1.0],
+                   "metallicFactor": 0.1, "roughnessFactor": 0.55}, "doubleSided": True},
+                  {"name": "kenar", "pbrMetallicRoughness": {"baseColorFactor": [0.1, 0.1, 0.12, 1.0]}}]
 
     def add_view(arr, target):
         nonlocal bin_chunks
@@ -322,9 +442,10 @@ def main():
         return len(buffer_views) - 1
 
     for mid, entry in meshes.items():
-        if not entry:
+        if not entry or mid not in web_mesh_id:
             continue
-        (v, n, t), color, mname = entry
+        (v, n, t), color, _ = entry
+        mname = web_mesh_id[mid]
         v = v.astype(np.float32)
         n = (n / np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-9)).astype(np.float32)
         bv = add_view(v, 34962)
@@ -338,20 +459,32 @@ def main():
         bv = add_view(idx, 34963)
         accessors.append({"bufferView": bv, "componentType": 5125, "count": len(idx), "type": "SCALAR"})
         ai = len(accessors) - 1
-        materials.append({"name": mname, "pbrMetallicRoughness": {
-            "baseColorFactor": (color or [0.75, 0.75, 0.78]) + [1.0], "metallicFactor": 0.1, "roughnessFactor": 0.55},
-            "doubleSided": True})
-        gl_meshes.append({"name": mname, "primitives": [{"attributes": {"POSITION": ap, "NORMAL": an},
-                                                          "indices": ai, "material": len(materials) - 1}]})
+        # Malzemeler sitede parça tablosundan atanır: modelde yalnız iki ortak
+        # malzeme (yükleyici 40 malzeme oluşturup atmasın).
+        prims = [{"attributes": {"POSITION": ap, "NORMAL": an}, "indices": ai, "material": 0}]
+        # Kenar çizgileri: aynı ağda ikinci bir LINES ilkeli
+        ev, ei = feature_edges(np.asarray(v, float), t)
+        if len(ei):
+            ev = ev.astype(np.float32)
+            bv = add_view(ev, 34962)
+            accessors.append({"bufferView": bv, "componentType": 5126, "count": len(ev), "type": "VEC3",
+                              "min": ev.min(0).tolist(), "max": ev.max(0).tolist()})
+            ae = len(accessors) - 1
+            eidx = ei.reshape(-1).astype(np.uint32)
+            bv = add_view(eidx, 34963)
+            accessors.append({"bufferView": bv, "componentType": 5125, "count": len(eidx), "type": "SCALAR"})
+            prims.append({"attributes": {"POSITION": ae}, "indices": len(accessors) - 1, "mode": 1, "material": 1})
+        edge_count[mname] = edge_count.get(mname, 0) + len(ei)
+        gl_meshes.append({"name": mname, "primitives": prims})
         mesh_index[mid] = len(gl_meshes) - 1
 
-    for full, sub, path, m, short, pname in instances:
+    for name, wid, path, m in web_instances:
         if path not in mesh_index:
             continue
-        nodes.append({"name": full, "mesh": mesh_index[path], "matrix": m.reshape(-1).tolist(),
-                      "extras": {"group": sub, "part": pname}})
+        nodes.append({"name": name, "mesh": mesh_index[path], "matrix": m.reshape(-1).tolist(),
+                      "extras": {"part": wid}})
 
-    gltf = {"asset": {"version": "2.0", "generator": "sw2glb_cad (ahtapot)"},
+    gltf = {"asset": {"version": "2.0", "generator": "ahtapot"},
             "scene": 0, "scenes": [{"nodes": list(range(len(nodes)))}],
             "nodes": nodes, "meshes": gl_meshes, "materials": materials,
             "accessors": accessors, "bufferViews": buffer_views,
@@ -365,7 +498,8 @@ def main():
         f.write(struct.pack("<III", 0x46546C67, 2, total))
         f.write(struct.pack("<II", len(js), 0x4E4F534A) + js)
         f.write(struct.pack("<II", len(bin_chunks), 0x004E4942) + bytes(bin_chunks))
-    print("GLB", out_path, total, "bayt;", sum(len(e[0][2]) for e in meshes.values() if e), "üçgen")
+    print("GLB", out_path, total, "bayt;", sum(len(meshes[p][0][2]) for p in mesh_index), "üçgen;",
+          sum(edge_count.values()), "kenar")
     if report_path:
         json.dump(report, open(report_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 

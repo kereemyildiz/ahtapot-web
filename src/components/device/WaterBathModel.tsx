@@ -1,13 +1,14 @@
 import Image from "next/image";
-import type { CSSProperties, ReactNode, Ref } from "react";
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode, Ref } from "react";
 import type { ProductLayer } from "@/content/schema";
+import { holdRepeat } from "@/lib/holdRepeat";
 import s from "./WaterBathModel.module.css";
 
 /**
  * SB-9K doku yüzdürme su banyosunun CSS 3B çizimi. Ölçü ve yerleşimler
  * ürünün SolidWorks montajından (Prod V4, SB-09) alındı; 1 em = 12 mm.
  * Gövde 310 × 347 × 91 mm: altta dik bir şerit, üstünde ~49° yatık ön panel
- * (solda logo, ortada iki ışıklı düğme, sağda PV/SV kontrolcü), üst yüzeyin
+ * (solda logo, ortada iki ışıklı düğme, sağda kontrolcü), üst yüzeyin
  * neredeyse tamamı mat siyah teflon kaplı hazne, arka duvarda LED aydınlatma
  * camı. Hazne altında 150 × 150 mm silikon ısıtıcı; tabanda 12 V güç kaynağı,
  * SSR ve EMI filtresi.
@@ -131,48 +132,45 @@ function FirmwarePlane() {
   );
 }
 
-/** Kontrolcünün ön yüzü: üstte PV (su), altta SV (ayar), OUT/ALM ışıkları, tuşlar. */
+/**
+ * Kontrolcünün ön yüzü (ENDA ET2011 kılavuzundaki düzen): tek 4 haneli ekran
+ * (ölçülen değer; ayar yapılırken ayar değeri), üstte °F · C/A2 · SSR ışıkları,
+ * sağda üstte °C ve ▲, altta SET ve ▼. Ekran boşsa kontrolcü enerjisizdir.
+ */
 export function ControllerFace({
-  pv,
-  sv,
-  out = false,
-  alm = false,
-  dim = false,
-  svBlink = false,
+  display,
+  blink = false,
+  ssr = false,
+  alarm = false,
   keys,
 }: {
-  pv: string;
-  sv: string;
-  out?: boolean;
-  alm?: boolean;
-  dim?: boolean;
-  svBlink?: boolean;
-  keys?: ReactNode;
+  display: string;
+  blink?: boolean;
+  ssr?: boolean;
+  alarm?: boolean;
+  keys?: { up: ReactNode; set: ReactNode; down: ReactNode };
 }) {
   return (
-    <div className={s.controller} data-dim={dim ? "" : undefined}>
-      <div className={s.readouts}>
-        <span className={s.pv}>
-          <span className={s.tag}>PV</span>
-          {pv}
-        </span>
-        <span className={`${s.sv} ${svBlink ? s.blink : ""}`}>
-          <span className={s.tag}>SV</span>
-          {sv}
-        </span>
-      </div>
-      <div className={s.side}>
+    <div className={s.controller}>
+      <div className={s.window}>
         <span className={s.lamps} aria-hidden="true">
-          <span className={s.lamp} data-on={out ? "" : undefined}>OUT</span>
-          <span className={`${s.lamp} ${s.lampAlarm}`} data-on={alm ? "" : undefined}>ALM</span>
-        </span>
-        {keys ?? (
-          <span className={s.keys} aria-hidden="true">
-            <span className={s.key}>SET</span>
-            <span className={s.key}>▼</span>
-            <span className={s.key}>▲</span>
+          <span className={s.lamp}>°F</span>
+          <span className={s.lamp} data-on={alarm ? "" : undefined}>
+            C/A2
           </span>
-        )}
+          <span className={s.lamp} data-on={ssr ? "" : undefined}>
+            SSR
+          </span>
+        </span>
+        <span className={`${s.readout} ${blink ? s.blink : ""}`}>{display}</span>
+      </div>
+      <div className={s.keypad}>
+        <span className={s.unit} aria-hidden="true">
+          °C
+        </span>
+        {keys?.up ?? <span className={s.key} aria-hidden="true">▲</span>}
+        {keys?.set ?? <span className={s.key} aria-hidden="true">SET</span>}
+        {keys?.down ?? <span className={s.key} aria-hidden="true">▼</span>}
       </div>
     </div>
   );
@@ -193,10 +191,15 @@ export function PushButton({ label, on, tone = "power", onClick }: { label: stri
   );
 }
 
-/** Kontrolcünün membran tuşu (gerçek <button>). */
-export function ControllerKey({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
+/** Kontrolcünün membran tuşu (gerçek <button>); `repeat` verilirse basılı tutunca hızlanır. */
+export function ControllerKey({
+  label,
+  children,
+  repeat,
+  ...rest
+}: { label: string; children: ReactNode; repeat?: (size: number) => void } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button type="button" aria-label={label} title={label} onClick={onClick} className={s.key}>
+    <button type="button" aria-label={label} title={label} className={s.key} {...rest} {...(repeat ? holdRepeat(repeat) : {})}>
       {children}
     </button>
   );
@@ -362,7 +365,7 @@ export function WaterBathModel({
               </span>
               {/* Kontrolcü: 77 mm genişlik, panelin sağında */}
               <span className={s.controllerSlot} data-layer="uygulama" style={{ left: `${hw + 4.7}em` }}>
-                {controller ?? <ControllerFace pv="40.0" sv="40.0" out />}
+                {controller ?? <ControllerFace display="40.0" ssr />}
               </span>
             </Face>
             {/* Üst yüzey, hazne ağzının çevresi */}

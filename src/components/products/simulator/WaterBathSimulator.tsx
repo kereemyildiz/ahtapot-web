@@ -8,10 +8,20 @@ import { ControllerFace, ControllerKey, PushButton, WaterBathModel, WaterBathSte
 import type { InteractionLabels } from "../ProductInteractionView";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 import { MiniTrend } from "./MiniTrend";
-import type { ViewerState } from "@/components/device/SB9KViewer";
+import type { MountResult, SectionLook, ViewerState } from "@/components/device/SB9KViewer";
 
-// Gerçek CAD modeli (three.js) yalnız simülatör açılınca yüklenir.
-const SB9KViewer = dynamic(() => import("@/components/device/SB9KViewer"), { ssr: false });
+// Gerçek CAD modeli (three.js) yalnız simülatör yaklaşınca yüklenir.
+const loadViewer = () => import("@/components/device/SB9KViewer");
+const SB9KViewer = dynamic(loadViewer, { ssr: false });
+
+/**
+ * Kontrolcünün ön paneli (ENDA ET2011 kılavuzu, "Modification of control set
+ * points"): ekran normalde ölçülen sıcaklığı (PV) gösterir. SET → "C1.SE."
+ * (kontrol ayar değeri); ilk ▲/▼ değeri gösterir, sonrakiler değiştirir; 3 sn
+ * tuşa basılmazsa değer kaydedilir ve ekran PV'ye döner. SET yeniden basılınca
+ * da PV'ye döner (alarm ayarı gibi diğer adımlar modellenmedi).
+ */
+type CtrlMode = "pv" | "label" | "sv";
 import {
   advance,
   createState,
@@ -87,16 +97,28 @@ export function WaterBathSimulator({
   const [exploded, setExploded] = useState(false);
   const [snap, setSnap] = useState<Snapshot>(() => snapshotOf(initial));
   const [history, setHistory] = useState<Sample[]>(() => initial.history.slice());
-  // Ayar değişince SV kısa süre yanıp söner (gerçek kontrolcüdeki gibi); SET onaylar.
-  const [editing, setEditing] = useState(false);
+  const [ctrl, setCtrl] = useState<CtrlMode>("pv");
+  const ctrlRef = useRef<CtrlMode>("pv");
+  const [keyAt, setKeyAt] = useState(0);
+  // Lamlama: su yüzeyindeki kesitin görünen durumu (WebGL) ve son lamın sonucu.
+  const [look, setLook] = useState<SectionLook | null | undefined>(undefined);
+  const [mounted, setMounted] = useState<MountResult | null>(null);
   const refresh = useCallback(() => setSnap(snapshotOf(sim.current)), []);
   useOffscreenPause(box);
 
+  const setMode = (m: CtrlMode) => {
+    ctrlRef.current = m;
+    setCtrl(m);
+    setKeyAt((k) => k + 1);
+  };
   useEffect(() => {
-    if (!editing) return;
-    const id = window.setTimeout(() => setEditing(false), 2500);
+    if (ctrl === "pv") return;
+    const id = window.setTimeout(() => {
+      ctrlRef.current = "pv";
+      setCtrl("pv");
+    }, 3000);
     return () => window.clearTimeout(id);
-  }, [editing, snap.setC]);
+  }, [ctrl, keyAt]);
 
   // İlk kez yarısı görününce cihaz kendiliğinden açılır: ziyaretçi beklemede
   // bir ekran değil, ısınan bir banyo görür. Kullanıcı önce bir kontrole
@@ -127,10 +149,37 @@ export function WaterBathSimulator({
         io.disconnect();
         setNear(true);
       },
-      { rootMargin: "800px 0px" }
+      { rootMargin: "900px 0px" }
     );
     io.observe(area);
     return () => io.disconnect();
+  }, [model3d]);
+
+  // Boşta önceden indir: modül ve model, simülatöre gelmeden hazır olsun
+  // (indirme ve modülün çalışması kaydırma sırasına denk gelmesin).
+  useEffect(() => {
+    const area = box.current;
+    if (!area || !model3d) return;
+    let idle = 0;
+    const hasIdle = typeof window.requestIdleCallback === "function";
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        const warm = () => {
+          void loadViewer();
+          void fetch(model3d.src, { priority: "low" } as RequestInit).catch(() => {});
+        };
+        idle = hasIdle ? window.requestIdleCallback(warm, { timeout: 4000 }) : window.setTimeout(warm, 1200);
+      },
+      { rootMargin: "2400px 0px" }
+    );
+    io.observe(area);
+    return () => {
+      io.disconnect();
+      if (hasIdle) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+    };
   }, [model3d]);
 
   // Simülasyon döngüsü: görünürken çalışır, React'i ~10 Hz günceller.
@@ -239,12 +288,22 @@ export function WaterBathSimulator({
   };
   // Ayar her zaman simülasyonun güncel değerinden hesaplanır: art arda hızlı
   // basışlar eski render değerine takılmasın.
-  const setPoint = (v: number | ((current: number) => number), blink = true) => {
+  const setPoint = (v: number | ((current: number) => number)) => {
     set((s) => {
       const next = typeof v === "function" ? v(s.setC) : v;
-      s.setC = Math.min(params.maxC, Math.max(params.minC, Math.round(next * 2) / 2));
+      s.setC = Math.min(params.maxC, Math.max(params.minC, Math.round(next * 10) / 10));
     });
-    setEditing(blink);
+  };
+  const pressSet = () => {
+    touched.current = true;
+    if (!sim.current.on) return;
+    setMode(ctrlRef.current === "pv" ? "label" : "pv");
+  };
+  const step = (dir: 1 | -1, size: number) => {
+    touched.current = true;
+    if (!sim.current.on || ctrlRef.current === "pv") return;
+    if (ctrlRef.current === "sv") setPoint((c) => c + dir * size);
+    setMode("sv");
   };
 
   const statusText: Record<Status, string> = {
@@ -261,6 +320,10 @@ export function WaterBathSimulator({
     tooHot: t.sectionTooHot,
   };
   const section = sectionOf(snap.T);
+  // WebGL'de yeni bırakılan kesit önce kırışıktır; görünen durum oradan gelir.
+  const sectionShown: SectionLook | null = webgl === "ready" && look !== undefined ? look : snap.waterLow ? null : section.state;
+  const mountedText: Record<MountResult, string> = { flat: t.slideFlat, wrinkled: t.slideWrinkled, tooHot: t.slideTooHot };
+  const display = ctrl === "label" ? "C1.SE." : ctrl === "sv" ? snap.setC.toFixed(1) : snap.Ts.toFixed(1);
   const dutyPct = Math.round(snap.power * 100);
   const steam = snap.T > 55 ? (snap.T - 55) / 8 : 0;
   const lightOn = snap.on && snap.light;
@@ -272,40 +335,41 @@ export function WaterBathSimulator({
       light: snap.light,
       waterLow: snap.waterLow,
       heat: Math.round(snap.power * 20) / 20,
-      pv: snap.Ts.toFixed(1),
-      sv: snap.setC.toFixed(1),
-      out: snap.on && snap.duty > 0.02,
-      alm: snap.on && snap.Ts > snap.setC + 5,
-      svBlink: snap.on && editing,
+      display,
+      blink: ctrl === "sv",
+      ssr: snap.on && snap.duty > 0.02,
+      alarm: snap.on && snap.Ts > snap.setC + 5,
       wrinkle: Math.round(section.wrinkle * 20) / 20,
       tooHot: section.state === "tooHot",
       exploded,
       activeLayer: activeLayer ?? null,
     }),
-    [snap, editing, section.wrinkle, section.state, exploded, activeLayer]
+    [snap, display, ctrl, section.wrinkle, section.state, exploded, activeLayer]
   );
 
   const controller = (
     <ControllerFace
-      pv={snap.on ? snap.Ts.toFixed(1) : "----"}
-      sv={snap.setC.toFixed(1)}
-      out={snap.on && snap.duty > 0.02}
-      alm={snap.on && snap.Ts > snap.setC + 5}
-      dim={!snap.on}
-      svBlink={snap.on && editing}
-      keys={
-        <span className="flex gap-[0.18em]">
-          <ControllerKey label={t.setKey} onClick={() => setEditing(false)}>
-            SET
-          </ControllerKey>
-          <ControllerKey label={t.decrease} onClick={() => setPoint((c) => c - 0.5)}>
-            ▼
-          </ControllerKey>
-          <ControllerKey label={t.increase} onClick={() => setPoint((c) => c + 0.5)}>
+      display={snap.on ? display : ""}
+      blink={snap.on && ctrl === "sv"}
+      ssr={snap.on && snap.duty > 0.02}
+      alarm={snap.on && snap.Ts > snap.setC + 5}
+      keys={{
+        up: (
+          <ControllerKey label={t.increase} repeat={(size) => step(1, size)}>
             ▲
           </ControllerKey>
-        </span>
-      }
+        ),
+        set: (
+          <ControllerKey label={t.setKey} onClick={pressSet}>
+            SET
+          </ControllerKey>
+        ),
+        down: (
+          <ControllerKey label={t.decrease} repeat={(size) => step(-1, size)}>
+            ▼
+          </ControllerKey>
+        ),
+      }}
     />
   );
 
@@ -335,23 +399,26 @@ export function WaterBathSimulator({
                 up: t.increase,
                 down: t.decrease,
                 model: labels.modelAlt,
+                slideTake: t.slideTake,
+                slideRefill: t.slideRefill,
               }}
               onPower={() => set((s) => (s.on = !s.on))}
               onLight={() => set((s) => (s.light = !s.light))}
-              onSet={() => setEditing(false)}
-              onUp={() => setPoint((c) => c + 0.5)}
-              onDown={() => setPoint((c) => c - 0.5)}
+              onSet={pressSet}
+              onStep={step}
+              onMounted={setMounted}
+              onRefill={() => setMounted(null)}
+              onSection={setLook}
               onReady={() => setWebgl("ready")}
               onError={() => setWebgl("failed")}
             />
           </div>
         ) : null}
-        {/* Çizim modeli: WebGL yokken ya da model yüklenirken. */}
-        <div
-          className={`absolute inset-x-0 bottom-[12%] top-[22%] transition-opacity duration-500 ${webgl === "ready" ? "pointer-events-none opacity-0" : ""}`}
-          aria-hidden={webgl === "ready" || undefined}
-          inert={webgl === "ready"}
-        >
+        {/* Çizim modeli: WebGL yokken ya da model yüklenirken. Gerçek model
+            hazır olunca tamamen kalkar (saydam bırakmak her 100 ms'de büyük bir
+            DOM ağacını yeniden çizdiriyordu). */}
+        {webgl !== "ready" ? (
+        <div className="absolute inset-x-0 bottom-[12%] top-[22%]">
           <WaterBathModel
             ref={model}
             label={labels.modelAlt}
@@ -374,6 +441,7 @@ export function WaterBathSimulator({
             style={{ "--x": 0, "--rx": -22, "--zoom": 1.9, "--heat": 0 } as CSSProperties}
           />
         </div>
+        ) : null}
 
         <div className="pointer-events-none absolute left-4 top-4">
           <p className="text-small text-muted">{t.actual}</p>
@@ -386,7 +454,10 @@ export function WaterBathSimulator({
             <span className="text-ink">%{dutyPct}</span>
           </p>
           <p className="mt-1 text-small text-muted">
-            {t.section}: <span className="text-ink">{sectionText[section.state]}</span>
+            {t.section}: <span className="text-ink">{sectionShown ? sectionText[sectionShown] : t.sectionNone}</span>
+          </p>
+          <p aria-live="polite" className="mt-1 max-w-[16rem] text-small text-ink">
+            {mounted ? mountedText[mounted] : null}
           </p>
         </div>
 
@@ -406,7 +477,9 @@ export function WaterBathSimulator({
 
         <div className="absolute inset-x-4 bottom-4 flex items-end justify-end gap-3 sm:justify-between">
           {/* Dar ekranda model bu satıra kadar iner; ipucu yalnız sm ve üstünde. */}
-          <p className="pointer-events-none hidden max-w-[60%] text-small text-muted sm:block">{t.panelHint}</p>
+          <p className="pointer-events-none hidden max-w-[60%] text-small text-muted sm:block">
+            {webgl === "ready" ? t.panelHintSlides : t.panelHint}
+          </p>
           <button type="button" onClick={() => setExploded((v) => !v)} aria-pressed={exploded} className="btn btn-quiet min-h-0 py-2.5 text-small">
             {exploded ? t.assemble : t.explode}
           </button>
@@ -420,7 +493,7 @@ export function WaterBathSimulator({
           <button
             key={p.label}
             type="button"
-            onClick={() => setPoint(p.setC, false)}
+            onClick={() => setPoint(p.setC)}
             aria-pressed={snap.setC === p.setC}
             className={`${chip} ${snap.setC === p.setC ? "bg-accent text-accent-ink" : quiet}`}
           >

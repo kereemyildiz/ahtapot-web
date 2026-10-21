@@ -230,7 +230,7 @@
       "heater": "Isıtıcı",
       "decrease": "Ayarı düşür (▼)",
       "increase": "Ayarı artır (▲)",
-      "setKey": "Ayarı onayla (SET)",
+      "setKey": "Ayar tuşu (SET)",
       "presets": "Hazır ayarlar",
       "presetLowMelt": "Düşük erime noktalı parafin",
       "presetHighMelt": "Yüksek erime noktalı parafin",
@@ -251,20 +251,27 @@
       "sectionOpening": "açılıyor",
       "sectionFlat": "gergin ve düz",
       "sectionTooHot": "fazla sıcak, dağılma riski",
+      "sectionNone": "yüzeyde kesit yok",
+      "slideTake": "Tepsiden lam alın, kesiti sudan lama alın",
+      "slideRefill": "Tepsiye temiz lam koyun",
+      "slideFlat": "Kesit lama düz ve gergin alındı.",
+      "slideWrinkled": "Kesit lamda kırışık kaldı: kesitin açılmasını bekleyin; su soğuksa önce ayar sıcaklığına gelsin.",
+      "slideTooHot": "Kesit lamda dağıldı: su bu parafin için fazla sıcak, ayarı düşürün.",
       "chartTitle": "Son 40 dakika",
       "chartTemp": "Su",
       "chartSet": "Ayar",
-      "panelHint": "Ön paneldeki düğmeleri ve kontrolcü tuşlarını kullanın, sürükleyerek döndürün.",
-      "disclaimer": "Temsili simülasyon: 2 L su, 200 W ısıtıcı ve basit bir ısı kaybı modeliyle hesaplanır; kesitin su yüzeyindeki davranışı da temsilidir, ürünün teknik değerlerini yansıtmaz. Zaman 90 kat hızlandırılmıştır."
+      "panelHint": "Ayarı değiştirmek için kontrolcüde SET'e, ardından ▲/▼'ye basın; sürükleyerek döndürün.",
+      "panelHintSlides": "Ayar için SET, ardından ▲/▼. Kesiti almak için öndeki tepsiden bir lama tıklayın; sürükleyerek döndürün.",
+      "disclaimer": "Temsili simülasyon: 2 L su, 200 W ısıtıcı ve basit bir ısı kaybı modeliyle hesaplanır; kesitin su yüzeyindeki ve lamdaki görünümü de temsilidir, ürünün teknik değerlerini yansıtmaz. Zaman 90 kat hızlandırılmıştır."
     }
   },
   "products": {
     "su-banyosu": {
       "name": "SB-9K doku yüzdürme su banyosu",
       "tagline": "Mikrotomdan alınan parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gererek lama alınmaya hazırlar.",
-      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Hazne tabanındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilirsiniz.",
+      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Hazne tabanındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
       "features": [
-        "PID sıcaklık kontrolü; ayar ve su sıcaklığı aynı anda ekranda",
+        "PID sıcaklık kontrolü ve dijital LED ekran",
         "Mat siyah teflon kaplı alüminyum hazne",
         "Hazne tabanına yerleşik silikon ısıtıcı",
         "LED aydınlatma",

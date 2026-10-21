@@ -102,8 +102,7 @@ def face_mesh(m, f, surf):
         else:
             if xm.area2(uv) < 0:
                 th, h, uv = th[::-1], h[::-1], uv[::-1]
-            poly = [(i, tuple(p)) for i, p in enumerate(uv)]
-            tris = xm.earclip(poly)
+            tris = xm.triangulate(uv, [])
             TH, H = th, h
     else:
         return None

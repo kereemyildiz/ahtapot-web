@@ -2,12 +2,18 @@
 
 Her PLANE yüzeyi için döngüler dolaşılır (FACE → LOOP → FIN), kenar eğrileri
 örneklenir (LINE, CIRCLE, ELLIPSE, TRIMMED_CURVE, B_CURVE/NURBS; diğerleri
-düz çizgi), delikler dış sınıra köprülenip kulak kırpma ile üçgenlenir.
+düz çizgi), delikli çokgen earcut ile üçgenlenir (mapbox_earcut; yoksa
+yedek olarak köprü + kulak kırpma).
 Eğri yüzeyler bu modülde değil: SolidWorks ekran listesindeki üçgenlerden gelir.
 """
 import math
 
 import numpy as np
+
+try:
+    import mapbox_earcut as _earcut
+except ImportError:  # yedek: kendi kulak kırpmamız (karmaşık deliklerde ters üçgen üretebilir)
+    _earcut = None
 
 TWO_PI = 2 * math.pi
 
@@ -332,6 +338,26 @@ def earclip(poly):
     return tris
 
 
+def triangulate(outer, holes):
+    """outer: CCW (x,y) dizisi, holes: CW diziler. Tüm noktaların sırasıyla
+    (outer + holes) dizinlerinde CCW üçgenler döner."""
+    rings = [np.asarray(outer, float)] + [np.asarray(h, float) for h in holes]
+    if _earcut is not None:
+        pts = np.vstack(rings)
+        ends = np.cumsum([len(r) for r in rings]).astype(np.uint32)
+        tri = _earcut.triangulate_float64(pts, ends).reshape(-1, 3).astype(np.int64)
+        a, b, c = pts[tri[:, 0]], pts[tri[:, 1]], pts[tri[:, 2]]
+        cw = (b[:, 0] - a[:, 0]) * (c[:, 1] - a[:, 1]) - (b[:, 1] - a[:, 1]) * (c[:, 0] - a[:, 0]) < 0
+        tri[cw] = tri[cw][:, [0, 2, 1]]
+        return [tuple(t) for t in tri]
+    offs = np.cumsum([0] + [len(r) for r in rings])
+    poly = bridge_holes(
+        [(int(i), tuple(p)) for i, p in enumerate(rings[0])],
+        [([int(offs[k + 1] + i) for i in range(len(h))], [tuple(p) for p in h]) for k, h in enumerate(rings[1:])],
+    )
+    return earclip(poly)
+
+
 def planar_faces(nodes):
     """Tüm düz yüzeyler → (köşeler Nx3, normaller Nx3, üçgenler Mx3), istatistik."""
     m = Model(nodes)
@@ -371,18 +397,17 @@ def planar_faces(nodes):
                 rings2.append((ids, uv))
             areas = [area2(uv) for _, uv in rings2]
             k = int(np.argmax(np.abs(areas)))
-            outer_ids, outer_uv = rings2[k]
-            if areas[k] < 0:
-                outer_ids, outer_uv = outer_ids[::-1], outer_uv[::-1]
-            holes = []
-            for j, (ids, uv) in enumerate(rings2):
-                if j == k:
-                    continue
-                if areas[j] > 0:
+            order = [k] + [j for j in range(len(rings2)) if j != k]
+            ids_all, uvs = [], []
+            for j in order:
+                ids, uv = rings2[j]
+                # dış CCW, delikler CW
+                if (j == k) != (areas[j] > 0):
                     ids, uv = ids[::-1], uv[::-1]
-                holes.append((ids, [tuple(p) for p in uv]))
-            poly = bridge_holes([(i, tuple(p)) for i, p in zip(outer_ids, outer_uv)], holes)
-            tris = earclip(poly)
+                ids_all += list(ids)
+                uvs.append(uv)
+            local = triangulate(uvs[0], uvs[1:])
+            tris = [(ids_all[a], ids_all[b], ids_all[c]) for a, b, c in local]
             all3 = np.array(all3)
             V += list(all3)
             Nn += [normal] * len(all3)
