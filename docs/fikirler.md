@@ -29,11 +29,11 @@ Aklımıza gelen ama henüz yapılmayan işler. Yeni fikir en alta eklenir; yap�
 
 ## Yol haritası (kullanıcının sırası: A → B → C)
 
-**A** (2026-10-21'de başlandı)
+**A** — yapıldı (2026-10-21; `develop`: 2d2c780, 82f1177; kullanıcı onayı bekliyor)
 - Hakkımızda bölümü daha etkileyici olsun.
 - Stetoskop animasyonu yalnız ilk açılışta değil, bölüme her girişte oynasın (hero gibi).
 - Hero'daki 4 disiplin modülüne tıklayınca ilgili yetkinlik adımına güzel bir geçişle gidilsin.
-- Footer üstündeki büyük logo için beyin fırtınası: kaldır ya da başka bir şeye dönüştür.
+- Footer üstündeki büyük logo için beyin fırtınası: kaldır ya da başka bir şeye dönüştür. → Seçenek 2: logo iletişim bilgilerinin başına geçti, kolları satırlara uzanıyor.
 
 **B**
 - Su banyosunun SolidWorks çizimi var (asıl ürün): simülatördeki temsili 3B model bununla değiştirilip entegre edilecek.
