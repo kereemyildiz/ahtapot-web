@@ -1,12 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import dynamic from "next/dynamic";
 import { gsap, useGSAP } from "@/lib/gsapSetup";
 import type { Product, ProductLayer } from "@/content/schema";
 import { ControllerFace, ControllerKey, PushButton, WaterBathModel, WaterBathSteam } from "@/components/device/WaterBathModel";
 import type { InteractionLabels } from "../ProductInteractionView";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 import { MiniTrend } from "./MiniTrend";
+import type { ViewerState } from "@/components/device/SB9KViewer";
+
+// Gerçek CAD modeli (three.js) yalnız simülatör açılınca yüklenir.
+const SB9KViewer = dynamic(() => import("@/components/device/SB9KViewer"), { ssr: false });
 import {
   advance,
   createState,
@@ -67,6 +72,12 @@ export function WaterBathSimulator({
   const config = product.assets.simulator;
   const params: WaterBathParams = useMemo(() => readParams(config?.params ?? {}), [config]);
   const presets = config?.presets ?? [];
+  const model3d = config?.model3d;
+  // WebGL modeli yüklenene kadar (ya da hiç yüklenemezse) çizim modeli görünür.
+  const [webgl, setWebgl] = useState<"loading" | "ready" | "failed">(model3d ? "loading" : "failed");
+  // three.js ve model (~150 KB JS + ~190 KB model) ancak simülatör ekrana
+  // yaklaşınca yüklenir; o zamana kadar hafif çizim modeli görünür.
+  const [near, setNear] = useState(false);
 
   const [initial] = useState(() => createState(params));
   const sim = useRef(initial);
@@ -106,6 +117,21 @@ export function WaterBathSimulator({
     io.observe(area);
     return () => io.disconnect();
   }, [refresh]);
+
+  useEffect(() => {
+    const area = box.current;
+    if (!area || !model3d) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        setNear(true);
+      },
+      { rootMargin: "800px 0px" }
+    );
+    io.observe(area);
+    return () => io.disconnect();
+  }, [model3d]);
 
   // Simülasyon döngüsü: görünürken çalışır, React'i ~10 Hz günceller.
   useEffect(() => {
@@ -240,6 +266,25 @@ export function WaterBathSimulator({
   const lightOn = snap.on && snap.light;
   const presetLabel = (key: string) => (t as Record<string, string>)[key] ?? "";
 
+  const viewerState: ViewerState = useMemo(
+    () => ({
+      on: snap.on,
+      light: snap.light,
+      waterLow: snap.waterLow,
+      heat: Math.round(snap.power * 20) / 20,
+      pv: snap.Ts.toFixed(1),
+      sv: snap.setC.toFixed(1),
+      out: snap.on && snap.duty > 0.02,
+      alm: snap.on && snap.Ts > snap.setC + 5,
+      svBlink: snap.on && editing,
+      wrinkle: Math.round(section.wrinkle * 20) / 20,
+      tooHot: section.state === "tooHot",
+      exploded,
+      activeLayer: activeLayer ?? null,
+    }),
+    [snap, editing, section.wrinkle, section.state, exploded, activeLayer]
+  );
+
   const controller = (
     <ControllerFace
       pv={snap.on ? snap.Ts.toFixed(1) : "----"}
@@ -277,8 +322,36 @@ export function WaterBathSimulator({
           className="pointer-events-none absolute inset-0"
           style={{ background: "radial-gradient(48% 62% at 50% 38%, rgb(62 82 224 / 0.2), transparent 100%)" }}
         />
-        {/* Model, üstteki değerlerin altındaki alanda durur. */}
-        <div className="absolute inset-x-0 bottom-[12%] top-[22%]">
+        {/* Gerçek CAD modeli (WebGL); hazır olunca çizim modelinin yerini alır. */}
+        {model3d && near && webgl !== "failed" ? (
+          <div className="absolute inset-x-0 bottom-[14%] top-[18%]">
+            <SB9KViewer
+              config={model3d}
+              state={viewerState}
+              labels={{
+                power: `${t.powerButton}: ${snap.on ? t.on : t.off}`,
+                light: `${t.lightButton}: ${lightOn ? t.on : t.off}`,
+                set: t.setKey,
+                up: t.increase,
+                down: t.decrease,
+                model: labels.modelAlt,
+              }}
+              onPower={() => set((s) => (s.on = !s.on))}
+              onLight={() => set((s) => (s.light = !s.light))}
+              onSet={() => setEditing(false)}
+              onUp={() => setPoint((c) => c + 0.5)}
+              onDown={() => setPoint((c) => c - 0.5)}
+              onReady={() => setWebgl("ready")}
+              onError={() => setWebgl("failed")}
+            />
+          </div>
+        ) : null}
+        {/* Çizim modeli: WebGL yokken ya da model yüklenirken. */}
+        <div
+          className={`absolute inset-x-0 bottom-[12%] top-[22%] transition-opacity duration-500 ${webgl === "ready" ? "pointer-events-none opacity-0" : ""}`}
+          aria-hidden={webgl === "ready" || undefined}
+          inert={webgl === "ready"}
+        >
           <WaterBathModel
             ref={model}
             label={labels.modelAlt}

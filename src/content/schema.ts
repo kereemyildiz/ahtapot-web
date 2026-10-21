@@ -383,6 +383,29 @@ const productAssetsSchema = z
         params: z.record(z.string(), z.number()),
         // Hazır ayar: sıcaklık + simülatör metinlerindeki etiket anahtarı.
         presets: z.array(z.object({ setC: z.number(), label: z.string() }).strict()),
+        // Gerçek CAD modeli (tools/cad ile SolidWorks montajından üretilir).
+        // Verilirse simülatör WebGL'de bu modeli gösterir; WebGL yoksa çizim modeline düşer.
+        model3d: z
+          .object({
+            src: z.string(),
+            anchors: z.string(),
+            parts: z.array(
+              z
+                .object({
+                  // Parça adında geçen metin (SolidWorks parça adı, büyük/küçük harf duyarlı)
+                  match: z.string(),
+                  color: z.string().regex(/^#[0-9a-f]{6}$/i),
+                  finish: z.enum(["paint", "metal", "plastic", "teflon", "glass", "rubber"]).default("paint"),
+                  layer: z.enum(PRODUCT_LAYERS).optional(),
+                  // "İçini gösterin"de parçanın kayacağı yön ve mesafe (m, Y yukarı)
+                  explode: z.tuple([z.number(), z.number(), z.number()]).optional(),
+                  role: z.enum(["controller", "button", "ledGlass", "heater", "container"]).optional(),
+                })
+                .strict()
+            ),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
