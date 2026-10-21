@@ -46,20 +46,19 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const scrollToId = useCallback((id: string) => {
+  // onArrive: kaydırma bitince (varış efekti için); Lenis yoksa hemen.
+  const scrollToId = useCallback((id: string, onArrive?: () => void) => {
     const header = parseFloat(getComputedStyle(document.documentElement).fontSize) * 4.5;
     const target = id === "top" ? 0 : document.getElementById(id);
     if (target === null) return;
 
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(target, { offset: id === "top" ? 0 : -header, duration: 1.2 });
+      lenisRef.current.scrollTo(target, { offset: id === "top" ? 0 : -header, duration: 1.2, onComplete: onArrive });
       return;
     }
-    if (target === 0) {
-      window.scrollTo({ top: 0 });
-      return;
-    }
-    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - header });
+    if (target === 0) window.scrollTo({ top: 0 });
+    else window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - header });
+    onArrive?.();
   }, []);
 
   return (
