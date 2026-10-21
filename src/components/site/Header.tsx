@@ -121,7 +121,7 @@ export function Header({ locale, labels }: HeaderProps) {
           <LogoMark className="h-10 w-auto" strokeWidth={44} gradientId="logo-header" />
           <span className="flex flex-col items-start gap-[3px]">
             {/* Logodaki yazı: public/logo.jpg'den çıkarılmış, düz marka mavisi. */}
-            <Image src="/brand/wordmark.png" alt="" width={82} height={21} priority className="h-[21px] w-auto" />
+            <Image src="/brand/wordmark.png" alt="" width={82} height={21} priority />
             {/* Altında küçük satır; logonun parçası, o yüzden de mavi. */}
             <span className="text-[0.6rem] font-semibold uppercase leading-none tracking-[0.16em] text-periwinkle">
               {labels.brandSub}

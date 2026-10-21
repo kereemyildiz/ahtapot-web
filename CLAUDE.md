@@ -188,7 +188,7 @@ gsap.ticker.lagSmoothing(0)
 ```
 
 - React tarafında **her zaman `useGSAP`**, `useEffect` değil (zamanlayıcı/gözlemci gibi GSAP dışı abonelikler hariç). Selector'ları scope'la.
-- `gsap.matchMedia()` ile `prefers-reduced-motion` dallanması. Reduced motion açıksa: çizimler tek seferde çizili görünür, hiçbir içerik erişilemez hale gelmez. Giriş animasyonunun gizli başlangıç durumu yalnız `html.js` varken uygulanır.
+- `gsap.matchMedia()` ile `prefers-reduced-motion` dallanması. Reduced motion açıksa: çizimler tek seferde çizili görünür, hiçbir içerik erişilemez hale gelmez. Giriş animasyonunun gizli başlangıç durumu yalnız `@media (scripting: enabled)` altında uygulanır (layout'a inline `<script>` koyma: React 19 istemcide uyarı verir).
 - **LCP adayı gizlenmez:** hero metni opaklıkla değil yalnız transform ile girer (`.hero-rise`).
 - **Scroll-jack yok:** kullanıcı scroll kontrolünü asla kaybetmez. Tekerlek olayını yakalayan etkileşimler (deepzoom) yalnız kullanıcı tıklayınca ya da Ctrl/⌘ ile yakalar ve o sırada `data-lenis-prevent` taşır; imleç çıkınca bırakır. Turntable/simülatör tekerleğe hiç dokunmaz, yalnız sürükleme.
 - GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz, hex kullan.
