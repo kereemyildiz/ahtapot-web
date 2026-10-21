@@ -5,11 +5,14 @@ import {
   type ContactFieldErrors,
 } from "@/lib/contact/schema";
 import { isRateLimited } from "@/lib/contact/rateLimit";
+import { REQUEST_TYPE_KEY } from "@/lib/contact/validate";
+// Şema doğrulaması build'de sayfalar üzerinden yapılıyor; burada yeniden zod
+// çalıştırmak Worker'ın ilk açılış CPU süresine eklenir (ücretsiz plan: 10 ms).
+import tr from "../../../../content/tr.json";
 
-// TODO(mock-data): CONTACT_EMAIL_TO gerçek bir gelen kutusu değil —
-// env var olarak ayarlanmalı (bkz. .env.example, docs/mock-data-todo.md).
-// RESEND_API_KEY de gerçek bir key olmadan bu route 500 döner (yakalanır,
-// kullanıcıya "şu anda gönderilemedi" gösterilir — çökmez).
+// Canlıda RESEND_API_KEY, CONTACT_EMAIL_TO ve CONTACT_EMAIL_FROM Cloudflare
+// Worker secret'ı (bkz. docs/deploy-cloudflare.md). Yoksa bu route 500 döner
+// (yakalanır, kullanıcıya "şu anda gönderilemedi" gösterilir — çökmez).
 const FROM_ADDRESS =
   process.env.CONTACT_EMAIL_FROM || "Ahtapot Site <onboarding@resend.dev>";
 
@@ -85,17 +88,19 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Talepleri okuyan ekip Türkçe; konu ve gövde formun dilinden bağımsız TR.
+    const typeLabel = tr.contact.requestTypes[REQUEST_TYPE_KEY[requestType]];
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: FROM_ADDRESS,
       to: [toAddress],
       replyTo: email,
-      subject: `[Site talebi] ${requestType} — ${name}`,
+      subject: `[Site talebi] ${typeLabel} — ${name}`,
       html: `
         <p><strong>Ad Soyad:</strong> ${escapeHtml(name)}</p>
         <p><strong>E-posta:</strong> ${escapeHtml(email)}</p>
         <p><strong>Kurum:</strong> ${escapeHtml(organization || "—")}</p>
-        <p><strong>Talep türü:</strong> ${escapeHtml(requestType)}</p>
+        <p><strong>Talep türü:</strong> ${escapeHtml(typeLabel)}</p>
         <p><strong>Mesaj:</strong></p>
         <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
       `,
@@ -109,6 +114,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log("[contact] Gönderildi, Resend id:", data?.id);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[contact] Beklenmeyen hata:", err);
