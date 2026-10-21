@@ -8,6 +8,7 @@ import { localeHref } from "@/i18n/href";
 import { PageMotion } from "@/components/motion/PageMotion";
 import { ProductExhibit } from "@/components/products/ProductExhibit";
 import { getExhibitCopy, getExhibitUi } from "@/components/products/productLabels";
+import { Icon } from "@/components/brand/Icon";
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => getProducts().map((p) => ({ locale, slug: p.slug })));
@@ -41,8 +42,9 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/urunl
   return (
     <main className="frame pb-[clamp(5rem,10vw,9rem)] pt-[calc(var(--header-h)+clamp(2rem,5vw,4rem))]">
       <PageMotion>
-        <Link href={localeHref(locale as AppLocale, "/#urunler")} className="text-small text-muted transition-colors hover:text-ink">
-          ← {t("backToProducts")}
+        <Link href={localeHref(locale as AppLocale, "/#urunler")} className="inline-flex items-center gap-1.5 text-small text-muted transition-colors hover:text-ink">
+          <Icon name="arrowLeft" className="size-4" strokeWidth={2} />
+          {t("backToProducts")}
         </Link>
 
         <div className="mt-10">

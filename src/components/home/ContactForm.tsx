@@ -113,7 +113,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
 
   const field = "h-14 w-full bg-field px-4 text-[1.0625rem] text-field-ink outline-none transition-shadow duration-200 placeholder:text-field-ink/50 focus-visible:shadow-[inset_0_0_0_3px_var(--color-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
   const label = "mb-2 block text-small text-muted";
-  const errorText = "mt-2 text-small font-medium text-[#ff9db8]";
+  const errorText = "mt-2 flex items-start gap-1.5 text-small font-medium text-[#ff9db8]";
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-7">
@@ -167,6 +167,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
           />
           {errors.name && (
             <p id={`${uid}-name-err`} className={errorText}>
+              <Icon name="alert" className="mt-[0.2em] size-[1em]" />
               {errors.name}
             </p>
           )}
@@ -187,6 +188,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
           />
           {errors.email && (
             <p id={`${uid}-email-err`} className={errorText}>
+              <Icon name="alert" className="mt-[0.2em] size-[1em]" />
               {errors.email}
             </p>
           )}
@@ -215,6 +217,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
         />
         {errors.message && (
           <p id={`${uid}-message-err`} className={errorText}>
+            <Icon name="alert" className="mt-[0.2em] size-[1em]" />
             {errors.message}
           </p>
         )}
@@ -249,13 +252,19 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
         </label>
         {errors.consent && (
           <p id={`${uid}-consent-err`} className={errorText}>
+            <Icon name="alert" className="mt-[0.2em] size-[1em]" />
             {errors.consent}
           </p>
         )}
       </div>
 
       <div aria-live="assertive">
-        {formError && <p className={`${errorText} mt-0`}>{formError}</p>}
+        {formError && (
+          <p className={`${errorText} mt-0`}>
+            <Icon name="alert" className="mt-[0.2em] size-[1em]" />
+            {formError}
+          </p>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-5">

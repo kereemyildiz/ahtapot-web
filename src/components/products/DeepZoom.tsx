@@ -7,6 +7,7 @@ import type OpenSeadragonType from "openseadragon";
 import type { Product } from "@/content/schema";
 import type { InteractionLabels } from "./ProductInteractionView";
 import { AnnotationLayer, rectPoints, type Pt, type Shape, type Tool } from "./deepzoom/annotations";
+import { Icon } from "@/components/brand/Icon";
 
 const OBJECTIVES = [2, 5, 10, 20, 40] as const;
 
@@ -363,7 +364,10 @@ export function DeepZoom({ product, labels }: { product: Product; labels: Intera
             className="object-cover opacity-85 transition-[transform,opacity] duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-100"
           />
           <span className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-3">
-            <span className="btn btn-primary pointer-events-none">{t.open}</span>
+            <span className="btn btn-primary pointer-events-none">
+              <Icon name="expand" className="size-4" strokeWidth={2} />
+              {t.open}
+            </span>
             <span className="bg-ground/85 px-3 py-2 text-small text-ink">{t.sampleNote}</span>
           </span>
         </button>
