@@ -15,6 +15,7 @@ export async function Footer() {
   const tCompany = await getTranslations("company");
   const year = new Date().getFullYear();
   const phone = tCompany("phone");
+  const email = tCompany("email");
   const hasCredits = getMedia().credits.length > 0;
 
   return (
@@ -34,6 +35,14 @@ export async function Footer() {
               {" · "}
               <a href={`tel:${phone.replace(/\s/g, "")}`} className="text-ink hover:text-accent">
                 {phone}
+              </a>
+            </>
+          )}
+          {email && (
+            <>
+              {" · "}
+              <a href={`mailto:${email}`} className="text-ink hover:text-accent">
+                {email}
               </a>
             </>
           )}

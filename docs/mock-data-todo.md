@@ -7,6 +7,7 @@ Gerçek veri geldikçe ilgili dosyada değiştirilip buradan silinmeli.
 - **Şirket hikâyesi:** Tıbbi cihaz üreticisi; odak tıbbi cihazları yerlileştirmek. Kurucu hekim; yazılım/elektronik/mekanikten anlıyor, teknik işe bizzat giriyor. Ekip, kurucunun uzun süredir tanıdığı mühendis arkadaşları.
 - **Kurucu:** Dr. Mustafa Can Yılmaz (`content/*.json` → `about.founder.name`).
 - **Telefon:** +90 535 770 66 49 (`company.phone`; iletişim bölümü ve footer).
+- **E-posta:** info@ahtapot.ink (`company.email`; iletişim bölümü ve footer). Cloudflare Email Routing ile yönlendiriliyor.
 - **Adres:** Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul (`content/*.json` → `company.address`).
   Merkez İstanbul (kullanıcı onayladı).
 - **Ürün adı:** AhtaPatolog (AhtaPatoloji değil).
@@ -31,7 +32,6 @@ Gerçek veri geldikçe ilgili dosyada değiştirilip buradan silinmeli.
 | Ürün açıklamaları ve özellikler | `content/*.json` → `products.<slug>` | Nitel, sayı/tolerans yok. Gerçek liste gelmeli. |
 | Hakkımızda metni ve ilkeler | `content/*.json` → `about` | Yerlileştirme odağıyla kurumsal dilde yazıldı; "yurt dışından tedarik edilen tıbbi cihazların Türkiye'de tasarlanıp üretilmesi", "tasarım, yazılım ve üretim dokümantasyonu bize ait" ve üç ilke onay bekliyor. |
 | Hakkımızda olguları | `about.facts` | "Kuruluş yılı" bilinmediği için yazılmadı. |
-| E-posta | `company.email` | Boş; boşken sayfada görünmez. |
 | Referanslar | — | Gerçek referans yok, bölüm yok. |
 | Sertifikalar | — | Hiçbiri yazılmadı (CE / ISO 13485 / ÜTS). |
 | Durum etiketi "Piyasada" | `product.statusAvailable` | Su banyosu için `status: available`'dan türüyor; doğru ifade mi onaylanmalı. |
