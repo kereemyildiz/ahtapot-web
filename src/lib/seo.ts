@@ -77,8 +77,8 @@ export function organizationJsonLd(locale: AppLocale) {
         ...(tr.company.sameAs.length ? { sameAs: tr.company.sameAs } : {}),
         areaServed: { "@type": "Country", name: "Türkiye" },
         knowsAbout: c.meta.knowsAbout,
-        // Hakkımızda'daki görselli bilgi satırları belgedir (Teknogirişim Rozeti gibi).
-        award: c.about.facts.filter((f) => f.image).map((f) => `${f.label} (${f.value})`),
+        // Footer'daki belge rozetleri (Teknogirişim Rozeti).
+        award: c.footer.badges.flatMap((b) => (b.award ? [b.award] : [])),
         founder: { "@type": "Person", name: tr.about.founder.name, jobTitle: c.about.founder.role },
       },
       {
