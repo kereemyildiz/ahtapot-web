@@ -9,7 +9,7 @@ import { PageMotion } from "@/components/motion/PageMotion";
 import { ProductExhibit } from "@/components/products/ProductExhibit";
 import { getExhibitCopy, getExhibitUi } from "@/components/products/productLabels";
 import { Icon } from "@/components/brand/Icon";
-import { pageAlternates, shareMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd, jsonLdHtml, pageAlternates, shareMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => getProducts().map((p) => ({ locale, slug: p.slug })));
@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/urunler/
   if (!product) return {};
   const t = await getTranslations({ locale: locale as AppLocale, namespace: "products" });
   const tMeta = await getTranslations({ locale: locale as AppLocale, namespace: "meta" });
-  const title = `${t(`${slug}.name`)} · ${tMeta("siteTitle")}`;
-  const description = t(`${slug}.tagline`);
+  const title = `${t.has(`${slug}.metaTitle`) ? t(`${slug}.metaTitle`) : t(`${slug}.name`)} · ${tMeta("siteTitle")}`;
+  const description = t.has(`${slug}.metaDescription`) ? t(`${slug}.metaDescription`) : t(`${slug}.tagline`);
   const path = `/urunler/${slug}`;
   return { title, description, alternates: pageAlternates(locale as AppLocale, path), ...shareMetadata(locale as AppLocale, title, description, path) };
 }
@@ -45,6 +45,10 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/urunl
 
   return (
     <main className="frame pb-[clamp(5rem,10vw,9rem)] pt-[calc(var(--header-h)+clamp(2rem,5vw,4rem))]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLdHtml(breadcrumbJsonLd(locale as AppLocale, `/urunler/${slug}`, copy.name))}
+      />
       <PageMotion>
         <Link href={localeHref(locale as AppLocale, "/#urunler")} className="inline-flex items-center gap-1.5 text-small text-muted transition-colors hover:text-ink">
           <Icon name="arrowLeft" className="size-4" strokeWidth={2} />

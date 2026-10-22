@@ -1,8 +1,19 @@
 {
   "meta": {
     "siteTitle": "Ahtapot Tıbbi Teknolojiler",
-    "homeTitle": "Ahtapot Tıbbi Teknolojiler · Tıbbi cihaz tasarımı ve üretimi",
-    "siteDescription": "Ahtapot Tıbbi Teknolojiler, İstanbul'da tıbbi cihaz tasarlar ve üretir. Mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı ekip içinde geliştirilir."
+    "homeTitle": "Ahtapot Tıbbi Teknolojiler · Yerli tıbbi cihaz tasarımı ve üretimi",
+    "siteDescription": "Ahtapot Tıbbi Teknolojiler, İstanbul'da medikal cihaz tasarlar ve üretir. Mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı ekip içinde geliştirilir.",
+    "knowsAbout": [
+      "Tıbbi cihaz tasarımı",
+      "Medikal cihaz üretimi",
+      "Tıbbi cihaz yerlileştirme",
+      "Mekanik tasarım",
+      "Elektronik kart tasarımı",
+      "Gömülü yazılım",
+      "Uygulama yazılımı",
+      "Histopatoloji laboratuvar cihazları",
+      "Dijital patoloji"
+    ]
   },
   "company": {
     "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
@@ -10,7 +21,8 @@
     "brandSub": "Tıbbi Teknolojiler",
     "address": ["Ahmet Yesevi Mah. Kerem Sok.", "A Blok No:9 İç Kapı No:404", "34903 Pendik/İstanbul"],
     "email": "info@ahtapot.ink",
-    "phone": "+90 535 770 66 49"
+    "phone": "+90 535 770 66 49",
+    "sameAs": ["https://teknopolistanbul.com/firma/ahtapot-tibbi-teknolojiler-a-s/"]
   },
   "nav": {
     "kabiliyet": "Çözümler",
@@ -272,6 +284,7 @@
     "su-banyosu": {
       "name": "SB-9K doku yüzdürme su banyosu",
       "tagline": "Mikrotomdan alınan parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gererek lama alınmaya hazırlar.",
+      "metaDescription": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gerer; teflon kaplı hazne, LED aydınlatma, PID kontrol.",
       "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Hazne tabanındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
       "features": [
         "PID sıcaklık kontrolü ve dijital LED ekran",
@@ -286,6 +299,8 @@
     "dijital-patoloji": {
       "name": "AhtaPatolog",
       "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi.",
+      "metaTitle": "AhtaPatolog dijital patoloji yazılımı",
+      "metaDescription": "Dijital patoloji yazılımı: whole-slide (WSI) görüntüleri tarayıcıda açar; patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi. Geliştirme aşamasında.",
       "description": "Whole-slide görüntüleri tarayıcıda açar; patoloğun dokuyu yüksek büyütmede incelemesini, işaretlemesini ve vakaları düzenlemesini sağlar. Tanı kararı patoloğa aittir; yazılım inceleme sürecini destekler.",
       "features": [
         "Whole-slide görüntü desteği: SVS, TIFF, NDPI",
