@@ -75,7 +75,7 @@ export function organizationJsonLd(locale: AppLocale) {
         ...(tr.company.sameAs.length ? { sameAs: tr.company.sameAs } : {}),
         areaServed: { "@type": "Country", name: "Türkiye" },
         knowsAbout: c.meta.knowsAbout,
-        founder: { "@type": "Person", name: tr.about.founder.name },
+        founder: { "@type": "Person", name: tr.about.founder.name, jobTitle: c.about.founder.role },
       },
       {
         "@type": "WebSite",
