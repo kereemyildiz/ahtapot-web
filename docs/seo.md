@@ -103,9 +103,9 @@ yeniden taradığında günceller; birkaç gün ile birkaç hafta sürebilir.
 ## Belgeler ve kurumsal bilgiler
 
 - **Teknogirişim Rozeti** (T.C. Sanayi ve Teknoloji Bakanlığı, 3 Temmuz 2025 tarihli yönetmelik):
-  belge no 2026-1713, onay 11.09.2026, 3 yıl geçerli (Eylül 2029). Footer'ın altında, belgedeki gibi
+  belge no 2026-1713, onay 11.09.2026, 3 yıl geçerli (Eylül 2029). Footer'da, belgedeki gibi
   Millî Teknoloji Hamlesi logosuyla yan yana (kullanıcı: rozetler footer'da; Hakkımızda'da belge metni
-  gereksiz). Belge numarası logonun alt metninde, yapılandırılmış veride `award` ve `/llms.txt`'de.
+  gereksiz; telif satırının yanında, ayrı satır değil). Belge numarası logonun alt metninde, yapılandırılmış veride `award` ve `/llms.txt`'de.
   Logolar Bakanlığın Teknogirişim portalındaki resmî PNG'lerden (`tools/brand/badges.py`); koyu tema
   için lacivert/siyah kısımları açık renge çevrilmiş ikinci sürüm. Bir ürün sertifikası değildir;
   ürünlerin yanında kullanılmaz. 2029'da yenilenmezse kaldırılmalı.
