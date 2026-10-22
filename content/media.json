@@ -1,5 +1,10 @@
 {
   "images": {
+    "teknogirisimRozeti": {
+      "src": "/badges/teknogirisim-rozeti.png",
+      "width": 582,
+      "height": 212
+    },
     "appAnnotation": {
       "src": "/products/dijital-patoloji/annotasyon.png",
       "width": 1916,

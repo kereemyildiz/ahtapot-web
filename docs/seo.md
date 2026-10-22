@@ -68,7 +68,8 @@ Sizin yapacaklarınız (önem sırasıyla):
    sık kaynak gösteriyor. Şirket açıklaması sitedekiyle aynı olsun.
 3. **Tutarlı tanım**: Teknopol, LinkedIn, Google İşletme Profili, Crunchbase vb. her yerde aynı cümle
    ("İstanbul'da tıbbi cihaz tasarlayan ve üreten…"). Asistanlar kaynaklar arası tutarlılığa bakar;
-   Teknopol'deki "yapay zekâ destekli karar destek" tanımı şu an bununla çelişiyor.
+   Teknopol'deki tanım esas sözleşmenin geniş faaliyet konusunu sayıyor; asistanlar şirketi
+   "yapay zekâ / robotik firması" sanabilir.
 4. **Wikidata kaydı** (https://www.wikidata.org): şirket için bir öğe (ad, kuruluş yeri İstanbul,
    sektör tıbbi cihaz, resmi site, kurucu). Google bilgi paneli ve asistanlar varlık tanımada kullanır.
    Şirket adına beyan olduğu için sizin açmanız gerekir.
@@ -90,6 +91,24 @@ deneme ölçüm değildir):
 - "İstanbul'da medikal cihaz geliştirme yaptırabileceğim firma önerir misin?"
 - "Yerli doku yüzdürme su banyosu üreticisi var mı?"
 - "Türkiye'de geliştirilen dijital patoloji yazılımları hangileri?"
+
+## Site ikonu (arama sonucundaki küçük logo)
+
+Google sonuçta varsayılan küre gösteriyordu. Nedenler: ikon 256 px idi (Google 48'in katı kare ister:
+48, 96, 144, 192…) ve `/favicon.ico` 404 dönüyordu. Şimdi `src/app/icon.png` 192 px,
+`src/app/favicon.ico` 16/32/48 px, `src/app/apple-icon.png` 180 px; hepsi logonun vektör izinden
+`tools/brand/icons.py` ile üretilir (logo değişirse yeniden çalıştırın). Google ikonu ana sayfayı
+yeniden taradığında günceller; birkaç gün ile birkaç hafta sürebilir.
+
+## Belgeler ve kurumsal bilgiler
+
+- **Teknogirişim Rozeti** (T.C. Sanayi ve Teknoloji Bakanlığı, 3 Temmuz 2025 tarihli yönetmelik):
+  belge no 2026-1713, onay 11.09.2026, 3 yıl geçerli (Eylül 2029). Hakkımızda bölümündeki bilgi
+  listesinde rozet logosuyla (`public/badges/teknogirisim-rozeti.png`, kullanıcının belgesinden
+  çıkarıldı) ve yapılandırılmış veride `award` olarak. Bir ürün sertifikası değildir; ürünlerin
+  yanında kullanılmaz. 2029'da yenilenmezse kaldırılmalı.
+- **Teknopol İstanbul**: kuluçka firması, teknokent onaylı Ar-Ge projesi (kullanıcı beyanı; Teknopol
+  firma listesi de kuluçka firması diyor).
 
 ## Search Console'da yapılanlar
 
@@ -125,7 +144,8 @@ Bunlar hesap açma, kimlik doğrulama veya şirket adına beyan gerektiriyor; Cl
    - Gerçek fotoğraflar: logo, ofis/atölye, ürün. Doğrulama genelde video ile.
 2. **Teknopol İstanbul kaydını düzelttirin** (https://teknopolistanbul.com/firma/ahtapot-tibbi-teknolojiler-a-s/):
    ad "Ahtapot Tıbb**ı**" yazılmış → "Ahtapot Tıbbi Teknolojiler A.Ş."; e-posta boş → `info@ahtapot.ink`.
-   Açıklamadaki "yapay zekâ destekli karar destek çözümleri" gibi ifadeler sitedeki dille uyuşmuyor.
+   Açıklama esas sözleşmedeki faaliyet konusundan alınmış (doğru ama çok geniş: yapay zekâ, robotik,
+   biyoinformatik…); isterseniz sitedeki kısa tanımla değiştirilmesini isteyebilirsiniz.
 3. **Bing Webmaster Tools** (https://www.bing.com/webmasters): Google hesabıyla girip "Search
    Console'dan içe aktar" — tek tıkla doğrulanır. Bing; DuckDuckGo, Yahoo ve ChatGPT aramasını da besler.
 4. **Yandex Webmaster** (https://webmaster.yandex.com.tr): Türkiye'de kullanımı azımsanmayacak.

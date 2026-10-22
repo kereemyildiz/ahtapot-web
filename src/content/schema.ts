@@ -257,7 +257,8 @@ export const localeContentSchema = z
         heading: z.string(),
         lead: z.string(),
         body: z.string(),
-        facts: z.array(z.object({ label: z.string(), value: z.string() }).strict()),
+        // image: media.json anahtarı (belge rozeti gibi); varsa değerin üstünde gösterilir.
+        facts: z.array(z.object({ label: z.string(), value: z.string(), image: z.string().optional() }).strict()),
         pillars: z.array(z.object({ title: z.string(), text: z.string() }).strict()),
         founder: z
           .object({

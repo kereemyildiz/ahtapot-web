@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { LogoMark } from "@/components/brand/LogoMark";
+import { getImage } from "@/content/media";
 import { ScrubText } from "@/components/motion/ScrubText";
 import { SectionRule } from "@/components/motion/SectionRule";
 import { Words } from "@/components/motion/Words";
@@ -15,7 +17,7 @@ type Pillar = { title: string; text: string };
  */
 export async function About() {
   const t = await getTranslations("about");
-  const facts = t.raw("facts") as { label: string; value: string }[];
+  const facts = t.raw("facts") as { label: string; value: string; image?: string }[];
   const pillars = t.raw("pillars") as Pillar[];
   const founder = t.raw("founder") as Founder;
 
@@ -42,7 +44,15 @@ export async function About() {
           {facts.map((f) => (
             <div key={f.label}>
               <dt className="text-muted">{f.label}</dt>
-              <dd className="mt-1 text-body text-ink">{f.value}</dd>
+              <dd className="mt-1 text-body text-ink">
+                {/* Belge rozeti (beyaz zemine çizilmiş resmi işaret): iki temada da açık bir levha üstünde. */}
+                {f.image && (
+                  <span className="mb-2 mt-2 block w-fit border border-field-line bg-field px-3 py-2">
+                    <Image src={getImage(f.image).src} alt="" width={getImage(f.image).width} height={getImage(f.image).height} sizes="160px" className="h-10 w-auto" />
+                  </span>
+                )}
+                {f.value}
+              </dd>
             </div>
           ))}
         </dl>
