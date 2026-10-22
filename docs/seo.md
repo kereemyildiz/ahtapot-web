@@ -97,8 +97,13 @@ deneme ölçüm değildir):
 - 22 Ekim 2026: site haritası gönderildi (`https://ahtapot.ink/sitemap.xml`). Yeni mülkte ilk
   saatlerde "Getirilemedi" görünmesi olağan; birkaç gün içinde "Başarılı" olmalı. Dosya Googlebot'a
   200 ve geçerli XML dönüyor.
-- 22 Ekim 2026: dizine ekleme istendi: `/tr/urunler/su-banyosu`, `/tr/urunler/dijital-patoloji`, `/en`.
-  Yeni başlıklar yayına girince `/tr` ve ürün sayfaları için yeniden istenir (günlük kota ~10 adres).
+- 22 Ekim 2026: dizine ekleme istendi: `/tr/urunler/su-banyosu`, `/tr/urunler/dijital-patoloji`, `/en`;
+  yeni başlıklar yayına girince (PR #5) `/tr`, `/tr/urunler/dijital-patoloji` (zaten dizindeydi, yeniden
+  tarama), `/en/urunler/dijital-patoloji`, `/en/urunler/su-banyosu`. Günlük kota ~10 adres.
+  Aynı gün site haritası "Başarılı", 10 sayfa keşfedildi.
+- Zengin Sonuçlar Testi (22 Ekim): ana sayfada "Kuruluş" ve "Yerel işletmeler" geçerli (tek uyarı
+  isteğe bağlı `image`; develop'ta eklendi), ürün sayfasında "İçerik haritaları" geçerli.
+- IndexNow (22 Ekim, yayından sonra): 10 adres gönderildi, `202 Accepted`.
 
 ## Sizin yapmanız gerekenler
 
