@@ -1,5 +1,17 @@
 {
   "images": {
+    "milliTeknolojiHamlesi": {
+      "src": "/badges/milli-teknoloji-hamlesi.png",
+      "darkSrc": "/badges/milli-teknoloji-hamlesi-koyu.png",
+      "width": 589,
+      "height": 482
+    },
+    "teknogirisimRozeti": {
+      "src": "/badges/teknogirisim-rozeti.png",
+      "darkSrc": "/badges/teknogirisim-rozeti-koyu.png",
+      "width": 704,
+      "height": 256
+    },
     "appAnnotation": {
       "src": "/products/dijital-patoloji/annotasyon.png",
       "width": 1916,

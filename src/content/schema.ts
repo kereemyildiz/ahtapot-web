@@ -316,6 +316,8 @@ export const localeContentSchema = z
         privacy: z.string(),
         credits: z.string(),
         backToTop: z.string(),
+        // Footer'daki belge/program logoları (media.json anahtarı). award: yapılandırılmış veride ödül/belge.
+        badges: z.array(z.object({ image: z.string(), alt: z.string(), award: z.string().optional() }).strict()),
       })
       .strict(),
     // Açık lisanslı fotoğrafların atıf sayfası (footer'dan bağlantı).
@@ -337,6 +339,8 @@ const imageSchema = z
     src: z.string(),
     width: z.number().int().positive(),
     height: z.number().int().positive(),
+    // Koyu zemin sürümü (başka kurumların logoları: lacivert/siyah kısımlar açık); açık temada src.
+    darkSrc: z.string().optional(),
     // Mikroskopi görüntülerinde bir pikselin fiziksel boyutu (ölçek çubuğu için).
     umPerPx: z.number().positive().optional(),
   })

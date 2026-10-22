@@ -28,6 +28,7 @@ function facts(locale: AppLocale) {
     `- ${c.contact.phoneLabel}: ${c.company.phone}`,
     `- ${c.about.founder.label}: ${c.about.founder.name} (${c.about.founder.role})`,
     ...c.about.facts.map((f) => `- ${f.label}: ${f.value}`),
+    ...c.footer.badges.flatMap((b) => (b.award ? [`- ${b.award}`] : [])),
   ];
 }
 

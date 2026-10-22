@@ -68,7 +68,8 @@ Sizin yapacaklarınız (önem sırasıyla):
    sık kaynak gösteriyor. Şirket açıklaması sitedekiyle aynı olsun.
 3. **Tutarlı tanım**: Teknopol, LinkedIn, Google İşletme Profili, Crunchbase vb. her yerde aynı cümle
    ("İstanbul'da tıbbi cihaz tasarlayan ve üreten…"). Asistanlar kaynaklar arası tutarlılığa bakar;
-   Teknopol'deki "yapay zekâ destekli karar destek" tanımı şu an bununla çelişiyor.
+   Teknopol'deki tanım esas sözleşmenin geniş faaliyet konusunu sayıyor; asistanlar şirketi
+   "yapay zekâ / robotik firması" sanabilir.
 4. **Wikidata kaydı** (https://www.wikidata.org): şirket için bir öğe (ad, kuruluş yeri İstanbul,
    sektör tıbbi cihaz, resmi site, kurucu). Google bilgi paneli ve asistanlar varlık tanımada kullanır.
    Şirket adına beyan olduğu için sizin açmanız gerekir.
@@ -91,14 +92,39 @@ deneme ölçüm değildir):
 - "Yerli doku yüzdürme su banyosu üreticisi var mı?"
 - "Türkiye'de geliştirilen dijital patoloji yazılımları hangileri?"
 
+## Site ikonu (arama sonucundaki küçük logo)
+
+Google sonuçta varsayılan küre gösteriyordu. Nedenler: ikon 256 px idi (Google 48'in katı kare ister:
+48, 96, 144, 192…) ve `/favicon.ico` 404 dönüyordu. Şimdi `src/app/icon.png` 192 px,
+`src/app/favicon.ico` 16/32/48 px, `src/app/apple-icon.png` 180 px; hepsi logonun vektör izinden
+`tools/brand/icons.py` ile üretilir (logo değişirse yeniden çalıştırın). Google ikonu ana sayfayı
+yeniden taradığında günceller; birkaç gün ile birkaç hafta sürebilir.
+
+## Belgeler ve kurumsal bilgiler
+
+- **Teknogirişim Rozeti** (T.C. Sanayi ve Teknoloji Bakanlığı, 3 Temmuz 2025 tarihli yönetmelik):
+  belge no 2026-1713, onay 11.09.2026, 3 yıl geçerli (Eylül 2029). Footer'da, belgedeki gibi
+  Millî Teknoloji Hamlesi logosuyla yan yana (kullanıcı: rozetler footer'da; Hakkımızda'da belge metni
+  gereksiz; telif satırının yanında, ayrı satır değil). Belge numarası logonun alt metninde, yapılandırılmış veride `award` ve `/llms.txt`'de.
+  Logolar Bakanlığın Teknogirişim portalındaki resmî PNG'lerden (`tools/brand/badges.py`); koyu tema
+  için lacivert/siyah kısımları açık renge çevrilmiş ikinci sürüm. Bir ürün sertifikası değildir;
+  ürünlerin yanında kullanılmaz. 2029'da yenilenmezse kaldırılmalı.
+- **Teknopol İstanbul**: kuluçka firması, teknokent onaylı Ar-Ge projesi (kullanıcı beyanı; Teknopol
+  firma listesi de kuluçka firması diyor).
+
 ## Search Console'da yapılanlar
 
 - Alan adı mülkü (`ahtapot.ink`) doğrulanmış (kullanıcı).
 - 22 Ekim 2026: site haritası gönderildi (`https://ahtapot.ink/sitemap.xml`). Yeni mülkte ilk
   saatlerde "Getirilemedi" görünmesi olağan; birkaç gün içinde "Başarılı" olmalı. Dosya Googlebot'a
   200 ve geçerli XML dönüyor.
-- 22 Ekim 2026: dizine ekleme istendi: `/tr/urunler/su-banyosu`, `/tr/urunler/dijital-patoloji`, `/en`.
-  Yeni başlıklar yayına girince `/tr` ve ürün sayfaları için yeniden istenir (günlük kota ~10 adres).
+- 22 Ekim 2026: dizine ekleme istendi: `/tr/urunler/su-banyosu`, `/tr/urunler/dijital-patoloji`, `/en`;
+  yeni başlıklar yayına girince (PR #5) `/tr`, `/tr/urunler/dijital-patoloji` (zaten dizindeydi, yeniden
+  tarama), `/en/urunler/dijital-patoloji`, `/en/urunler/su-banyosu`. Günlük kota ~10 adres.
+  Aynı gün site haritası "Başarılı", 10 sayfa keşfedildi.
+- Zengin Sonuçlar Testi (22 Ekim): ana sayfada "Kuruluş" ve "Yerel işletmeler" geçerli (tek uyarı
+  isteğe bağlı `image`; develop'ta eklendi), ürün sayfasında "İçerik haritaları" geçerli.
+- IndexNow (22 Ekim, yayından sonra): 10 adres gönderildi, `202 Accepted`.
 
 ## Sizin yapmanız gerekenler
 
@@ -120,7 +146,8 @@ Bunlar hesap açma, kimlik doğrulama veya şirket adına beyan gerektiriyor; Cl
    - Gerçek fotoğraflar: logo, ofis/atölye, ürün. Doğrulama genelde video ile.
 2. **Teknopol İstanbul kaydını düzelttirin** (https://teknopolistanbul.com/firma/ahtapot-tibbi-teknolojiler-a-s/):
    ad "Ahtapot Tıbb**ı**" yazılmış → "Ahtapot Tıbbi Teknolojiler A.Ş."; e-posta boş → `info@ahtapot.ink`.
-   Açıklamadaki "yapay zekâ destekli karar destek çözümleri" gibi ifadeler sitedeki dille uyuşmuyor.
+   Açıklama esas sözleşmedeki faaliyet konusundan alınmış (doğru ama çok geniş: yapay zekâ, robotik,
+   biyoinformatik…); isterseniz sitedeki kısa tanımla değiştirilmesini isteyebilirsiniz.
 3. **Bing Webmaster Tools** (https://www.bing.com/webmasters): Google hesabıyla girip "Search
    Console'dan içe aktar" — tek tıkla doğrulanır. Bing; DuckDuckGo, Yahoo ve ChatGPT aramasını da besler.
 4. **Yandex Webmaster** (https://webmaster.yandex.com.tr): Türkiye'de kullanımı azımsanmayacak.

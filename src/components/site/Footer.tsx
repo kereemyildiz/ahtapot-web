@@ -1,13 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
-import { getMedia } from "@/content/media";
+import { getImage, getMedia } from "@/content/media";
 import { LogoMark } from "@/components/brand/LogoMark";
 
 /**
  * Kapanış: tek satır ve telefon. Atıf gerektiren bir görsel varsa
  * (media.json → credits) "Görsel kaynakları" bağlantısı da görünür.
+ * Sağda, telif satırının yanında belge/program logoları (Millî Teknoloji
+ * Hamlesi, Teknogirişim Rozeti), belgedeki gibi aralarında ince bir çizgiyle.
  */
 export async function Footer() {
   const locale = (await getLocale()) as AppLocale;
@@ -17,10 +20,11 @@ export async function Footer() {
   const phone = tCompany("phone");
   const email = tCompany("email");
   const hasCredits = getMedia().credits.length > 0;
+  const badges = t.raw("badges") as { image: string; alt: string }[];
 
   return (
     <footer className="frame overflow-hidden pb-8 pt-[clamp(4rem,8vw,7rem)] text-small text-muted">
-      <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-baseline">
+      <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
         <p>
           {/* Logo ve şirketin adı yan yana; altında slogan ve telefon. */}
           <span className="mb-3 flex items-center gap-3">
@@ -60,7 +64,24 @@ export async function Footer() {
             </Link>
           )}
         </nav>
-        <p className="md:text-right">© {year}</p>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-4 md:justify-end">
+          {badges.length > 0 && (
+            <ul className="flex items-center gap-5">
+              {badges.map((b, i) => {
+                const img = getImage(b.image);
+                return (
+                  <li key={b.image} title={b.alt} className={i > 0 ? "flex border-l border-wire pl-5" : "flex"}>
+                    <Image src={img.darkSrc ?? img.src} alt={b.alt} width={img.width} height={img.height} sizes="120px" className={`h-10 w-auto${img.darkSrc ? " logo-on-dark" : ""}`} />
+                    {img.darkSrc && (
+                      <Image src={img.src} alt={b.alt} width={img.width} height={img.height} sizes="120px" className="logo-on-light h-10 w-auto" />
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <p>© {year}</p>
+        </div>
       </div>
     </footer>
   );
