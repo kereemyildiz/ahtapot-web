@@ -75,6 +75,9 @@ const productCopySchema = z
   .object({
     name: z.string(),
     tagline: z.string(),
+    // Ürün sayfasının arama sonucu: başlık (yoksa ad) ve açıklama (yoksa tagline).
+    metaTitle: z.string().optional(),
+    metaDescription: z.string().optional(),
     // TODO(mock-data): gerçek spesifikasyon değil, nitel özellikler.
     description: z.string(),
     features: z.array(z.string()),
@@ -107,7 +110,17 @@ const legalPageSchema = z
 export const localeContentSchema = z
   .object({
     // homeTitle: ana sayfanın arama sonucundaki başlığı (marka + ne yaptığı).
-    meta: z.object({ siteTitle: z.string(), homeTitle: z.string(), siteDescription: z.string() }).strict(),
+    // knowsAbout: yapılandırılmış verideki uzmanlık konuları (sayfada görünmez).
+    meta: z
+      .object({
+        siteTitle: z.string(),
+        homeTitle: z.string(),
+        siteDescription: z.string(),
+        // /llms.txt (yapay zekâ asistanları için özet) başlıkları.
+        llms: z.object({ pages: z.string(), fullText: z.string() }).strict(),
+        knowsAbout: z.array(z.string()),
+      })
+      .strict(),
     company: z
       .object({
         legalName: z.string(),
@@ -119,6 +132,8 @@ export const localeContentSchema = z
         // TODO: gerçek e-posta / telefon — boşsa render edilmez.
         email: z.string(),
         phone: z.string(),
+        // Şirketi anlatan başka sitelerdeki sayfalar (yapılandırılmış veri sameAs; sayfada görünmez).
+        sameAs: z.array(z.string().url()),
       })
       .strict(),
     nav: z

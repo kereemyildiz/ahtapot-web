@@ -72,7 +72,10 @@ export function organizationJsonLd(locale: AppLocale) {
         ...(tr.company.email ? { email: tr.company.email } : {}),
         ...(tr.company.phone ? { telephone: tr.company.phone } : {}),
         address,
-        founder: { "@type": "Person", name: tr.about.founder.name },
+        ...(tr.company.sameAs.length ? { sameAs: tr.company.sameAs } : {}),
+        areaServed: { "@type": "Country", name: "Türkiye" },
+        knowsAbout: c.meta.knowsAbout,
+        founder: { "@type": "Person", name: tr.about.founder.name, jobTitle: c.about.founder.role },
       },
       {
         "@type": "WebSite",
@@ -83,6 +86,21 @@ export function organizationJsonLd(locale: AppLocale) {
         inLanguage: [...routing.locales],
         publisher: { "@id": org },
       },
+    ],
+  };
+}
+
+/**
+ * Alt sayfanın içerik yolu (schema.org BreadcrumbList): arama sonucunda adres
+ * yerine "Ahtapot Tıbbi Teknolojiler › Sayfa" görünür. Son öğe sayfanın kendisi.
+ */
+export function breadcrumbJsonLd(locale: AppLocale, path: string, name: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: getLocaleContent(locale).meta.siteTitle, item: `${SITE_URL}/${locale}` },
+      { "@type": "ListItem", position: 2, name, item: `${SITE_URL}/${locale}${path}` },
     ],
   };
 }

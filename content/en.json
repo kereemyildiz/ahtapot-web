@@ -2,7 +2,19 @@
   "meta": {
     "siteTitle": "Ahtapot Medical Technologies",
     "homeTitle": "Ahtapot Medical Technologies · Medical device design and manufacturing",
-    "siteDescription": "Ahtapot Medical Technologies designs and manufactures medical devices in Istanbul, with mechanical design, electronics, firmware and application software developed in-house."
+    "siteDescription": "Ahtapot Medical Technologies designs and manufactures medical devices in Istanbul, with mechanical design, electronics, firmware and application software developed in-house.",
+    "llms": { "pages": "Pages", "fullText": "Full site text (Turkish and English)" },
+    "knowsAbout": [
+      "Medical device design",
+      "Medical device manufacturing",
+      "Medical device localisation",
+      "Mechanical design",
+      "Electronics and PCB design",
+      "Embedded firmware",
+      "Application software",
+      "Histopathology laboratory equipment",
+      "Digital pathology"
+    ]
   },
   "company": {
     "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
@@ -10,7 +22,8 @@
     "brandSub": "Medical Technologies",
     "address": ["Ahmet Yesevi Mah. Kerem Sok.", "A Blok No:9 İç Kapı No:404", "34903 Pendik/İstanbul", "Türkiye"],
     "email": "info@ahtapot.ink",
-    "phone": "+90 535 770 66 49"
+    "phone": "+90 535 770 66 49",
+    "sameAs": ["https://teknopolistanbul.com/firma/ahtapot-tibbi-teknolojiler-a-s/"]
   },
   "nav": {
     "kabiliyet": "Solutions",
@@ -272,6 +285,7 @@
     "su-banyosu": {
       "name": "SB-9K tissue flotation bath",
       "tagline": "Stretches paraffin sections from the microtome on a water surface held at a constant temperature, ready to be picked up on a slide.",
+      "metaDescription": "Tissue flotation water bath for histopathology labs. Stretches paraffin sections on a temperature-controlled water surface; PTFE-coated reservoir, LED lighting, PID control.",
       "description": "A tissue flotation water bath for histopathology labs. The matte black PTFE-coated aluminium reservoir makes translucent sections only a few microns thick stand out against a dark background, and LED illumination makes wrinkles easy to follow. A PID controller drives the silicone heater bonded to the reservoir floor. In the simulation you can change the setpoint, watch the section flatten and pick it up on a slide.",
       "features": [
         "PID temperature control with a digital LED display",
@@ -286,6 +300,8 @@
     "dijital-patoloji": {
       "name": "AhtaPatolog",
       "tagline": "Viewing, annotation and case management for the pathologist's review.",
+      "metaTitle": "AhtaPatolog digital pathology software",
+      "metaDescription": "Digital pathology software that opens whole-slide images (WSI) in the browser, with viewing, annotation and case management for the pathologist's review. In development.",
       "description": "Opens whole-slide images in the browser so the pathologist can examine tissue at high magnification, annotate it and keep cases organised. Diagnostic decisions remain with the pathologist; the software supports the review.",
       "features": [
         "Whole-slide images: SVS, TIFF, NDPI",
