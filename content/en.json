@@ -340,6 +340,15 @@
       {
         "label": "Disciplines",
         "value": "Mechanics, electronics, firmware and software"
+      },
+      {
+        "label": "Teknogirişim badge",
+        "value": "Ministry of Industry and Technology · Certificate no. 2026-1713 · valid until 2029",
+        "image": "teknogirisimRozeti"
+      },
+      {
+        "label": "Teknopol İstanbul",
+        "value": "Incubator company with an R&D project approved by the technology park"
       }
     ],
     "pillars": [

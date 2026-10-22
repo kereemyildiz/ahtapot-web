@@ -340,6 +340,15 @@
       {
         "label": "Disiplinler",
         "value": "Mekanik, elektronik, gömülü ve uygulama yazılımı"
+      },
+      {
+        "label": "Teknogirişim Rozeti",
+        "value": "Sanayi ve Teknoloji Bakanlığı · Belge no 2026-1713 · 2029'a kadar geçerli",
+        "image": "teknogirisimRozeti"
+      },
+      {
+        "label": "Teknopol İstanbul",
+        "value": "Kuluçka firması; teknokent onaylı Ar‑Ge projesi"
       }
     ],
     "pillars": [
