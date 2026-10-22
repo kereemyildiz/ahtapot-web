@@ -342,11 +342,6 @@
         "value": "Mekanik, elektronik, gömülü ve uygulama yazılımı"
       },
       {
-        "label": "Teknogirişim Rozeti",
-        "value": "Sanayi ve Teknoloji Bakanlığı · Belge no 2026-1713 · 2029'a kadar geçerli",
-        "image": "teknogirisimRozeti"
-      },
-      {
         "label": "Teknopol İstanbul",
         "value": "Kuluçka firması; teknokent onaylı Ar‑Ge projesi"
       }
@@ -428,6 +423,17 @@
     "kvkk": "KVKK",
     "privacy": "Gizlilik",
     "backToTop": "Başa dön",
+    "badges": [
+      {
+        "image": "milliTeknolojiHamlesi",
+        "alt": "Millî Teknoloji Hamlesi"
+      },
+      {
+        "image": "teknogirisimRozeti",
+        "alt": "Teknogirişim Rozeti: Sanayi ve Teknoloji Bakanlığı, belge no 2026-1713",
+        "award": "Teknogirişim Rozeti (Sanayi ve Teknoloji Bakanlığı, belge no 2026-1713, 2026–2029)"
+      }
+    ],
     "credits": "Görsel kaynakları"
   },
   "credits": {

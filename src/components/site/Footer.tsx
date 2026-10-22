@@ -1,13 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
-import { getMedia } from "@/content/media";
+import { getImage, getMedia } from "@/content/media";
 import { LogoMark } from "@/components/brand/LogoMark";
 
 /**
  * Kapanış: tek satır ve telefon. Atıf gerektiren bir görsel varsa
  * (media.json → credits) "Görsel kaynakları" bağlantısı da görünür.
+ * Altta belge/program logoları (Millî Teknoloji Hamlesi, Teknogirişim Rozeti),
+ * belgedeki gibi aralarında ince bir çizgiyle.
  */
 export async function Footer() {
   const locale = (await getLocale()) as AppLocale;
@@ -17,6 +20,7 @@ export async function Footer() {
   const phone = tCompany("phone");
   const email = tCompany("email");
   const hasCredits = getMedia().credits.length > 0;
+  const badges = t.raw("badges") as { image: string; alt: string }[];
 
   return (
     <footer className="frame overflow-hidden pb-8 pt-[clamp(4rem,8vw,7rem)] text-small text-muted">
@@ -62,6 +66,22 @@ export async function Footer() {
         </nav>
         <p className="md:text-right">© {year}</p>
       </div>
+
+      {badges.length > 0 && (
+        <ul className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-wire pt-8">
+          {badges.map((b, i) => {
+            const img = getImage(b.image);
+            return (
+              <li key={b.image} title={b.alt} className={i > 0 ? "flex border-l border-wire pl-6" : "flex"}>
+                <Image src={img.darkSrc ?? img.src} alt={b.alt} width={img.width} height={img.height} sizes="160px" className={`h-12 w-auto${img.darkSrc ? " logo-on-dark" : ""}`} />
+                {img.darkSrc && (
+                  <Image src={img.src} alt={b.alt} width={img.width} height={img.height} sizes="160px" className="logo-on-light h-12 w-auto" />
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </footer>
   );
 }
