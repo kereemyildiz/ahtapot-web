@@ -354,7 +354,9 @@ export function DeepZoom({ product, labels }: { product: Product; labels: Intera
 
   return (
     // Dar ekranda daha uzun: araç çubuğu, ipucu ve büyütme düğmeleri sığsın.
-    <div ref={frame} className="relative aspect-[4/5] overflow-hidden bg-tool after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_var(--color-tool-line)] sm:aspect-[4/3] lg:aspect-square lg:max-h-[78svh]">
+    // w-full şart: genişlik auto kalırsa aspect-ratio, max-h'yi oran üzerinden
+    // genişliğe de aktarır ve kutu sütundan dar kalır (geniş ekranda sağda boşluk).
+    <div ref={frame} className="relative aspect-[4/5] w-full overflow-hidden bg-tool after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_var(--color-tool-line)] sm:aspect-[4/3] lg:aspect-square lg:max-h-[78svh]">
       {!open ? (
         <button type="button" onClick={() => setOpen(true)} className="group absolute inset-0 block h-full w-full text-left">
           <Image

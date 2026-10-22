@@ -188,6 +188,7 @@ Inter. Mor/menekşe gradyan. Glassmorphism. `rounded-2xl` + `p-6` + `shadow-lg` 
 - Eşit dış kenar boşlukları (`--gutter`), 12 kolon ızgara; asimetri ızgaranın içinde.
 - Her bölümün görünür bir başlığı var; ilk ekranda tek `h1`.
 - Border radius 0. Meander dik açılıdır, yuvarlak köşe onunla çelişir. İstisna: logo ve fotoğraf maskeleri.
+- Oranlı kutuya (`aspect-*`) `max-h` verilecekse `w-full` da ver: genişlik auto iken tarayıcı yükseklik sınırını oran üzerinden genişliğe aktarır ve kutu sütundan daralır (AhtaPatolog görüntüleyicisi geniş ekranda sağda ~200 px boşluk bırakıyordu; flex sütundaki simülatörde görünmüyordu).
 - Mobilde sabit sahneler ve yan raylar iner; görseller adımların içine girer.
 
 ---
