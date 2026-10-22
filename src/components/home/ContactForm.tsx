@@ -111,9 +111,9 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
     return <ContactSuccess title={t.success.title} body={t.success.body} />;
   }
 
-  const field = "h-14 w-full bg-field px-4 text-[1.0625rem] text-field-ink outline-none transition-shadow duration-200 placeholder:text-field-ink/50 focus-visible:shadow-[inset_0_0_0_3px_var(--color-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  const field = "h-14 w-full bg-field px-4 shadow-[inset_0_0_0_1px_var(--color-field-line)] text-[1.0625rem] text-field-ink outline-none transition-shadow duration-200 placeholder:text-field-ink/50 focus-visible:shadow-[inset_0_0_0_3px_var(--color-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
   const label = "mb-2 block text-small text-muted";
-  const errorText = "mt-2 flex items-start gap-1.5 text-small font-medium text-[#ff9db8]";
+  const errorText = "mt-2 flex items-start gap-1.5 text-small font-medium text-alert";
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-7">
@@ -234,7 +234,7 @@ export function ContactForm({ labels: t, kvkkHref }: { labels: Labels; kvkkHref:
               required
               aria-invalid={!!errors.consent}
               aria-describedby={errors.consent ? `${uid}-consent-err` : undefined}
-              className="peer size-6 cursor-pointer appearance-none border-2 border-field bg-field transition-colors duration-150 checked:border-accent checked:bg-accent aria-invalid:border-eosin"
+              className="peer size-6 cursor-pointer appearance-none border-2 border-field-line bg-field transition-colors duration-150 checked:border-accent checked:bg-accent aria-invalid:border-eosin"
             />
             <Icon
               name="check"

@@ -33,7 +33,7 @@ export function SectionRule() {
       </svg>
       <div
         data-rule-line=""
-        className="h-[3px] flex-1 origin-left bg-[linear-gradient(90deg,var(--color-periwinkle),rgb(147_164_244/0.25)_45%,transparent)]"
+        className="h-[3px] flex-1 origin-left bg-[linear-gradient(90deg,var(--color-periwinkle),color-mix(in_oklab,var(--color-periwinkle)_25%,transparent)_45%,transparent)]"
       />
     </div>
   );

@@ -49,6 +49,14 @@ const PATHS = {
   layers: <path d="M12 3 2 8.5l10 5.5 10-5.5zM2 13l10 5.5L22 13M2 17.5 12 23l10-5.5" />,
   thermometer: <path d="M10 4.5a2 2 0 0 1 4 0V14a4 4 0 1 1-4 0zM12 10v7" />,
   expand: <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" />,
+  // Tema düğmesi
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" />
+    </>
+  ),
+  moon: <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z" />,
 } as const;
 
 /** Yetkinlik adımı / ürün katmanı → ikon. */

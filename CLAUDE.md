@@ -21,7 +21,7 @@ Ahtapot Tıbbi Teknolojiler A.Ş. için tek sayfalık (scroll-driven) kurumsal t
 
 Logodaki meander işareti bir ahtapottur: bir baş (elmas) ve dik açılarla kıvrılan kollar. Sitenin görsel dili bundan türer.
 
-- **Karanlık oda:** sayfa baştan sona tek bir mavi-siyah zeminde akar; cihazlar, çizimler ve fotoğraflar bu zeminde ışıklı sergi objeleri gibi durur. Açık/koyu tema düğmesi yok, tek koyu tema.
+- **Karanlık oda:** sayfa baştan sona tek bir mavi-siyah zeminde akar; cihazlar, çizimler ve fotoğraflar bu zeminde ışıklı sergi objeleri gibi durur. Varsayılan tema budur. Kullanıcı isteğiyle bir **açık tema** da var (başlıkta güneş/ay düğmesi, `site/ThemeToggle.tsx`); ziyaretçi seçmedikçe site koyu açılır, sistem tercihi izlenmez (marka ilk izlenimi koyu). Açık temada "ekranlar" (yetkinlik araç ekranları, slayt görüntüleyici, mikroskop karşılaştırması) koyu ada olarak kalır: kapsayıcıda `data-theme="dark"`, içindeki token'lar koyu değerine döner.
 - **Tek çizgi:** logonun meander çizgisi sitenin her yerinde aynı dille devam eder. Hero'da ahtapotun dört kolu dört disipline uzanır; yetkinlikler bölümünde aynı çizgi ilerleme göstergesi olarak kaydırdıkça uzar; iletişimde aynı ahtapotun kolları iletişim satırlarına uzanır (açılış disiplinlere, kapanış size).
 
 Bu bir jenerik "stack diyagramı" değil — markanın kendi logosundan türetilmiş, başka hiçbir şirkete uymayan bir yapı. Yeni ürün eklendiğinde metafor bozulmaz.
@@ -129,7 +129,7 @@ skill-issue.in'den: ui-ux-pro-max (tasarım sistemi ve UX kuralları), taste-ski
 
 ## Design tokens
 
-Kesindir. Yeni renk uydurma, yeni font ekleme. Tanım: `src/app/globals.css`.
+Kesindir. Yeni renk uydurma, yeni font ekleme. Tanım: `src/app/globals.css` (koyu `@theme`'de; açık değerler `:root[data-theme="light"]` altında, koyu ada için `[data-theme="dark"]`).
 
 ```css
 @theme {
@@ -143,8 +143,14 @@ Kesindir. Yeni renk uydurma, yeni font ekleme. Tanım: `src/app/globals.css`.
   --color-periwinkle: #93a4f4;  /* çizimler, logo degradesinin açık durağı */
   --color-eosin:      #e0518a;  /* yalnız patoloji işaretlemesi ve aktif işaretleme durumu */
   --color-field:      #e9ecf4;  /* form alanları, "geliştirme aşamasında" rozeti */
+  --color-field-line: transparent; /* alan/rozet kenarı (açık temada 3:1 kenar) */
+  --color-alert:      #ff9db8;  /* uyarı metni ve rozeti (form hatası, su az) */
+  --color-wire:       #2b3566;  /* logodan uzanan kolların sönük hali */
+  --color-node:       #151a33;  /* hero modül kutusu; --color-node-on #1d2445 etkin */
 }
 ```
+
+Açık tema (OKLCH'de aynı tonlardan türetildi, `oklch-skill`; metin çiftleri WCAG AA hesapla doğrulandı): ground `oklch(0.975 0.006 275)`, surface `0.948`, surface-2 `0.915`, ink `oklch(0.21 0.035 275)`, muted `oklch(0.49 0.03 275)`, accent `oklch(0.5 0.13 131)` (fosfor izi açık zeminde koyulaşır; üstünde açık metin), periwinkle `oklch(0.56 0.13 274)`, eosin `oklch(0.55 0.18 359)`, field beyaz + `field-line` `oklch(0.6 0.03 275)`, alert `oklch(0.52 0.17 2)`. Marka mavisi ve logo iki temada aynı. Yeni bir renk eklerken iki temada da değer ve kontrast hesabı gerekir; bileşende tema rengini hex olarak yazma (cihaz/ekran çizimleri hariç).
 
 - **Fosfor yeşili** (hasta monitörü / osiloskop izi): birincil aksiyon, odak halkası, etkin durum, canlı veri izi. Başlık rengi veya gradyan olarak kullanma.
 - **Eosin** H&E patoloji boyamasının gerçek rengidir; buton dolgusu, başlık rengi veya gradyan olarak kullanma.
@@ -192,10 +198,10 @@ gsap.ticker.lagSmoothing(0)
 ```
 
 - React tarafında **her zaman `useGSAP`**, `useEffect` değil (zamanlayıcı/gözlemci gibi GSAP dışı abonelikler hariç). Selector'ları scope'la.
-- `gsap.matchMedia()` ile `prefers-reduced-motion` dallanması. Reduced motion açıksa: çizimler tek seferde çizili görünür, hiçbir içerik erişilemez hale gelmez. Giriş animasyonunun gizli başlangıç durumu yalnız `@media (scripting: enabled)` altında uygulanır (layout'a inline `<script>` koyma: React 19 istemcide uyarı verir).
+- `gsap.matchMedia()` ile `prefers-reduced-motion` dallanması. Reduced motion açıksa: çizimler tek seferde çizili görünür, hiçbir içerik erişilemez hale gelmez. Giriş animasyonunun gizli başlangıç durumu yalnız `@media (scripting: enabled)` altında uygulanır. Layout'a inline `<script>` yalnız bir tane var: `<head>`'deki tema betiği (seçimi ilk boyamadan önce uygular). İstemcide çizilen `<script>` React 19'da uyarı verir ve çalışmaz; bu yüzden kök layout istemcide yeniden çizilmemeli: dil seçici `next/link` değil düz `<a>` (tam sayfa gezinme). Başka inline betik ekleme; `next/script` `beforeInteractive` App Router'da Next çalışma zamanıyla geç çalışır, tema için işe yaramaz.
 - **LCP adayı gizlenmez:** hero metni opaklıkla değil yalnız transform ile girer (`.hero-rise`).
 - **Scroll-jack yok:** kullanıcı scroll kontrolünü asla kaybetmez. Tekerlek olayını yakalayan etkileşimler (deepzoom) yalnız kullanıcı tıklayınca ya da Ctrl/⌘ ile yakalar ve o sırada `data-lenis-prevent` taşır; imleç çıkınca bırakır. Turntable/simülatör tekerleğe hiç dokunmaz, yalnız sürükleme.
-- GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz, hex kullan.
+- GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz. Tema rengini GSAP'la tween'leme (tema değişince eski renk satır içinde kalır): 0..1 bir değişken tween'le, rengi CSS'te `color-mix` ile token'lardan karıştır (`.scrub-word` → `--lit`, `.pillar-node` → `--on`).
 - Yolda akan darbe/işaret için `pathLength` + CSS `stroke-dashoffset` kullanma: Chrome CSS'teki dashoffset'i pathLength'e göre ölçeklemiyor. `lib/svgPath.ts` → `pulseDash` (akan darbe) ve `drawDash` (kendini çizen yol) gerçek uzunluğu (`--len`) verir.
 - "Bölüme her girişte yeniden çiz" için `lib/replayOnView` (IntersectionObserver): ScrollTrigger'ın onLeave/onLeaveBack ile başa sarma, refresh sırasında tetiklenip çizimi başa sarılı bırakıyordu (mobilde hiç görünmüyordu).
 - `useGSAP` içindeki "bir kez oldu" bayraklarını `useRef`'te değil, efektin içinde tut: StrictMode ikinci kurulumda başlangıç durumunu yeniden uygular, ref'teki bayrak ise animasyonu atlatır.

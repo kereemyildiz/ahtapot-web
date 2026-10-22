@@ -9,7 +9,7 @@ import type { FieldLabels } from "./FieldService";
 
 // Araç ekranları ilk ekranın altında: ilk yüklemeye girmesinler (JS bütçesi),
 // yalnız istemcide ve gerektiğinde yüklensinler.
-const toolFallback = () => <div className="absolute inset-0 bg-[#0b0e1a]" />;
+const toolFallback = () => <div data-theme="dark" className="absolute inset-0 bg-[#0b0e1a]" />;
 const CadViewport = dynamic(() => import("./CadViewport").then((m) => m.CadViewport), { ssr: false, loading: toolFallback });
 const PcbLayout = dynamic(() => import("./PcbLayout").then((m) => m.PcbLayout), { ssr: false, loading: toolFallback });
 const FirmwareIde = dynamic(() => import("./FirmwareIde").then((m) => m.FirmwareIde), { ssr: false, loading: toolFallback });
@@ -81,7 +81,7 @@ export function LayerVisual({
   // Araç ekranı: kendi araç ve durum çubukları var; açıklama altında ayrı satır.
   if (tool) {
     return (
-      <div className="@container absolute inset-0 flex flex-col overflow-hidden bg-surface" role="img" aria-label={item.alt}>
+      <div data-theme="dark" className="@container absolute inset-0 flex flex-col overflow-hidden bg-surface" role="img" aria-label={item.alt}>
         <div className="relative min-h-0 flex-1">{tool}</div>
         <p className="shrink-0 border-t border-periwinkle/15 bg-ground px-3 py-2 text-small text-muted">{item.caption}</p>
       </div>
@@ -90,7 +90,7 @@ export function LayerVisual({
 
   /** Fotoğraf (duotone) ya da birden çok ekran görüntüsü (pencereler). */
   return (
-    <div className="@container absolute inset-0 overflow-hidden bg-surface">
+    <div data-theme="dark" className="@container absolute inset-0 overflow-hidden bg-surface">
       {item.images.length > 1 ? (
         <>
           <div aria-hidden="true" className="hero-glow absolute inset-0" />

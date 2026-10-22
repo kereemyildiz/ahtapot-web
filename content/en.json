@@ -23,6 +23,8 @@
     "home": "Ahtapot home",
     "localeLabel": "Change language",
     "localeName": "Türkçe",
+    "themeToLight": "Switch to light theme",
+    "themeToDark": "Switch to dark theme",
     "navLabel": "Main menu"
   },
   "hero": {

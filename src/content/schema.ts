@@ -132,6 +132,8 @@ export const localeContentSchema = z
         home: z.string(),
         localeLabel: z.string(),
         localeName: z.string(),
+        themeToLight: z.string(),
+        themeToDark: z.string(),
         navLabel: z.string(),
       })
       .strict(),

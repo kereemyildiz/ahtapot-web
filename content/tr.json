@@ -23,6 +23,8 @@
     "home": "Ahtapot ana sayfa",
     "localeLabel": "Dili değiştir",
     "localeName": "English",
+    "themeToLight": "Açık temaya geç",
+    "themeToDark": "Koyu temaya geç",
     "navLabel": "Ana menü"
   },
   "hero": {

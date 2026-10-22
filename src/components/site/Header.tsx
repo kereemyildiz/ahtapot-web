@@ -9,6 +9,7 @@ import Image from "next/image";
 import { LogoMark } from "@/components/brand/LogoMark";
 import { Icon } from "@/components/brand/Icon";
 import { useLenisContext } from "@/components/providers/LenisContext";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 
 type HeaderProps = {
   locale: AppLocale;
@@ -23,6 +24,8 @@ type HeaderProps = {
     brand: string;
     brandSub: string;
     navLabel: string;
+    themeToLight: string;
+    themeToDark: string;
   };
 };
 
@@ -31,6 +34,9 @@ const LOCALES: AppLocale[] = ["tr", "en"];
 /**
  * Dil seçici: nav bağlantılarından ayrı duran küre + TR/EN anahtarı.
  * Etkin dil düz yazı (aria-current), diğeri o sayfanın karşılığına gider.
+ * Tam sayfa gezinme (next/link değil): kök layout istemcide yeniden
+ * çizilmesin; <head>'deki tema betiği yalnız sunucu HTML'inde çalışır
+ * (istemcide çizilen <script> React 19'da uyarı verir ve çalışmaz).
  */
 function LocaleSwitch({
   locale,
@@ -55,7 +61,7 @@ function LocaleSwitch({
               {code.toUpperCase()}
             </span>
           ) : (
-            <Link
+            <a
               key={code}
               href={href}
               lang={code}
@@ -64,7 +70,7 @@ function LocaleSwitch({
               className="px-3 py-3 transition-colors duration-200 hover:text-ink lg:px-2 lg:py-1.5"
             >
               {code.toUpperCase()}
-            </Link>
+            </a>
           ),
         )}
       </span>
@@ -141,7 +147,10 @@ export function Header({ locale, labels }: HeaderProps) {
             </a>
           ))}
           <span className="h-5 w-px bg-surface-2" aria-hidden="true" />
-          <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
+          <div className="flex items-center gap-2">
+            <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-[2.15rem]" />
+            <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
+          </div>
           <a
             href={`/${locale}#iletisim`}
             onClick={onAnchor("iletisim")}
@@ -193,13 +202,10 @@ export function Header({ locale, labels }: HeaderProps) {
             {labels.cta}
             <Icon name="arrowRight" className="size-4" strokeWidth={2} />
           </a>
-          <LocaleSwitch
-            locale={locale}
-            href={otherHref}
-            label={labels.localeLabel}
-            otherName={labels.localeName}
-            className="ml-auto"
-          />
+          <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-12" />
+            <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
+          </div>
         </div>
       </nav>
     </header>

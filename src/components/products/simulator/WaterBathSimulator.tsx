@@ -376,7 +376,7 @@ export function WaterBathSimulator({
 
   const chip = "inline-flex items-center gap-2 px-3 py-2.5 text-small font-medium transition-colors duration-200";
   const quiet = "bg-surface-2 text-ink hover:bg-ink hover:text-ground";
-  const alertTone = "bg-[#ff9db8] text-ground";
+  const alertTone = "bg-alert text-ground";
 
   return (
     <div className="flex flex-col gap-3">
@@ -460,7 +460,7 @@ export function WaterBathSimulator({
           <p aria-live="polite" className="mt-1 flex max-w-[16rem] items-start gap-1.5 text-small text-ink">
             {mounted ? (
               <>
-                <Icon name={mounted === "flat" ? "check" : "alert"} className={`mt-[0.2em] size-[1em] ${mounted === "flat" ? "text-accent" : "text-[#ff9db8]"}`} />
+                <Icon name={mounted === "flat" ? "check" : "alert"} className={`mt-[0.2em] size-[1em] ${mounted === "flat" ? "text-accent" : "text-alert"}`} />
                 {mountedText[mounted]}
               </>
             ) : null}

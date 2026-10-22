@@ -89,7 +89,7 @@ export function ProductExhibit({
           <div data-reveal="">
             {inDevelopment ? (
               // Gizlenemez, küçültülemez, opsiyonel değildir.
-              <span className="inline-flex items-center gap-2 bg-field px-3 py-1.5 text-small font-semibold text-field-ink">
+              <span className="inline-flex items-center gap-2 bg-field px-3 py-1.5 text-small font-semibold text-field-ink shadow-[inset_0_0_0_1px_var(--color-field-line)]">
                 <span className="size-2 bg-eosin" aria-hidden="true" />
                 {ui.inDevelopmentBadge}
               </span>
