@@ -391,7 +391,7 @@ export function WaterBathSimulator({
 
   return (
     <div className="flex flex-col gap-3">
-      <div ref={box} className="relative aspect-[4/5] cursor-grab touch-pan-y overflow-hidden bg-surface sm:aspect-[4/3] lg:aspect-square lg:max-h-[78svh]">
+      <div ref={box} className="relative aspect-[4/5] w-full cursor-grab touch-pan-y overflow-hidden bg-surface sm:aspect-[4/3] lg:aspect-square lg:max-h-[78svh]">
         {/* Sergi ışığı: cihazın üstünden düşen mavi bir koni. */}
         <div
           aria-hidden="true"
