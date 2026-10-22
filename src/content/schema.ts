@@ -52,12 +52,13 @@ const VIEWER_KEYS = [
 ] as const;
 
 const SIMULATOR_KEYS = [
-  "power", "stop", "setpoint", "actual", "heater", "decrease", "increase",
-  "presets", "lid", "lidOpen", "lidClosed", "water", "waterOk", "waterLow",
-  "explode", "assemble", "statusIdle", "statusHeating", "statusHolding",
-  "statusCooling", "statusInterlock", "statusDone", "chartTitle", "chartTemp",
-  "chartSet", "timer", "timerOff", "timerWaiting", "minutes", "pump", "pumpOn",
-  "pumpOff", "panelHint", "disclaimer",
+  "powerButton", "lightButton", "on", "off", "setpoint", "actual", "heater",
+  "decrease", "increase", "setKey", "presets", "presetLowMelt", "presetHighMelt",
+  "presetFatty", "light", "water", "waterOk", "waterLow", "explode", "assemble",
+  "statusOff", "statusHeating", "statusHolding", "statusCooling", "statusInterlock",
+  "section", "sectionWrinkled", "sectionOpening", "sectionFlat", "sectionTooHot",
+  "sectionNone", "slideTake", "slideRefill", "slideFlat", "slideWrinkled", "slideTooHot",
+  "chartTitle", "chartTemp", "chartSet", "panelHint", "panelHintSlides", "disclaimer",
 ] as const;
 
 const requestTypeRecord = z
@@ -105,14 +106,16 @@ const legalPageSchema = z
 
 export const localeContentSchema = z
   .object({
-    meta: z.object({ siteTitle: z.string(), siteDescription: z.string() }).strict(),
+    // homeTitle: ana sayfanın arama sonucundaki başlığı (marka + ne yaptığı).
+    meta: z.object({ siteTitle: z.string(), homeTitle: z.string(), siteDescription: z.string() }).strict(),
     company: z
       .object({
         legalName: z.string(),
         shortName: z.string(),
         // Logoda "Ahtapot" yazısının altındaki küçük satır.
         brandSub: z.string(),
-        address: z.string(),
+        // Satır satır (sokak, blok/kapı, posta kodu ve il).
+        address: z.array(z.string()).min(1),
         // TODO: gerçek e-posta / telefon — boşsa render edilmez.
         email: z.string(),
         phone: z.string(),
@@ -131,6 +134,8 @@ export const localeContentSchema = z
         home: z.string(),
         localeLabel: z.string(),
         localeName: z.string(),
+        themeToLight: z.string(),
+        themeToDark: z.string(),
         navLabel: z.string(),
       })
       .strict(),
@@ -245,7 +250,6 @@ export const localeContentSchema = z
             name: z.string(),
             role: z.string(),
             bio: z.string(),
-            areas: z.array(z.string()),
           })
           .strict(),
       })
@@ -381,7 +385,31 @@ const productAssetsSchema = z
         kind: z.string(),
         model: z.string(),
         params: z.record(z.string(), z.number()),
-        presets: z.array(z.number()),
+        // Hazır ayar: sıcaklık + simülatör metinlerindeki etiket anahtarı.
+        presets: z.array(z.object({ setC: z.number(), label: z.string() }).strict()),
+        // Gerçek CAD modeli (tools/cad ile SolidWorks montajından üretilir).
+        // Verilirse simülatör WebGL'de bu modeli gösterir; WebGL yoksa çizim modeline düşer.
+        model3d: z
+          .object({
+            src: z.string(),
+            anchors: z.string(),
+            parts: z.array(
+              z
+                .object({
+                  // Parçanın web kimliğinde geçen metin (tools/cad → WEB_PARTS; ör. "govde", "dugme")
+                  match: z.string(),
+                  color: z.string().regex(/^#[0-9a-f]{6}$/i),
+                  finish: z.enum(["paint", "metal", "plastic", "teflon", "glass", "rubber"]).default("paint"),
+                  layer: z.enum(PRODUCT_LAYERS).optional(),
+                  // "İçini gösterin"de parçanın kayacağı yön ve mesafe (m, Y yukarı)
+                  explode: z.tuple([z.number(), z.number(), z.number()]).optional(),
+                  role: z.enum(["controller", "button", "ledGlass", "heater", "container"]).optional(),
+                })
+                .strict()
+            ),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),

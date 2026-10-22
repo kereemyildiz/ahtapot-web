@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import { LOGO_BLUES, LOGO_PATHS } from "@/components/brand/LogoMark";
 import type { ProductLayer } from "@/content/constants";
-import { pulseDash } from "@/lib/svgPath";
+import { drawDash, pulseDash } from "@/lib/svgPath";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
+import { useLenisContext } from "@/components/providers/LenisContext";
 
 /**
  * Hero görseli: logodaki ahtapot işareti ve dört kolu. Kollar logonun kendi
@@ -55,6 +56,8 @@ const SCOPE_CURVE = (() => {
   return pts.join(" ");
 })();
 const SCOPE_PULSE = pulseDash(SCOPE_CURVE, 0.04);
+const MARK = "M-8 -4 L8 -8 L18 2 L12 14 L-4 14 L-12 6 Z";
+const MARK_DRAW = drawDash(MARK);
 
 function ModuleArt({ layer }: { layer: ProductLayer }) {
   switch (layer) {
@@ -122,7 +125,7 @@ function ModuleArt({ layer }: { layer: ProductLayer }) {
           <rect x="-46" y="-30" width="92" height="60" />
           <path d="M-46 -19 H46" strokeWidth="2" />
           <path d="M-34 14 L-24 -6 L-4 -12 L18 -6 L36 6 L28 20 L-2 22 L-26 22 Z" strokeWidth="1.5" opacity="0.55" />
-          <path d="M-8 -4 L8 -8 L18 2 L12 14 L-4 14 L-12 6 Z" stroke="var(--color-eosin)" pathLength={100} strokeDasharray="100" className="mod-draw" />
+          <path d={MARK} stroke="var(--color-eosin)" strokeDasharray={MARK_DRAW.strokeDasharray} style={MARK_DRAW.style} className="mod-draw" />
         </g>
       );
   }
@@ -137,6 +140,36 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
   useOffscreenPause(root);
 
   const replay = useRef<(() => void) | null>(null);
+  const { scrollToId } = useLenisContext();
+
+  // Modüle tıklayınca: logodan modüle bir sinyal akar, modül basılır, sayfa
+  // o disiplinin yetkinlik adımına kayar; varınca başlığın yanında bir çizgi
+  // belirir. Reduced motion'da efektler atlanır, kaydırma anında olur.
+  const goTo = (i: number, layer: ProductLayer) => (e: ReactMouseEvent) => {
+    e.preventDefault();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const arrive = () => {
+      const bar = document.querySelector(`#kabiliyet-${layer} [data-arrive-bar]`);
+      if (!bar || reduce) return;
+      gsap
+        .timeline()
+        .fromTo(bar, { scaleY: 0, autoAlpha: 1 }, { scaleY: 1, duration: 0.5, ease: "expo.out" })
+        .to(bar, { autoAlpha: 0, duration: 0.6, ease: "power2.out" }, "+=0.9");
+    };
+    if (reduce) {
+      scrollToId(`kabiliyet-${layer}`, arrive);
+      return;
+    }
+    const q = gsap.utils.selector(root);
+    gsap
+      .timeline()
+      .set(q(`[data-arm-burst="${i}"]`), { autoAlpha: 1 })
+      .fromTo(q(`[data-arm-burst="${i}"]`), { drawSVG: "0% 0%" }, { drawSVG: "0% 100%", duration: 0.3, ease: "power2.in" })
+      .fromTo(q(`[data-module="${layer}"]`), { scale: 0.92 }, { scale: 1, transformOrigin: "50% 50%", duration: 0.6, ease: "expo.out" })
+      .to(q(`[data-arm-burst="${i}"]`), { drawSVG: "100% 100%", duration: 0.25, ease: "power2.out" }, "<")
+      .set(q(`[data-arm-burst="${i}"]`), { autoAlpha: 0 })
+      .add(() => scrollToId(`kabiliyet-${layer}`, arrive), 0.28);
+  };
 
   useGSAP(
     () => {
@@ -145,7 +178,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
         const tl = gsap.timeline({ delay: 0.2, onComplete: () => setCycling(true) });
         tl.from("[data-logo-path]", { drawSVG: "0%", duration: 0.9, stagger: 0.14, ease: "power2.inOut" })
           .from("[data-arm]", { drawSVG: "0%", duration: 0.8, stagger: 0.1, ease: "power2.inOut" }, "-=0.3")
-          .from("[data-module]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.08, ease: "back.out(1.6)" }, "-=0.4")
+          .from("[data-module]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.08, ease: "expo.out" }, "-=0.4")
           .from("[data-node-label]", { autoAlpha: 0, y: 8, duration: 0.4, stagger: 0.06 }, "-=0.3");
 
         // Giriş yalnız ilk açılışta değil: hero'ya geri dönülünce ve logonun
@@ -171,10 +204,13 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
   }, [cycling, hovered, nodes.length]);
 
   // İmleç ışığı: React'i yeniden çizdirmeden CSS değişkeni olarak taşınır.
+  // Değişkenler yalnız ışık katmanına yazılır; köke yazılsa her harekette
+  // bütün SVG'nin stili yeniden hesaplanırdı.
+  const spot = useRef<HTMLDivElement>(null);
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse") return;
-    const el = e.currentTarget;
-    const r = el.getBoundingClientRect();
+    const el = spot.current;
+    if (e.pointerType !== "mouse" || !el) return;
+    const r = e.currentTarget.getBoundingClientRect();
     el.style.setProperty("--mx", `${e.clientX - r.left}px`);
     el.style.setProperty("--my", `${e.clientY - r.top}px`);
     el.style.setProperty("--spot", "1");
@@ -185,12 +221,13 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
       ref={root}
       className="absolute inset-0 flex items-center justify-center overflow-hidden p-[4%]"
       onPointerMove={onPointerMove}
-      onPointerLeave={(e) => e.currentTarget.style.setProperty("--spot", "0")}
+      onPointerLeave={() => spot.current?.style.setProperty("--spot", "0")}
     >
       <div aria-hidden="true" className="hero-glow pointer-events-none absolute inset-0" />
       <div aria-hidden="true" className="hero-pattern pointer-events-none absolute inset-0" />
-      <div aria-hidden="true" className="hero-spot pointer-events-none absolute inset-0" />
-      <svg viewBox="0 0 600 760" className="relative h-full w-full max-w-[40rem]" role="img" aria-label={label}>
+      <div ref={spot} aria-hidden="true" className="hero-spot pointer-events-none absolute inset-0" />
+      {/* role="group": içinde bağlantılar var; role="img" onları ekran okuyucudan gizlerdi. */}
+      <svg viewBox="0 0 600 760" className="relative h-full w-full max-w-[40rem]" role="group" aria-label={label}>
         <defs>
           <linearGradient id="hero-logo" gradientUnits="userSpaceOnUse" x1="150" y1="130" x2="710" y2="865">
             <stop offset="0" stopColor={LOGO_BLUES.deep} />
@@ -207,7 +244,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
           const armPulse = pulseDash(m.arm, 0.08);
           return (
             <g key={`arm-${n.layer}`}>
-              <path data-arm="" d={m.arm} fill="none" stroke={on ? LOGO_BLUES.light : "#2b3566"} strokeWidth="6" strokeLinecap="square" style={{ transition: "stroke 400ms ease" }} />
+              <path data-arm="" d={m.arm} fill="none" strokeWidth="6" strokeLinecap="square" style={{ stroke: on ? LOGO_BLUES.light : "var(--color-wire)", transition: "stroke 400ms ease" }} />
               <path
                 d={m.arm}
                 fill="none"
@@ -217,6 +254,8 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
                 className="pulse"
                 style={{ ...armPulse.style, animationDuration: on ? "1.4s" : "2.8s", animationDelay: `${i * -0.6}s`, opacity: on ? 1 : 0.55 }}
               />
+              {/* Tıklanınca logodan modüle akan sinyal (goTo). */}
+              <path data-arm-burst={i} d={m.arm} fill="none" stroke="var(--color-accent)" strokeWidth="9" strokeLinecap="square" visibility="hidden" />
             </g>
           );
         })}
@@ -240,14 +279,20 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
           const m = MODULES[n.layer];
           const on = i === current;
           return (
-            <g
+            <a
               key={n.layer}
+              href={`#kabiliyet-${n.layer}`}
+              aria-label={`${n.name}: ${n.detail}`}
+              className="hero-mod cursor-pointer"
+              onClick={goTo(i, n.layer)}
               onPointerEnter={() => setHovered(i)}
               onPointerLeave={() => setHovered(null)}
-              style={{ cursor: "default" }}
+              onFocus={() => setHovered(i)}
+              onBlur={() => setHovered(null)}
             >
-              <g data-module="" transform={`translate(${m.cx} ${m.cy})`}>
-                <rect x="-70" y="-42" width="140" height="84" fill={on ? "#1d2445" : "#151a33"} style={{ transition: "fill 400ms ease" }} />
+              <g data-module={n.layer} transform={`translate(${m.cx} ${m.cy})`}>
+                <rect x="-70" y="-42" width="140" height="84" style={{ fill: on ? "var(--color-node-on)" : "var(--color-node)", transition: "fill 400ms ease" }} />
+                <rect className="mod-focus" x="-76" y="-48" width="152" height="96" fill="none" stroke="var(--color-accent)" strokeWidth="3" />
                 <g
                   className={on ? "mod-on" : undefined}
                   fill="none"
@@ -267,7 +312,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
                   {n.detail}
                 </text>
               </g>
-            </g>
+            </a>
           );
         })}
       </svg>

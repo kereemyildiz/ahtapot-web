@@ -2,6 +2,7 @@
 
 import { useState, type MouseEvent } from "react";
 import Link from "next/link";
+import { Icon, LAYER_ICON } from "@/components/brand/Icon";
 import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
 import { PRODUCT_LAYERS, type ProductLayer } from "@/content/constants";
@@ -45,7 +46,7 @@ type ProductExhibitProps = {
   copy: ExhibitCopy;
   ui: ExhibitUi;
   flip?: boolean;
-  headingLevel?: "h2" | "h3";
+  headingLevel?: "h1" | "h2" | "h3";
   showDetailsLink?: boolean;
 };
 
@@ -88,7 +89,7 @@ export function ProductExhibit({
           <div data-reveal="">
             {inDevelopment ? (
               // Gizlenemez, küçültülemez, opsiyonel değildir.
-              <span className="inline-flex items-center gap-2 bg-field px-3 py-1.5 text-small font-semibold text-field-ink">
+              <span className="inline-flex items-center gap-2 bg-field px-3 py-1.5 text-small font-semibold text-field-ink shadow-[inset_0_0_0_1px_var(--color-field-line)]">
                 <span className="size-2 bg-eosin" aria-hidden="true" />
                 {ui.inDevelopmentBadge}
               </span>
@@ -98,10 +99,12 @@ export function ProductExhibit({
                 {ui.statusAvailable}
               </span>
             )}
-            <Heading className="mt-5 font-display text-[clamp(1.75rem,1.2rem+1.6vw,2.75rem)] font-medium leading-[1.05] tracking-[-0.03em] text-balance">
-              {copy.name}
-            </Heading>
-            <p className="mt-4 text-lead leading-snug text-ink/90">{copy.tagline}</p>
+            <div className="mt-6 border-l-[3px] border-brand pl-5">
+              <Heading className="font-display text-[clamp(2.1rem,1.4rem+2vw,3.25rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-balance">
+                {copy.name}
+              </Heading>
+              <p className="mt-4 text-lead leading-snug text-muted">{copy.tagline}</p>
+            </div>
           </div>
 
           <div data-reveal="" className="mt-8">
@@ -124,11 +127,12 @@ export function ProductExhibit({
                           active === layer ? "bg-accent text-accent-ink" : "bg-surface-2 text-ink hover:bg-ink hover:text-ground"
                         }`}
                       >
-                        <span className={`size-2 ${active === layer ? "bg-accent-ink" : "bg-accent"}`} aria-hidden="true" />
+                        <Icon name={LAYER_ICON[layer]} className={`size-4 ${active === layer ? "text-accent-ink" : "text-accent"}`} />
                         {ui.layerNames[layer]}
                       </button>
                     ) : (
                       <span className="inline-flex items-center gap-2 px-3 py-2 text-small text-muted line-through decoration-muted/60">
+                        <Icon name={LAYER_ICON[layer]} className="size-4 opacity-60" />
                         {ui.layerNames[layer]}
                       </span>
                     )}
@@ -158,13 +162,15 @@ export function ProductExhibit({
             <Link
               href={localeHref(locale, `/?tur=${requestType}#iletisim`)}
               onClick={onRequest}
-              className="btn btn-primary"
+              className="btn btn-primary group"
             >
               {inDevelopment ? ui.demoCta : ui.quoteCta}
+              <Icon name="arrowRight" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
             </Link>
             {showDetailsLink && (
               <Link href={localeHref(locale, `/urunler/${product.slug}`)} className="btn btn-quiet">
                 {ui.detailsCta}
+                <Icon name="arrowUpRight" className="size-4" strokeWidth={2} />
               </Link>
             )}
           </div>

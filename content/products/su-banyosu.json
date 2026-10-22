@@ -3,7 +3,11 @@
   "order": 1,
   "status": "available",
   "interaction": "simulator",
-  "layers": ["mekanik", "elektronik", "gomulu"],
+  "layers": [
+    "mekanik",
+    "elektronik",
+    "gomulu"
+  ],
   "assets": {
     "gallery": [],
     "turntable": {
@@ -13,18 +17,218 @@
       "kind": "water-bath",
       "model": "water-bath",
       "params": {
-        "volumeL": 10,
-        "heaterW": 1000,
+        "volumeL": 2,
+        "heaterW": 200,
         "ambientC": 22,
-        "lossLidClosedWK": 6,
-        "lossLidOpenWK": 14,
+        "lossWK": 1.6,
         "minC": 25,
-        "maxC": 95,
+        "maxC": 65,
         "startC": 22,
-        "initialSetC": 37,
-        "timeScale": 90
+        "initialSetC": 40,
+        "timeScale": 90,
+        "sensorTauS": 45,
+        "cutoffC": 150,
+        "resetC": 110
       },
-      "presets": [37, 45, 56]
+      "presets": [
+        {
+          "setC": 40,
+          "label": "presetLowMelt"
+        },
+        {
+          "setC": 47,
+          "label": "presetHighMelt"
+        },
+        {
+          "setC": 41,
+          "label": "presetFatty"
+        }
+      ],
+      "model3d": {
+        "src": "/models/sb9k.glb",
+        "anchors": "/models/sb9k.anchors.json",
+        "parts": [
+          {
+            "match": "govde",
+            "color": "#86379b",
+            "finish": "paint",
+            "layer": "mekanik"
+          },
+          {
+            "match": "ic-duvar",
+            "color": "#86379b",
+            "finish": "paint",
+            "layer": "mekanik"
+          },
+          {
+            "match": "hazne",
+            "color": "#1c1f25",
+            "finish": "teflon",
+            "layer": "mekanik",
+            "explode": [
+              0,
+              0.2,
+              0
+            ],
+            "role": "container"
+          },
+          {
+            "match": "tutamak",
+            "color": "#1d1e22",
+            "finish": "plastic",
+            "layer": "mekanik",
+            "explode": [
+              0,
+              0.2,
+              0
+            ]
+          },
+          {
+            "match": "led-cami",
+            "color": "#dfe8ff",
+            "finish": "glass",
+            "layer": "elektronik",
+            "explode": [
+              0,
+              0.2,
+              0
+            ],
+            "role": "ledGlass"
+          },
+          {
+            "match": "alt-tepsi",
+            "color": "#c9ced5",
+            "finish": "metal",
+            "layer": "mekanik",
+            "explode": [
+              0,
+              0.14,
+              0
+            ]
+          },
+          {
+            "match": "isi-plakasi",
+            "color": "#c4c8cf",
+            "finish": "metal",
+            "layer": "mekanik",
+            "explode": [
+              0,
+              0.1,
+              0
+            ]
+          },
+          {
+            "match": "isitici",
+            "color": "#4c4c4c",
+            "finish": "rubber",
+            "layer": "elektronik",
+            "explode": [
+              0,
+              0.07,
+              0
+            ],
+            "role": "heater"
+          },
+          {
+            "match": "prob-soketi",
+            "color": "#868686",
+            "finish": "metal",
+            "layer": "elektronik",
+            "explode": [
+              0,
+              0.07,
+              0
+            ]
+          },
+          {
+            "match": "prob-baglantisi",
+            "color": "#895956",
+            "finish": "metal",
+            "layer": "elektronik",
+            "explode": [
+              0,
+              0.07,
+              0
+            ]
+          },
+          {
+            "match": "aralayici",
+            "color": "#9aa0aa",
+            "finish": "metal",
+            "layer": "mekanik",
+            "explode": [
+              0,
+              0.04,
+              0
+            ]
+          },
+          {
+            "match": "taban",
+            "color": "#c9ced5",
+            "finish": "metal",
+            "layer": "mekanik",
+            "explode": [
+              0,
+              -0.07,
+              0
+            ]
+          },
+          {
+            "match": "ssr",
+            "color": "#e5eaed",
+            "finish": "plastic",
+            "layer": "elektronik",
+            "explode": [
+              0,
+              -0.07,
+              0
+            ]
+          },
+          {
+            "match": "guc-kaynagi",
+            "color": "#a59e96",
+            "finish": "metal",
+            "layer": "elektronik",
+            "explode": [
+              0,
+              -0.07,
+              0
+            ]
+          },
+          {
+            "match": "emi-filtre",
+            "color": "#a59e96",
+            "finish": "metal",
+            "layer": "elektronik"
+          },
+          {
+            "match": "kontrolcu",
+            "color": "#2c2f35",
+            "finish": "plastic",
+            "layer": "gomulu",
+            "role": "controller"
+          },
+          {
+            "match": "dugme",
+            "color": "#b9bec6",
+            "finish": "metal",
+            "layer": "elektronik",
+            "role": "button"
+          },
+          {
+            "match": "guc-girisi",
+            "color": "#1e2026",
+            "finish": "plastic",
+            "layer": "elektronik"
+          },
+          {
+            "match": "kablo",
+            "color": "#15171b",
+            "finish": "rubber",
+            "layer": "elektronik"
+          }
+        ]
+      }
     }
   }
 }

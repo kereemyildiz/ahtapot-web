@@ -67,3 +67,12 @@ export function pulseDash(d: string, dashFraction: number) {
     style: { "--len": len.toFixed(1) } as CSSProperties,
   };
 }
+
+/** Kendini çizen yol (.mod-draw) için: tek çizgi + boşluk, --len gerçek uzunluk. */
+export function drawDash(d: string) {
+  const len = polylineLength(d).toFixed(1);
+  return {
+    strokeDasharray: `${len} ${len}`,
+    style: { "--len": len } as CSSProperties,
+  };
+}

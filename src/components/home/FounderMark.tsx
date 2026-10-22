@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsapSetup";
+import { replayOnView } from "@/lib/replayOnView";
 import { pulseDash } from "@/lib/svgPath";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 
@@ -17,8 +18,8 @@ const PULSE = pulseDash(TRACE, 0.14);
 
 /**
  * Kurucu bloğunun görseli: stetoskobun hortumu göğüs başlığından sonra
- * bir devre izine dönüşüp çipe bağlanır. Görünüme girince kendini çizer,
- * sonra izden periyodik bir sinyal geçer.
+ * bir devre izine dönüşüp çipe bağlanır. Görünüme her girişte kendini
+ * yeniden çizer, sonra izden periyodik bir sinyal geçer.
  * TODO(mock-data): gerçek portre gelince yerine konabilir.
  */
 export function FounderMark({ label }: { label: string }) {
@@ -29,13 +30,16 @@ export function FounderMark({ label }: { label: string }) {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap
-          .timeline({ scrollTrigger: { trigger: root.current, start: "top 75%", once: true } })
+        const tl = gsap
+          .timeline({ paused: true })
           .from("[data-founder-scope]", { drawSVG: "0%", duration: 1.1, stagger: 0.15, ease: "power2.inOut" })
-          .from("[data-founder-head]", { scale: 0.6, autoAlpha: 0, transformOrigin: "50% 50%", duration: 0.5, ease: "back.out(2)" }, "-=0.3")
+          .from("[data-founder-head]", { scale: 0.6, autoAlpha: 0, transformOrigin: "50% 50%", duration: 0.5, ease: "expo.out" }, "-=0.3")
           .from("[data-founder-trace]", { drawSVG: "0%", duration: 0.9, ease: "power2.inOut" }, "-=0.1")
-          .from("[data-founder-chip]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.45, ease: "power2.out" }, "-=0.2")
+          .from("[data-founder-chip]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.45, ease: "expo.out" }, "-=0.2")
           .from("[data-founder-pulse]", { autoAlpha: 0, duration: 0.3 });
+
+        // Hero gibi: yalnız ilk açılışta değil, bölüme her girişte yeniden çizilir.
+        return root.current ? replayOnView(root.current, tl) : undefined;
       });
       return () => mm.revert();
     },

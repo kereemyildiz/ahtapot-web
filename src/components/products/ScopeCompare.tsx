@@ -86,16 +86,19 @@ export function ScopeCompare({ image, copy }: { image: MediaImage; copy: Compare
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Değer tween'in ilerlemesinden hesaplanır (ease: none → doğrusal);
+        // her karede getComputedStyle ile okumak stili zorla yeniden hesaplatıyordu.
+        const FROM = 88;
+        const TO = 14;
         scrub.current = gsap.fromTo(
           root.current,
-          { "--split": 88 },
+          { "--split": FROM },
           {
-            "--split": 14,
+            "--split": TO,
             ease: "none",
             scrollTrigger: { trigger: root.current, start: "top 85%", end: "bottom 35%", scrub: 0.5 },
             onUpdate: () => {
-              const v = Number(getComputedStyle(root.current!).getPropertyValue("--split"));
-              if (Number.isNaN(v)) return;
+              const v = FROM + (TO - FROM) * (scrub.current?.progress() ?? 0);
               current.current = target.current = v;
               handle.current?.setAttribute("aria-valuenow", String(Math.round(v)));
             },
@@ -144,6 +147,7 @@ export function ScopeCompare({ image, copy }: { image: MediaImage; copy: Compare
     <div
       ref={root}
       onPointerMove={onPointerMove}
+      data-theme="dark"
       className="relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden bg-black select-none"
       style={{ "--split": 50 } as CSSProperties}
     >
@@ -188,26 +192,29 @@ export function ScopeCompare({ image, copy }: { image: MediaImage; copy: Compare
         </svg>
       </div>
 
-      {/* Ayraç: fosfor yeşili çizgi ve tutamak (klavyeyle de kayar). */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-accent" style={{ left: "calc(var(--split) * 1%)" }} />
-      <div
-        ref={handle}
-        role="slider"
-        tabIndex={0}
-        aria-label={copy.handle}
-        aria-valuemin={MIN}
-        aria-valuemax={MAX}
-        aria-valuenow={50}
-        onKeyDown={onKey}
-        onPointerDown={onHandleDown}
-        onPointerUp={onHandleUp}
-        onPointerCancel={onHandleUp}
-        className="absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none place-items-center bg-accent text-accent-ink shadow-[0_8px_24px_rgb(0_0_0/0.45)] active:cursor-grabbing"
-        style={{ left: "calc(var(--split) * 1%)" }}
-      >
-        <svg viewBox="0 0 16 16" className="size-4" fill="currentColor" aria-hidden="true">
-          <path d="M6 4 2 8l4 4zM10 4l4 4-4 4z" />
-        </svg>
+      {/* Ayraç: fosfor yeşili çizgi ve tutamak (klavyeyle de kayar). Tam genişlikteki
+          taşıyıcı transform ile kayar (yüzde, taşıyıcının = kutunun genişliği);
+          `left` her karede yerleşimi yeniden hesaplatıyordu. */}
+      <div className="pointer-events-none absolute inset-0" style={{ transform: "translateX(calc(var(--split) * 1%))" }}>
+        <div aria-hidden="true" className="absolute inset-y-0 left-0 w-0.5 -translate-x-1/2 bg-accent" />
+        <div
+          ref={handle}
+          role="slider"
+          tabIndex={0}
+          aria-label={copy.handle}
+          aria-valuemin={MIN}
+          aria-valuemax={MAX}
+          aria-valuenow={50}
+          onKeyDown={onKey}
+          onPointerDown={onHandleDown}
+          onPointerUp={onHandleUp}
+          onPointerCancel={onHandleUp}
+          className="pointer-events-auto absolute left-0 top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none place-items-center bg-accent text-accent-ink shadow-[0_8px_24px_rgb(0_0_0/0.45)] active:cursor-grabbing"
+        >
+          <svg viewBox="0 0 16 16" className="size-4" fill="currentColor" aria-hidden="true">
+            <path d="M6 4 2 8l4 4zM10 4l4 4-4 4z" />
+          </svg>
+        </div>
       </div>
 
       {/* Etiketler karşı köşelerde: dar ekranda çakışmasın. */}

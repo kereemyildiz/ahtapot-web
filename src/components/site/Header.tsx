@@ -7,7 +7,9 @@ import type { AppLocale } from "@/i18n/routing";
 import { localeHref, swapLocale } from "@/i18n/href";
 import Image from "next/image";
 import { LogoMark } from "@/components/brand/LogoMark";
+import { Icon } from "@/components/brand/Icon";
 import { useLenisContext } from "@/components/providers/LenisContext";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 
 type HeaderProps = {
   locale: AppLocale;
@@ -22,8 +24,59 @@ type HeaderProps = {
     brand: string;
     brandSub: string;
     navLabel: string;
+    themeToLight: string;
+    themeToDark: string;
   };
 };
+
+const LOCALES: AppLocale[] = ["tr", "en"];
+
+/**
+ * Dil seçici: nav bağlantılarından ayrı duran küre + TR/EN anahtarı.
+ * Etkin dil düz yazı (aria-current), diğeri o sayfanın karşılığına gider.
+ * Tam sayfa gezinme (next/link değil): kök layout istemcide yeniden
+ * çizilmesin; <head>'deki tema betiği yalnız sunucu HTML'inde çalışır
+ * (istemcide çizilen <script> React 19'da uyarı verir ve çalışmaz).
+ */
+function LocaleSwitch({
+  locale,
+  href,
+  label,
+  otherName,
+  className = "",
+}: {
+  locale: AppLocale;
+  href: string;
+  label: string;
+  otherName: string;
+  className?: string;
+}) {
+  return (
+    <div role="group" aria-label={label} className={`flex items-center gap-2 text-muted ${className}`}>
+      <Icon name="globe" className="size-[1.05rem]" />
+      <span className="flex border border-surface-2 p-[3px] text-[0.75rem] font-semibold leading-none tracking-[0.08em]">
+        {LOCALES.map((code) =>
+          code === locale ? (
+            <span key={code} aria-current="true" className="bg-surface-2 px-3 py-3 text-ink lg:px-2 lg:py-1.5">
+              {code.toUpperCase()}
+            </span>
+          ) : (
+            <a
+              key={code}
+              href={href}
+              lang={code}
+              hrefLang={code}
+              aria-label={otherName}
+              className="px-3 py-3 transition-colors duration-200 hover:text-ink lg:px-2 lg:py-1.5"
+            >
+              {code.toUpperCase()}
+            </a>
+          ),
+        )}
+      </span>
+    </div>
+  );
+}
 
 export function Header({ locale, labels }: HeaderProps) {
   const pathname = usePathname();
@@ -74,7 +127,7 @@ export function Header({ locale, labels }: HeaderProps) {
           <LogoMark className="h-10 w-auto" strokeWidth={44} gradientId="logo-header" />
           <span className="flex flex-col items-start gap-[3px]">
             {/* Logodaki yazı: public/logo.jpg'den çıkarılmış, düz marka mavisi. */}
-            <Image src="/brand/wordmark.png" alt="" width={82} height={21} priority className="h-[21px] w-auto" />
+            <Image src="/brand/wordmark.png" alt="" width={82} height={21} priority />
             {/* Altında küçük satır; logonun parçası, o yüzden de mavi. */}
             <span className="text-[0.6rem] font-semibold uppercase leading-none tracking-[0.16em] text-periwinkle">
               {labels.brandSub}
@@ -93,21 +146,19 @@ export function Header({ locale, labels }: HeaderProps) {
               {link.label}
             </a>
           ))}
-          <Link
-            href={otherHref}
-            aria-label={labels.localeLabel}
-            lang={otherLocale}
-            className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
-          >
-            {labels.localeName}
-          </Link>
           <a
             href={`/${locale}#iletisim`}
             onClick={onAnchor("iletisim")}
-            className="btn btn-primary min-h-0 py-3 text-[0.95rem]"
+            className="btn btn-primary group min-h-0 py-3 text-[0.95rem]"
           >
             {labels.cta}
+            <Icon name="arrowRight" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
           </a>
+          {/* Ayarlar en sağda, birincil aksiyondan çizgiyle ayrı. */}
+          <div className="flex items-center gap-5 border-l border-surface-2 pl-6">
+            <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-[2.15rem]" />
+            <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
+          </div>
         </nav>
 
         <button
@@ -117,41 +168,46 @@ export function Header({ locale, labels }: HeaderProps) {
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
         >
+          <Icon name={open ? "close" : "menu"} className="size-[1.1rem]" />
           {open ? labels.close : labels.menu}
         </button>
       </div>
 
-      {open && (
-        <nav
-          id="mobile-menu"
-          aria-label={labels.navLabel}
-          className="frame flex h-[calc(100svh-var(--header-h))] flex-col gap-2 bg-ground pb-10 pt-6 lg:hidden"
-        >
-          {labels.links.map((link) => (
-            <a
-              key={link.id}
-              href={`/${locale}#${link.id}`}
-              onClick={onAnchor(link.id)}
-              className="display py-2 text-[2rem] text-ink"
-            >
-              {link.label}
-            </a>
-          ))}
-          <div className="mt-auto flex flex-wrap items-center gap-4">
-            <a href={`/${locale}#iletisim`} onClick={onAnchor("iletisim")} className="btn btn-primary">
-              {labels.cta}
-            </a>
-            <Link
-              href={otherHref}
-              lang={otherLocale}
-              aria-label={labels.localeLabel}
-              className="btn btn-quiet"
-            >
-              {labels.localeName}
-            </Link>
+      {/* Mobil menü hep DOM'da: kapanırken de perdeyle çekilir. Kapalıyken
+          inert (odaklanılamaz, ekran okuyucuda yok) ve görünmez. Başlığın
+          altında mutlak durur; header yüksekliğini değiştirmez. */}
+      <nav
+        id="mobile-menu"
+        aria-label={labels.navLabel}
+        inert={!open}
+        className={`frame absolute inset-x-0 top-full flex h-[calc(100svh-var(--header-h))] flex-col gap-2 bg-ground pb-10 pt-6 transition-[clip-path,visibility] ease-out-expo lg:hidden ${
+          open ? "visible duration-300 [clip-path:inset(0)]" : "invisible duration-200 [clip-path:inset(0_0_100%_0)]"
+        }`}
+      >
+        {labels.links.map((link, i) => (
+          <a
+            key={link.id}
+            href={`/${locale}#${link.id}`}
+            onClick={onAnchor(link.id)}
+            className={`display py-2 text-[2rem] text-ink transition-[opacity,transform] ease-out-expo ${
+              open ? "translate-y-0 opacity-100 duration-500" : "-translate-y-2 opacity-0 duration-150"
+            }`}
+            style={{ transitionDelay: open ? `${80 + i * 40}ms` : "0ms" }}
+          >
+            {link.label}
+          </a>
+        ))}
+        <div className="mt-auto flex flex-wrap items-center gap-4">
+          <a href={`/${locale}#iletisim`} onClick={onAnchor("iletisim")} className="btn btn-primary">
+            {labels.cta}
+            <Icon name="arrowRight" className="size-4" strokeWidth={2} />
+          </a>
+          <div className="ml-auto flex items-center gap-5">
+            <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-12" />
+            <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
           </div>
-        </nav>
-      )}
+        </div>
+      </nav>
     </header>
   );
 }

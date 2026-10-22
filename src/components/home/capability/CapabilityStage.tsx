@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
 import type { LayerId } from "@/content/constants";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 import { LayerVisual, type ToolLabels, type VisualItem } from "./visuals";
+import { Icon, LAYER_ICON } from "@/components/brand/Icon";
 
 type StageItem = VisualItem & {
   layer: string;
@@ -102,7 +103,7 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
         <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-10 lg:block" aria-hidden="true">
           <div className="sticky top-[calc(var(--header-h)+18vh)]">
             <svg width="40" height={threadHeight + 8} viewBox={`0 -4 40 ${threadHeight + 8}`} className="overflow-visible">
-              <path d={threadPath(items.length, STEP)} fill="none" stroke="rgb(162 168 188 / 0.3)" strokeWidth="2.5" />
+              <path d={threadPath(items.length, STEP)} fill="none" className="stroke-muted/30" strokeWidth="2.5" />
               <path data-thread="" d={threadPath(items.length, STEP)} fill="none" stroke="var(--color-accent)" strokeWidth="2.5" />
               {items.map((it, i) => (
                 <rect
@@ -111,10 +112,12 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
                   y={i * STEP - 6}
                   width="12"
                   height="12"
-                  fill={i <= active ? "var(--color-accent)" : "var(--color-ground)"}
-                  stroke={i <= active ? "var(--color-accent)" : "rgb(162 168 188 / 0.6)"}
                   strokeWidth="2"
-                  style={{ transition: "fill 250ms ease, stroke 250ms ease" }}
+                  style={{
+                    fill: i <= active ? "var(--color-accent)" : "var(--color-ground)",
+                    stroke: i <= active ? "var(--color-accent)" : "color-mix(in oklab, var(--color-muted) 60%, transparent)",
+                    transition: "fill 250ms ease, stroke 250ms ease",
+                  }}
                 />
               ))}
             </svg>
@@ -125,6 +128,7 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
           {items.map((it, i) => (
             <li
               key={it.id}
+              id={`kabiliyet-${it.id}`}
               data-step={it.id}
               className="flex flex-col justify-center py-10 lg:min-h-[78vh] lg:py-0"
             >
@@ -132,10 +136,19 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
                 <LayerVisual item={it} tools={tools} active />
               </div>
               <h3
-                className={`font-display text-[clamp(1.7rem,1.1rem+1.8vw,2.8rem)] font-medium leading-[1.08] tracking-[-0.03em] transition-colors duration-300 ${
+                className={`relative font-display text-[clamp(1.7rem,1.1rem+1.8vw,2.8rem)] font-medium leading-[1.08] tracking-[-0.03em] transition-colors duration-300 ${
                   i === active ? "text-ink" : "text-ink/55"
                 }`}
               >
+                {/* Hero'daki modülden gelinince beliren varış çizgisi (HeroNetwork → goTo). */}
+                <span data-arrive-bar="" aria-hidden="true" className="invisible absolute -left-3 top-0 h-full w-[3px] origin-top bg-accent" />
+                <Icon
+                  name={LAYER_ICON[it.id]}
+                  strokeWidth={1.5}
+                  className={`mr-[0.3em] inline-block size-[0.78em] align-[-0.06em] transition-colors duration-300 ${
+                    i === active ? "text-periwinkle" : "text-muted/60"
+                  }`}
+                />
                 {it.title}
               </h3>
               <p className="mt-5 max-w-[42ch] text-body text-ink/90">{it.sentence}</p>
@@ -159,8 +172,10 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
               key={it.id}
               data-stage-visual={it.id}
               aria-hidden={i !== active}
-              className={`absolute inset-0 transition-[opacity,transform] duration-700 ease-out ${
-                i === active ? "opacity-100" : "pointer-events-none scale-[0.985] opacity-0"
+              // Asimetrik geçiş: giden çabuk söner, gelen biraz bekleyip açılır;
+              // iki yoğun araç ekranı üst üste binmesin.
+              className={`absolute inset-0 transition-[opacity,transform] ease-out-expo ${
+                i === active ? "opacity-100 delay-[120ms] duration-[450ms] motion-reduce:delay-0" : "pointer-events-none scale-[0.985] opacity-0 duration-200"
               }`}
             >
               <LayerVisual item={it} tools={tools} active={i === active} eager={i === 0} />

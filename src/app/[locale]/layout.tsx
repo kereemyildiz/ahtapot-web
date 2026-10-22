@@ -4,14 +4,22 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { fontVariables } from "@/lib/fonts";
+import { SITE_URL } from "@/lib/seo";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import "../globals.css";
 
+// Seçilen tema ilk boyamadan önce (varsayılan koyu; bkz. ThemeToggle).
+const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
+// Yalnız tr/en. Bilinmeyen ilk segment (/favicon.ico, /xyz.txt) render
+// edilmeden 404 olur; yoksa kök layout'taki notFound() Worker'da 500 veriyordu.
+export const dynamicParams = false;
 
 export const viewport: Viewport = {
   themeColor: "#0a0c16",
@@ -23,14 +31,17 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { locale } = await props.params;
   const t = await getTranslations({ locale: locale as AppLocale, namespace: "meta" });
+  // Search Console HTML etiketi ile doğrulama (isteğe bağlı; DNS doğrulaması
+  // varsa gerekmez). Değer derleme anında ortam değişkeninden.
+  const google = process.env.GOOGLE_SITE_VERIFICATION;
   return {
+    metadataBase: new URL(SITE_URL),
     title: t("siteTitle"),
     description: t("siteDescription"),
+    applicationName: t("siteTitle"),
+    ...(google ? { verification: { google } } : {}),
   };
 }
-
-// İçerik giriş animasyonlarının başlangıç durumu yalnız JS varken uygulanır.
-const JS_FLAG = "document.documentElement.classList.add('js')";
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
@@ -50,7 +61,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     <html lang={locale} className={`${fontVariables} h-full`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: JS_FLAG }} />
+        {/* Kök layout istemcide yeniden çizilmez (dil değişimi tam sayfa
+            gezinme): betik yalnız sunucu HTML'inde çalışır, uyarı vermez. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="min-h-full">
         <SmoothScrollProvider>
@@ -73,6 +86,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
               brand: tCompany("shortName"),
               brandSub: tCompany("brandSub"),
               navLabel: t("navLabel"),
+              themeToLight: t("themeToLight"),
+              themeToDark: t("themeToDark"),
             }}
           />
           <div id="icerik">{children}</div>

@@ -1,14 +1,15 @@
 {
   "meta": {
-    "siteTitle": "Ahtapot Tıbbi Teknolojileri",
-    "siteDescription": "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir tıbbi cihaza uçtan uca dönüştürüyoruz."
+    "siteTitle": "Ahtapot Tıbbi Teknolojiler",
+    "homeTitle": "Ahtapot Tıbbi Teknolojiler · Tıbbi cihaz tasarımı ve üretimi",
+    "siteDescription": "Ahtapot Tıbbi Teknolojiler, İstanbul'da tıbbi cihaz tasarlar ve üretir. Mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı ekip içinde geliştirilir."
   },
   "company": {
-    "legalName": "Ahtapot Tıbbi Teknolojileri A.Ş.",
+    "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
     "shortName": "Ahtapot",
-    "brandSub": "Tıbbi Teknolojileri",
-    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul",
-    "email": "",
+    "brandSub": "Tıbbi Teknolojiler",
+    "address": ["Ahmet Yesevi Mah. Kerem Sok.", "A Blok No:9 İç Kapı No:404", "34903 Pendik/İstanbul"],
+    "email": "info@ahtapot.ink",
     "phone": "+90 535 770 66 49"
   },
   "nav": {
@@ -23,6 +24,8 @@
     "home": "Ahtapot ana sayfa",
     "localeLabel": "Dili değiştir",
     "localeName": "English",
+    "themeToLight": "Açık temaya geç",
+    "themeToDark": "Koyu temaya geç",
     "navLabel": "Ana menü"
   },
   "hero": {
@@ -46,7 +49,7 @@
     "saha": "Saha"
   },
   "capability": {
-    "heading": "Fikirden sahaya, beş katman tek ekipte",
+    "heading": "Mekanik tasarımdan saha desteğine",
     "progressLabel": "Katman",
     "items": {
       "mekanik": {
@@ -195,7 +198,7 @@
     "featuresHeading": "Özellikler",
     "backToProducts": "Ürünlere dön",
     "screensHeading": "Arayüzden",
-    "modelAlt": "Laboratuvar su banyosunun döndürülebilir çizimi.",
+    "modelAlt": "SB-9K doku yüzdürme su banyosunun döndürülebilir çizimi.",
     "viewer": {
       "sampleNote": "Gerçek bir H&E preparatından 6144 × 6144 piksellik kesit.",
       "open": "Görüntüleyiciyi açın",
@@ -221,52 +224,62 @@
       "measureNote": "Ölçümler slaytın gerçek piksel boyutundan (µm/px) hesaplanır."
     },
     "simulator": {
-      "power": "Çalıştır",
-      "stop": "Durdur",
+      "powerButton": "Güç düğmesi",
+      "lightButton": "LED aydınlatma düğmesi",
+      "on": "Açık",
+      "off": "Kapalı",
       "setpoint": "Ayar",
       "actual": "Su",
       "heater": "Isıtıcı",
-      "decrease": "Ayarı düşür",
-      "increase": "Ayarı artır",
+      "decrease": "Ayarı düşür (▼)",
+      "increase": "Ayarı artır (▲)",
+      "setKey": "Ayar tuşu (SET)",
       "presets": "Hazır ayarlar",
-      "lid": "Kapak",
-      "lidOpen": "Açık",
-      "lidClosed": "Kapalı",
+      "presetLowMelt": "Düşük erime noktalı parafin",
+      "presetHighMelt": "Yüksek erime noktalı parafin",
+      "presetFatty": "Yağlı doku",
+      "light": "LED aydınlatma",
       "water": "Su seviyesi",
       "waterOk": "Yeterli",
       "waterLow": "Düşük",
       "explode": "İçini gösterin",
       "assemble": "Birleştirin",
-      "statusIdle": "Beklemede",
+      "statusOff": "Kapalı",
       "statusHeating": "Isıtıyor",
       "statusHolding": "Sıcaklıkta sabit",
       "statusCooling": "Soğuyor",
-      "statusInterlock": "Düşük su: ısıtıcı güvenlik kilidiyle kapatıldı",
-      "statusDone": "Süre doldu, ısıtma durdu",
+      "statusInterlock": "Su az: ikincil termostat ısıtıcıyı kesti",
+      "section": "Kesit",
+      "sectionWrinkled": "kırışık",
+      "sectionOpening": "açılıyor",
+      "sectionFlat": "gergin ve düz",
+      "sectionTooHot": "fazla sıcak, dağılma riski",
+      "sectionNone": "yüzeyde kesit yok",
+      "slideTake": "Tepsiden lam alın, kesiti sudan lama alın",
+      "slideRefill": "Tepsiye temiz lam koyun",
+      "slideFlat": "Kesit lama düz ve gergin alındı.",
+      "slideWrinkled": "Kesit lamda kırışık kaldı: kesitin açılmasını bekleyin; su soğuksa önce ayar sıcaklığına gelsin.",
+      "slideTooHot": "Kesit lamda dağıldı: su bu parafin için fazla sıcak, ayarı düşürün.",
       "chartTitle": "Son 40 dakika",
       "chartTemp": "Su",
       "chartSet": "Ayar",
-      "timer": "Zamanlayıcı",
-      "timerOff": "Kapalı",
-      "timerWaiting": "ayara ulaşınca başlar",
-      "minutes": "dk",
-      "pump": "Sirkülasyon",
-      "pumpOn": "Açık",
-      "pumpOff": "Kapalı",
-      "panelHint": "Ön paneldeki tuşları kullanın, kapağa tıklayın, sürükleyerek döndürün.",
-      "disclaimer": "Temsili simülasyon: 10 L su, 1 kW ısıtıcı ve basit bir ısı kaybı modeliyle hesaplanır; pompa ve zamanlayıcı davranışı da temsilidir, ürünün teknik değerlerini yansıtmaz. Zaman 90 kat hızlandırılmıştır."
+      "panelHint": "Ayarı değiştirmek için kontrolcüde SET'e, ardından ▲/▼'ye basın; sürükleyerek döndürün.",
+      "panelHintSlides": "Ayar için SET, ardından ▲/▼. Kesiti almak için öndeki tepsiden bir lama tıklayın; sürükleyerek döndürün.",
+      "disclaimer": "Temsili simülasyon: 2 L su, 200 W ısıtıcı ve basit bir ısı kaybı modeliyle hesaplanır; kesitin su yüzeyindeki ve lamdaki görünümü de temsilidir, ürünün teknik değerlerini yansıtmaz. Zaman 90 kat hızlandırılmıştır."
     }
   },
   "products": {
     "su-banyosu": {
-      "name": "Laboratuvar su banyosu",
-      "tagline": "Numuneleri ayarlanan sıcaklıkta sabit tutar. Mekanik, elektronik ve gömülü yazılımı kendi tasarımımızdır.",
-      "description": "Numunelerin sabit sıcaklıkta ısıtılması ve inkübasyonu için geliştirilmiş laboratuvar su banyosu. Gövde, ısıtma kontrolü ve kullanıcı arayüzü aynı ekip tarafından tasarlandı. Simülasyonda ayar sıcaklığını değiştirerek cihazın nasıl tepki verdiğini görebilirsiniz.",
+      "name": "SB-9K doku yüzdürme su banyosu",
+      "tagline": "Mikrotomdan alınan parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gererek lama alınmaya hazırlar.",
+      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Hazne tabanındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
       "features": [
-        "Dijital sıcaklık kontrolü ve ekran",
-        "Paslanmaz çelik gövde",
-        "Sessiz sirkülasyon pompası",
-        "Taşma korumalı su seviyesi sensörü"
+        "PID sıcaklık kontrolü ve dijital LED ekran",
+        "Mat siyah teflon kaplı alüminyum hazne",
+        "Hazne tabanına yerleşik silikon ısıtıcı",
+        "LED aydınlatma",
+        "Rezistansı koruyan ikincil güvenlik termostatı",
+        "Ortam sıcaklığından 65 °C'ye çalışma aralığı"
       ],
       "screens": []
     },
@@ -297,7 +310,7 @@
   },
   "about": {
     "heading": "Hakkımızda",
-    "lead": "Ahtapot Tıbbi Teknolojileri, bir hekimin kurduğu bir tıbbi cihaz şirketi. Amacımız, bugün yurt dışından tedarik edilen tıbbi cihazları Türkiye'de tasarlamak ve üretmek.",
+    "lead": "Ahtapot Tıbbi Teknolojiler, bir hekimin kurduğu bir tıbbi cihaz şirketi. Amacımız, bugün yurt dışından tedarik edilen tıbbi cihazları Türkiye'de tasarlamak ve üretmek.",
     "body": "Bir cihazın mekaniğini, elektroniğini ve yazılımını kendimiz geliştiriyoruz. Tasarım bilgisi bizde olduğu için bir parçayı değiştirmek, yeni bir özellik eklemek ya da bir güncelleme çıkarmak için kimseyi beklemiyoruz.",
     "facts": [
       {
@@ -331,13 +344,7 @@
       "label": "Kurucu",
       "name": "Dr. Mustafa Can Yılmaz",
       "role": "Kurucu · Tıp Doktoru",
-      "bio": "Hekimliğin yanı sıra yazılım, elektronik ve mekanik tasarımda da çalışıyor. Cihazların klinik gereksinimlerini tanımlıyor; devre, yazılım ve gövde tasarımında mühendislerle birlikte bizzat yer alıyor.",
-      "areas": [
-        "Klinik gereksinimler",
-        "Yazılım",
-        "Elektronik",
-        "Mekanik"
-      ]
+      "bio": "Hekimliğin yanı sıra yazılım, elektronik ve mekanik tasarımda da çalışıyor. Cihazların klinik gereksinimlerini tanımlıyor; devre, yazılım ve gövde tasarımında mühendislerle birlikte bizzat yer alıyor."
     }
   },
   "contact": {
@@ -406,7 +413,7 @@
     "title": "KVKK Aydınlatma Metni",
     "legalReviewNote": "Bu metin taslaktır, yayına alınmadan önce hukuk danışmanlığından geçmelidir.",
     "body": [
-      "Bu aydınlatma metni, Ahtapot Tıbbi Teknolojileri A.Ş. (\"Şirket\") tarafından 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") kapsamında veri sorumlusu sıfatıyla hazırlanmıştır.",
+      "Bu aydınlatma metni, Ahtapot Tıbbi Teknolojiler A.Ş. (\"Şirket\") tarafından 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") kapsamında veri sorumlusu sıfatıyla hazırlanmıştır.",
       "İletişim formu üzerinden paylaştığınız ad-soyad, e-posta, kurum ve mesaj içeriği; talebinizi değerlendirmek ve sizinle iletişime geçmek amacıyla işlenir.",
       "Verileriniz bir veritabanında saklanmaz; form gönderimi doğrudan e-posta olarak iletilir ve yalnızca talebinizin yanıtlanması amacıyla kullanılır.",
       "KVKK'nın 11. maddesi kapsamında verilerinizin işlenip işlenmediğini öğrenme, işlenme amacını öğrenme, düzeltilmesini veya silinmesini isteme haklarına sahipsiniz.",

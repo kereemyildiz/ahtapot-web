@@ -4,8 +4,9 @@ import { ScrubText } from "@/components/motion/ScrubText";
 import { SectionRule } from "@/components/motion/SectionRule";
 import { Words } from "@/components/motion/Words";
 import { FounderMark } from "./FounderMark";
+import { Pillars } from "./Pillars";
 
-type Founder = { label: string; name: string; role: string; bio: string; areas: string[] };
+type Founder = { label: string; name: string; role: string; bio: string };
 type Pillar = { title: string; text: string };
 
 /**
@@ -47,15 +48,8 @@ export async function About() {
         </dl>
       </div>
 
-      {/* Üç ilke: üst çizgileri sırayla belirir. */}
-      <ul className="mt-[clamp(4rem,8vw,7rem)] grid gap-10 md:grid-cols-3 md:gap-8">
-        {pillars.map((p) => (
-          <li key={p.title} data-reveal="" className="border-t-2 border-periwinkle/50 pt-6">
-            <h3 className="font-display text-[clamp(1.2rem,1rem+0.6vw,1.6rem)] font-medium leading-[1.15] tracking-[-0.02em]">{p.title}</h3>
-            <p className="mt-3 max-w-[38ch] text-body text-ink/85">{p.text}</p>
-          </li>
-        ))}
-      </ul>
+      {/* Üç ilke tek çizgiyle bağlı; kaydırdıkça uzar, ilkeleri sırayla yakar. */}
+      <Pillars pillars={pillars} />
 
       {/* Kurucu. */}
       <div className="mt-[clamp(5rem,10vw,9rem)] grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
@@ -75,13 +69,6 @@ export async function About() {
           <p data-reveal="" className="mt-8 max-w-[46ch] text-lead leading-snug text-ink/90">
             {founder.bio}
           </p>
-          <ul data-reveal="" className="mt-8 flex flex-wrap gap-2">
-            {founder.areas.map((area, i) => (
-              <li key={area} className={`px-3 py-2 text-small ${i === 0 ? "bg-accent text-accent-ink" : "bg-surface-2 text-ink"}`}>
-                {area}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>
