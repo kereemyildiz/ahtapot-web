@@ -147,6 +147,7 @@ export function ScopeCompare({ image, copy }: { image: MediaImage; copy: Compare
     <div
       ref={root}
       onPointerMove={onPointerMove}
+      data-theme="dark"
       className="relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden bg-black select-none"
       style={{ "--split": 50 } as CSSProperties}
     >

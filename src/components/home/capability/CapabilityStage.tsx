@@ -103,7 +103,7 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
         <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-10 lg:block" aria-hidden="true">
           <div className="sticky top-[calc(var(--header-h)+18vh)]">
             <svg width="40" height={threadHeight + 8} viewBox={`0 -4 40 ${threadHeight + 8}`} className="overflow-visible">
-              <path d={threadPath(items.length, STEP)} fill="none" stroke="rgb(162 168 188 / 0.3)" strokeWidth="2.5" />
+              <path d={threadPath(items.length, STEP)} fill="none" className="stroke-muted/30" strokeWidth="2.5" />
               <path data-thread="" d={threadPath(items.length, STEP)} fill="none" stroke="var(--color-accent)" strokeWidth="2.5" />
               {items.map((it, i) => (
                 <rect
@@ -112,10 +112,12 @@ export function CapabilityStage({ items, progressLabel, tools }: { items: StageI
                   y={i * STEP - 6}
                   width="12"
                   height="12"
-                  fill={i <= active ? "var(--color-accent)" : "var(--color-ground)"}
-                  stroke={i <= active ? "var(--color-accent)" : "rgb(162 168 188 / 0.6)"}
                   strokeWidth="2"
-                  style={{ transition: "fill 250ms ease, stroke 250ms ease" }}
+                  style={{
+                    fill: i <= active ? "var(--color-accent)" : "var(--color-ground)",
+                    stroke: i <= active ? "var(--color-accent)" : "color-mix(in oklab, var(--color-muted) 60%, transparent)",
+                    transition: "fill 250ms ease, stroke 250ms ease",
+                  }}
                 />
               ))}
             </svg>

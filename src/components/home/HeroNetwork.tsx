@@ -244,7 +244,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
           const armPulse = pulseDash(m.arm, 0.08);
           return (
             <g key={`arm-${n.layer}`}>
-              <path data-arm="" d={m.arm} fill="none" stroke={on ? LOGO_BLUES.light : "#2b3566"} strokeWidth="6" strokeLinecap="square" style={{ transition: "stroke 400ms ease" }} />
+              <path data-arm="" d={m.arm} fill="none" strokeWidth="6" strokeLinecap="square" style={{ stroke: on ? LOGO_BLUES.light : "var(--color-wire)", transition: "stroke 400ms ease" }} />
               <path
                 d={m.arm}
                 fill="none"
@@ -291,7 +291,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
               onBlur={() => setHovered(null)}
             >
               <g data-module={n.layer} transform={`translate(${m.cx} ${m.cy})`}>
-                <rect x="-70" y="-42" width="140" height="84" fill={on ? "#1d2445" : "#151a33"} style={{ transition: "fill 400ms ease" }} />
+                <rect x="-70" y="-42" width="140" height="84" style={{ fill: on ? "var(--color-node-on)" : "var(--color-node)", transition: "fill 400ms ease" }} />
                 <rect className="mod-focus" x="-76" y="-48" width="152" height="96" fill="none" stroke="var(--color-accent)" strokeWidth="3" />
                 <g
                   className={on ? "mod-on" : undefined}

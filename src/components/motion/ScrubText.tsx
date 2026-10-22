@@ -26,9 +26,9 @@ export function ScrubText({
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
           "[data-word]",
-          { color: "#a2a8bc" },
+          { "--lit": 0 },
           {
-            color: "#eef0f6",
+            "--lit": 1,
             ease: "none",
             stagger: 0.1,
             scrollTrigger: { trigger: ref.current, start: "top 80%", end: "bottom 45%", scrub: true },
@@ -45,7 +45,7 @@ export function ScrubText({
     <p ref={ref} className={className}>
       {lead}
       {words.map((word, i) => (
-        <span key={i} data-word="">
+        <span key={i} data-word="" className="scrub-word">
           {word}
           {i < words.length - 1 ? " " : ""}
         </span>

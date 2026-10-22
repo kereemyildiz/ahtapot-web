@@ -9,6 +9,9 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import "../globals.css";
 
+// Seçilen tema ilk boyamadan önce (varsayılan koyu; bkz. ThemeToggle).
+const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -46,6 +49,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 
   return (
     <html lang={locale} className={`${fontVariables} h-full`} suppressHydrationWarning>
+      <head>
+        {/* Kök layout istemcide yeniden çizilmez (dil değişimi tam sayfa
+            gezinme): betik yalnız sunucu HTML'inde çalışır, uyarı vermez. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-full">
         <SmoothScrollProvider>
           <a
@@ -67,6 +75,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
               brand: tCompany("shortName"),
               brandSub: tCompany("brandSub"),
               navLabel: t("navLabel"),
+              themeToLight: t("themeToLight"),
+              themeToDark: t("themeToDark"),
             }}
           />
           <div id="icerik">{children}</div>

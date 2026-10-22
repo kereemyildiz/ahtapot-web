@@ -29,8 +29,8 @@ export function Pillars({ pillars }: { pillars: Pillar[] }) {
           const at = i * step;
           tl.fromTo(
             item.querySelector("[data-pillar-node]"),
-            { backgroundColor: "#0a0c16", borderColor: "rgba(162, 168, 188, 0.6)" },
-            { backgroundColor: "#d7f89a", borderColor: "#d7f89a", duration: 0.04 },
+            { "--on": 0 },
+            { "--on": 1, duration: 0.04 },
             at
           ).from(item.querySelectorAll("[data-pillar-text]"), { autoAlpha: 0, y: 16, duration: step * 0.8, stagger: step * 0.15 }, at);
         });
@@ -57,7 +57,7 @@ export function Pillars({ pillars }: { pillars: Pillar[] }) {
             <span
               data-pillar-node=""
               aria-hidden="true"
-              className="absolute left-0 top-1 size-4 border-2 border-accent bg-accent md:-top-[7px]"
+              className="pillar-node absolute left-0 top-1 size-4 border-2 md:-top-[7px]"
             />
             <h3 data-pillar-text="" className="font-display text-[clamp(1.2rem,1rem+0.6vw,1.6rem)] font-medium leading-[1.15] tracking-[-0.02em]">
               {p.title}

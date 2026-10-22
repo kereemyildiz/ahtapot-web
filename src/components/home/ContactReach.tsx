@@ -83,7 +83,7 @@ export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name:
             const p = pulseDash(d, 0.2);
             return (
               <g key={i}>
-                <path data-reach-arm="" d={d} stroke={on ? LOGO_BLUES.light : "#2b3566"} strokeWidth="4" style={{ transition: "stroke 250ms ease" }} />
+                <path data-reach-arm="" d={d} strokeWidth="4" style={{ stroke: on ? LOGO_BLUES.light : "var(--color-wire)", transition: "stroke 250ms ease" }} />
                 <path
                   data-reach-pulse=""
                   d={d}
@@ -133,7 +133,7 @@ export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name:
                   dots.current[i] = el;
                 }}
                 className={`grid size-8 shrink-0 place-items-center border-2 transition-colors duration-200 ${
-                  i === hovered ? "border-accent text-accent" : "border-[#2b3566] text-periwinkle"
+                  i === hovered ? "border-accent text-accent" : "border-wire text-periwinkle"
                 }`}
               >
                 <Icon name={row.icon} className="size-4" />

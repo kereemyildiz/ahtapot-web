@@ -37,8 +37,8 @@ Aklımıza gelen ama henüz yapılmayan işler. Yeni fikir en alta eklenir; yap�
 
 **B**
 - Su banyosunun SolidWorks çizimi var (asıl ürün): simülatördeki temsili 3B model bununla değiştirilip entegre edilecek. → Yapıldı (2026-10-21): simülatörde montajdan üretilen gerçek 3B model (WebGL), ENDA ET2011 kontrolcü davranışı, lamlama, fotoğraftaki renkler; `feature/sb9k-cad-3d` → `develop`.
-- Uygun yerlere ikon.
-- Açık tema desteği (şu an CLAUDE.md "tek koyu tema" diyor; bu kural kullanıcı isteğiyle değişecek).
+- Uygun yerlere ikon. → Yapıldı (2026-10-22): disiplin ikonları (yetkinlik adımı + ürün katman çipi), uyarı/onay, simülatör kontrolleri, geri bağlantıları; `feature/ikonlar` → `develop`.
+- Açık tema desteği. → Yapıldı (2026-10-22): başlıkta tema düğmesi, varsayılan koyu, açık palet OKLCH'den, ekranlar koyu ada; `feature/acik-tema` → `develop`.
 
 **C**
 - Şirket bilgileri verilecek, genel refactor.

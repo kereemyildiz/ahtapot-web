@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * "Karanlık oda" — sayfa baştan sona tek bir mavi-siyah zeminde akar,
+ * "Karanlık oda" (varsayılan) — sayfa baştan sona tek bir mavi-siyah zeminde akar,
  * cihaz parçaları ve görseller bu zeminde ışıklı sergi objeleri gibi durur.
  * Tek vurgu rengi fosfor yeşili (hasta monitörü / osiloskop izi): yalnız
  * birincil aksiyonda ve odak halkasında. Eosin yalnız patoloji
@@ -20,6 +20,14 @@
   --color-eosin: #e0518a;
   --color-field: #e9ecf4;
   --color-field-ink: #0a0c16;
+  /* Alan kenarı: koyu zeminde açık alan zaten ayrışır; açık temada 3:1 kenar. */
+  --color-field-line: transparent;
+  /* Uyarı metni ve rozeti (form hatası, su az): eosin'in açığı. */
+  --color-alert: #ff9db8;
+  /* Logodan uzanan kolların sönük hali ve hero modül kutuları. */
+  --color-wire: #2b3566;
+  --color-node: #151a33;
+  --color-node-on: #1d2445;
 
   --font-display: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
@@ -39,6 +47,76 @@
   --gutter: clamp(1rem, 3.2vw, 2.75rem);
   --header-h: 4.5rem;
   color-scheme: dark;
+}
+
+/*
+ * Açık tema (kullanıcı seçer; seçim localStorage'da, layout'taki betik ilk
+ * boyamadan önce uygular). Aynı marka tonu (zemin hue 275), açık zemin.
+ * OKLCH'de türetildi, metin çiftleri WCAG AA: ink/ground 16,5; muted/surface-2
+ * 4,9; accent/surface 4,9; accent-ink/accent 5,6; alert/surface 5,2.
+ * Fosfor yeşili açık zeminde kâğıda basılmış iz gibi koyulaşır.
+ */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-ground: oklch(0.975 0.006 275);
+  --color-surface: oklch(0.948 0.012 275);
+  --color-surface-2: oklch(0.915 0.02 275);
+  --color-ink: oklch(0.21 0.035 275);
+  --color-muted: oklch(0.49 0.03 275);
+  --color-accent: oklch(0.5 0.13 131);
+  --color-accent-ink: oklch(0.985 0.01 131);
+  --color-periwinkle: oklch(0.56 0.13 274);
+  --color-eosin: oklch(0.55 0.18 359.1);
+  --color-field: oklch(1 0 0);
+  --color-field-ink: oklch(0.21 0.035 275);
+  --color-field-line: oklch(0.6 0.03 275);
+  --color-alert: oklch(0.52 0.17 2.3);
+  --color-wire: oklch(0.86 0.03 270.5);
+  --color-node: oklch(0.955 0.012 275);
+  --color-node-on: oklch(0.92 0.025 275);
+}
+
+/*
+ * Koyu ada: açık temada da koyu kalan "ekranlar" (yetkinlik araç ekranları,
+ * slayt görüntüleyici, mikroskop karşılaştırması). Gerçek uygulama
+ * pencerelerini temsil ederler; içlerindeki token'lar koyu değerlerine döner.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-ground: #0a0c16;
+  --color-surface: #12162a;
+  --color-surface-2: #1b2038;
+  --color-ink: #eef0f6;
+  --color-muted: #a2a8bc;
+  --color-accent: #d7f89a;
+  --color-accent-ink: #0a0c16;
+  --color-periwinkle: #93a4f4;
+  --color-eosin: #e0518a;
+  --color-field: #e9ecf4;
+  --color-field-ink: #0a0c16;
+  --color-field-line: transparent;
+  --color-alert: #ff9db8;
+  --color-wire: #2b3566;
+  --color-node: #151a33;
+  --color-node-on: #1d2445;
+}
+
+/* Tema geçişi: View Transitions ile kısa bir çapraz geçiş (ThemeToggle). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+}
+
+/*
+ * Kaydırınca yanan metin ve ilkelerin düğümleri: GSAP renk değil 0..1 sayı
+ * tween'ler; renk token'lardan karışır (tema değişince de doğru kalır).
+ */
+.scrub-word {
+  color: color-mix(in oklab, var(--color-ink) calc(var(--lit, 1) * 100%), var(--color-muted));
+}
+.pillar-node {
+  background: color-mix(in oklab, var(--color-accent) calc(var(--on, 1) * 100%), var(--color-ground));
+  border-color: color-mix(in oklab, var(--color-accent) calc(var(--on, 1) * 100%), color-mix(in oklab, var(--color-muted) 60%, transparent));
 }
 
 html {
