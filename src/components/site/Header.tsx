@@ -146,11 +146,6 @@ export function Header({ locale, labels }: HeaderProps) {
               {link.label}
             </a>
           ))}
-          <span className="h-5 w-px bg-surface-2" aria-hidden="true" />
-          <div className="flex items-center gap-2">
-            <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-[2.15rem]" />
-            <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
-          </div>
           <a
             href={`/${locale}#iletisim`}
             onClick={onAnchor("iletisim")}
@@ -159,6 +154,11 @@ export function Header({ locale, labels }: HeaderProps) {
             {labels.cta}
             <Icon name="arrowRight" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
           </a>
+          {/* Ayarlar en sağda, birincil aksiyondan çizgiyle ayrı. */}
+          <div className="flex items-center gap-5 border-l border-surface-2 pl-6">
+            <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-[2.15rem]" />
+            <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
+          </div>
         </nav>
 
         <button
@@ -202,7 +202,7 @@ export function Header({ locale, labels }: HeaderProps) {
             {labels.cta}
             <Icon name="arrowRight" className="size-4" strokeWidth={2} />
           </a>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-5">
             <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} className="size-12" />
             <LocaleSwitch locale={locale} href={otherHref} label={labels.localeLabel} otherName={labels.localeName} />
           </div>

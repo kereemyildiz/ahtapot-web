@@ -38,13 +38,13 @@ Aklımıza gelen ama henüz yapılmayan işler. Yeni fikir en alta eklenir; yap�
 **B**
 - Su banyosunun SolidWorks çizimi var (asıl ürün): simülatördeki temsili 3B model bununla değiştirilip entegre edilecek. → Yapıldı (2026-10-21): simülatörde montajdan üretilen gerçek 3B model (WebGL), ENDA ET2011 kontrolcü davranışı, lamlama, fotoğraftaki renkler; `feature/sb9k-cad-3d` → `develop`.
 - Uygun yerlere ikon. → Yapıldı (2026-10-22): disiplin ikonları (yetkinlik adımı + ürün katman çipi), uyarı/onay, simülatör kontrolleri, geri bağlantıları; `feature/ikonlar` → `develop`.
-- Açık tema desteği. → Yapıldı (2026-10-22): başlıkta tema düğmesi, varsayılan koyu, açık palet OKLCH'den, ekranlar koyu ada; `feature/acik-tema` → `develop`.
+- Açık tema desteği. → Yapıldı (2026-10-22): başlıkta tema düğmesi, varsayılan koyu, açık palet OKLCH'den; geri bildirimle yetkinlik ekranları ve slayt görüntüleyici de açık pencere oldu (`feature/geri-bildirim-5`).
 
 **C**
 - Şirket bilgileri verilecek, genel refactor.
 - Metinler ve açıklamalar yeniden düzenlenecek (kullanıcı mevcut hâlini beğenmiyor).
 - Demo videosu (yukarıdaki tanıtım filmi / AhtaPatolog demosu).
-- SEO: aramalarda öne çıkma.
+- SEO: aramalarda öne çıkma. → Teknik kısım yapıldı (2026-10-22, `feature/geri-bildirim-5`): robots.txt (canlıda 500 dönüyordu), site haritası, canonical/hreflang, paylaşım kartı, Organization verisi, ana sayfa başlığı. Kalan: Search Console'a site eklenip site haritası gönderilmeli (kullanıcının Google hesabıyla; `docs/seo.md`), Google İşletme Profili.
 
 
 ## Yapıldı

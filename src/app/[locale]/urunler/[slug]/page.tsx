@@ -9,6 +9,7 @@ import { PageMotion } from "@/components/motion/PageMotion";
 import { ProductExhibit } from "@/components/products/ProductExhibit";
 import { getExhibitCopy, getExhibitUi } from "@/components/products/productLabels";
 import { Icon } from "@/components/brand/Icon";
+import { pageAlternates, shareMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => getProducts().map((p) => ({ locale, slug: p.slug })));
@@ -24,7 +25,10 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/urunler/
   if (!product) return {};
   const t = await getTranslations({ locale: locale as AppLocale, namespace: "products" });
   const tMeta = await getTranslations({ locale: locale as AppLocale, namespace: "meta" });
-  return { title: `${t(`${slug}.name`)} · ${tMeta("siteTitle")}`, description: t(`${slug}.tagline`) };
+  const title = `${t(`${slug}.name`)} · ${tMeta("siteTitle")}`;
+  const description = t(`${slug}.tagline`);
+  const path = `/urunler/${slug}`;
+  return { title, description, alternates: pageAlternates(locale as AppLocale, path), ...shareMetadata(locale as AppLocale, title, description, path) };
 }
 
 export default async function ProductPage({ params }: PageProps<"/[locale]/urunler/[slug]">) {

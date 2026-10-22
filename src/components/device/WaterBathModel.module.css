@@ -295,6 +295,10 @@
   position: absolute;
   display: block;
 }
+/* Üründe logo açık renk baskı (ürün fotoğrafı). */
+.logo img {
+  filter: brightness(0) invert(0.96);
+}
 
 .engraving {
   position: absolute;

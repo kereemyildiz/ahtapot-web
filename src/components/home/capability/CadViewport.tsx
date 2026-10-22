@@ -279,7 +279,7 @@ export function CadViewport({ labels, active }: { labels: CadLabels; active: boo
   const activePart = cmd.i % labels.parts.length;
 
   return (
-    <div ref={host} className="absolute inset-0 flex flex-col bg-[#0b0e1a] text-[clamp(0.62rem,0.5rem+0.25vw,0.78rem)]">
+    <div ref={host} className="absolute inset-0 flex flex-col bg-tool text-[clamp(0.62rem,0.5rem+0.25vw,0.78rem)]">
       {/* Araç çubuğu */}
       <div className="flex h-9 shrink-0 items-center gap-1 border-b border-periwinkle/15 px-2" aria-hidden="true">
         {TOOL_ICONS.map((d, i) => (
@@ -311,15 +311,15 @@ export function CadViewport({ labels, active }: { labels: CadLabels; active: boo
           <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="absolute inset-0 h-full w-full" aria-hidden="true">
             <defs>
               <pattern id="cad-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M20 0H0V20" fill="none" stroke="rgb(147 164 244 / 0.07)" strokeWidth="1" />
+                <path d="M20 0H0V20" fill="none" stroke="color-mix(in oklab, var(--color-periwinkle) 7%, transparent)" strokeWidth="1" />
               </pattern>
             </defs>
             <rect width={VB_W} height={VB_H} fill="url(#cad-grid)" />
-            <path ref={sectionFrame} fill="none" stroke="rgb(215 248 154 / 0.35)" strokeWidth="1" strokeDasharray="5 5" />
-            <path ref={hidden} fill="none" stroke="rgb(147 164 244 / 0.35)" strokeWidth="1" strokeDasharray="4 4" />
+            <path ref={sectionFrame} fill="none" stroke="color-mix(in oklab, var(--color-accent) 35%, transparent)" strokeWidth="1" strokeDasharray="5 5" />
+            <path ref={hidden} fill="none" stroke="color-mix(in oklab, var(--color-periwinkle) 35%, transparent)" strokeWidth="1" strokeDasharray="4 4" />
             <path ref={visible} fill="none" stroke="var(--color-periwinkle)" strokeWidth="1.8" strokeLinejoin="round" />
             <path ref={details} fill="none" stroke="var(--color-periwinkle)" strokeWidth="1.2" />
-            <path ref={section} fill="rgb(215 248 154 / 0.1)" stroke="var(--color-accent)" strokeWidth="2" />
+            <path ref={section} fill="color-mix(in oklab, var(--color-accent) 10%, transparent)" stroke="var(--color-accent)" strokeWidth="2" />
             <path ref={dims} fill="none" stroke="var(--color-ink)" strokeOpacity="0.6" strokeWidth="1" />
             {DIMS.map((d, i) => (
               <text

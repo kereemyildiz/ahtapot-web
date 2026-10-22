@@ -146,8 +146,9 @@ export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name:
                   {row.lines.join(" ")}
                 </a>
               ) : (
+                // Satır içinde kırılmaz (sığmıyorsa yalnız dar telefonda, dengeli kırılır).
                 row.lines.map((line, j) => (
-                  <span key={j} className="block">
+                  <span key={j} className="block text-balance sm:whitespace-nowrap">
                     {line}
                   </span>
                 ))

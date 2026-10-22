@@ -380,7 +380,7 @@ export function WaterBathSimulator({
 
   return (
     <div className="flex flex-col gap-3">
-      <div ref={box} className="relative aspect-[4/5] cursor-grab touch-pan-y overflow-hidden bg-surface sm:aspect-[4/3]">
+      <div ref={box} className="relative aspect-[4/5] cursor-grab touch-pan-y overflow-hidden bg-surface sm:aspect-[4/3] lg:aspect-square lg:max-h-[78svh]">
         {/* Sergi ışığı: cihazın üstünden düşen mavi bir koni. */}
         <div
           aria-hidden="true"
@@ -389,7 +389,7 @@ export function WaterBathSimulator({
         />
         {/* Gerçek CAD modeli (WebGL); hazır olunca çizim modelinin yerini alır. */}
         {model3d && near && webgl !== "failed" ? (
-          <div className="absolute inset-x-0 bottom-[14%] top-[18%]">
+          <div className="absolute inset-x-0 bottom-[14%] top-[18%] lg:bottom-[11%] lg:top-[16%]">
             <SB9KViewer
               config={model3d}
               state={viewerState}

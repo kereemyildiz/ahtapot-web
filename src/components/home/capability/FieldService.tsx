@@ -41,9 +41,9 @@ function IsoBox({ x0, x1, y0, y1, z0, z1, accent = false }: { x0: number; x1: nu
   const stroke = accent ? "var(--color-accent)" : "var(--color-periwinkle)";
   return (
     <g stroke={stroke} strokeWidth="1.5" strokeLinejoin="round">
-      <polygon points={pts(left)} fill="#141a33" />
-      <polygon points={pts(right)} fill="#10152b" />
-      <polygon points={pts(top)} fill="#1b2140" />
+      <polygon points={pts(left)} fill="var(--color-iso-left)" />
+      <polygon points={pts(right)} fill="var(--color-iso-right)" />
+      <polygon points={pts(top)} fill="var(--color-iso-top)" />
     </g>
   );
 }
@@ -106,11 +106,11 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
   };
 
   return (
-    <div ref={host} className="absolute inset-0 bg-[#0b0e1a]" aria-hidden="true">
+    <div ref={host} className="absolute inset-0 bg-tool" aria-hidden="true">
       <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="absolute inset-0 h-full w-full">
         <defs>
           <pattern id="field-grid" width="24" height="24" patternUnits="userSpaceOnUse">
-            <path d="M24 0H0V24" fill="none" stroke="rgb(147 164 244 / 0.05)" />
+            <path d="M24 0H0V24" fill="none" stroke="color-mix(in oklab, var(--color-periwinkle) 5%, transparent)" />
           </pattern>
         </defs>
         <rect width={VB_W} height={VB_H} fill="url(#field-grid)" />
@@ -119,15 +119,15 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
         <polygon
           data-draw=""
           points={pts([iso(-160, -100, 0), iso(160, -100, 0), iso(160, 100, 0), iso(-160, 100, 0)])}
-          fill="rgb(147 164 244 / 0.04)"
-          stroke="rgb(147 164 244 / 0.35)"
+          fill="color-mix(in oklab, var(--color-periwinkle) 4%, transparent)"
+          stroke="color-mix(in oklab, var(--color-periwinkle) 35%, transparent)"
           strokeWidth="1.5"
         />
 
         {/* Servis merkezinden cihazlara hatlar ve telemetri */}
         <g fill="none" strokeLinejoin="round">
           {LINKS.map((d, i) => (
-            <path key={d} data-draw="" d={d} stroke={i === working ? "var(--color-accent)" : "rgb(147 164 244 / 0.45)"} strokeWidth="1.8" />
+            <path key={d} data-draw="" d={d} stroke={i === working ? "var(--color-accent)" : "color-mix(in oklab, var(--color-periwinkle) 45%, transparent)"} strokeWidth="1.8" />
           ))}
           {LINKS.map((d, i) => (
             <path
@@ -142,7 +142,7 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
           ))}
         </g>
         <g transform={`translate(${NODE[0]} ${NODE[1]})`}>
-          <path d="M0 -16 L16 0 L0 16 L-16 0 Z" fill="#1b2140" stroke="var(--color-periwinkle)" strokeWidth="2" />
+          <path d="M0 -16 L16 0 L0 16 L-16 0 Z" fill="var(--color-iso-top)" stroke="var(--color-periwinkle)" strokeWidth="2" />
           <path d="M-5 0 H5 M0 -5 V5" stroke="var(--color-accent)" strokeWidth="2" opacity="0" />
           <text x="24" y="5" fontSize="13" fontFamily="var(--font-sans)" fill="var(--color-ink)">
             {labels.center}
@@ -153,22 +153,22 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
         <IsoBox x0={-135} x1={-65} y0={-80} y1={-30} z0={0} z1={30} accent={working === 0} />
         <polygon
           points={pts([iso(-135, -30, 30), iso(-65, -30, 30), iso(-65, -55, 48), iso(-135, -55, 48)])}
-          fill="#1b2140"
+          fill="var(--color-iso-top)"
           stroke={working === 0 ? "var(--color-accent)" : "var(--color-periwinkle)"}
           strokeWidth="1.5"
         />
-        <polygon points={pts([iso(-125, -34, 33), iso(-85, -34, 33), iso(-85, -48, 43), iso(-125, -48, 43)])} fill="rgb(215 248 154 / 0.25)" />
+        <polygon points={pts([iso(-125, -34, 33), iso(-85, -34, 33), iso(-85, -48, 43), iso(-125, -48, 43)])} fill="color-mix(in oklab, var(--color-accent) 25%, transparent)" />
 
         {/* 2: görüntüleme istasyonu (masa, monitör, tarayıcı) */}
         <IsoBox x0={20} x1={110} y0={-80} y1={-40} z0={0} z1={40} accent={working === 1} />
         <IsoBox x0={80} x1={104} y0={-76} y1={-50} z0={40} z1={58} accent={working === 1} />
         <polygon
           points={pts([iso(30, -62, 48), iso(70, -62, 48), iso(70, -62, 98), iso(30, -62, 98)])}
-          fill="#10152b"
+          fill="var(--color-iso-right)"
           stroke={working === 1 ? "var(--color-accent)" : "var(--color-periwinkle)"}
           strokeWidth="1.5"
         />
-        <polygon points={pts([iso(34, -62, 54), iso(66, -62, 54), iso(66, -62, 92), iso(34, -62, 92)])} fill="rgb(147 164 244 / 0.3)" />
+        <polygon points={pts([iso(34, -62, 54), iso(66, -62, 54), iso(66, -62, 92), iso(34, -62, 92)])} fill="color-mix(in oklab, var(--color-periwinkle) 30%, transparent)" />
 
         {/* 3: klinik cihaz (tekerlekli ayak, direk, ekran) */}
         <IsoBox x0={70} x1={110} y0={40} y1={80} z0={0} z1={6} accent={working === 2} />
@@ -194,7 +194,7 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
           const on = i === working;
           return (
             <g key={i} transform={`translate(${x} ${y})`}>
-              <rect width="148" height={s.progress !== null ? 58 : 48} fill="rgb(10 12 22 / 0.92)" stroke={on ? "var(--color-accent)" : "rgb(147 164 244 / 0.3)"} />
+              <rect width="148" height={s.progress !== null ? 58 : 48} fill="color-mix(in oklab, var(--color-ground) 92%, transparent)" stroke={on ? "var(--color-accent)" : "color-mix(in oklab, var(--color-periwinkle) 30%, transparent)"} />
               <text x="12" y="19" fontSize="11" fontFamily="var(--font-sans)" fill="var(--color-muted)">
                 {labels.devices[i]}
               </text>
@@ -203,7 +203,7 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
               </text>
               {s.progress !== null && (
                 <g transform="translate(12 46)">
-                  <rect width="124" height="4" fill="#1b2038" />
+                  <rect width="124" height="4" fill="var(--color-surface-2)" />
                   <rect width={124 * s.progress} height="4" fill="var(--color-accent)" />
                 </g>
               )}
@@ -213,7 +213,7 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
 
         {/* Zaman çizelgesi */}
         <g transform={`translate(40 ${VB_H - 26})`} fontFamily="var(--font-sans)" fontSize="13">
-          <path d="M0 0 H420" stroke="rgb(147 164 244 / 0.3)" strokeWidth="2" />
+          <path d="M0 0 H420" stroke="color-mix(in oklab, var(--color-periwinkle) 30%, transparent)" strokeWidth="2" />
           <path d={`M0 0 H${(420 * (t / PERIOD)).toFixed(1)}`} stroke="var(--color-accent)" strokeWidth="2" />
           {steps.slice(0, 4).map((label, i) => (
             <g key={label} transform={`translate(${i * 140} 0)`}>

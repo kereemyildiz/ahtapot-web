@@ -9,7 +9,7 @@ import type { FieldLabels } from "./FieldService";
 
 // Araç ekranları ilk ekranın altında: ilk yüklemeye girmesinler (JS bütçesi),
 // yalnız istemcide ve gerektiğinde yüklensinler.
-const toolFallback = () => <div data-theme="dark" className="absolute inset-0 bg-[#0b0e1a]" />;
+const toolFallback = () => <div className="absolute inset-0 bg-tool" />;
 const CadViewport = dynamic(() => import("./CadViewport").then((m) => m.CadViewport), { ssr: false, loading: toolFallback });
 const PcbLayout = dynamic(() => import("./PcbLayout").then((m) => m.PcbLayout), { ssr: false, loading: toolFallback });
 const FirmwareIde = dynamic(() => import("./FirmwareIde").then((m) => m.FirmwareIde), { ssr: false, loading: toolFallback });
@@ -33,7 +33,7 @@ function ScreenStack({ images, alt }: { images: MediaImage[]; alt: string }) {
       {images.map((img, i) => (
         <div
           key={img.src}
-          className="screen-card absolute left-1/2 top-[46%] w-[84%] -translate-x-1/2 -translate-y-1/2 shadow-[0_24px_60px_rgb(0_0_0/0.55)] ring-1 ring-periwinkle/25"
+          className="screen-card absolute left-1/2 top-[46%] w-[84%] -translate-x-1/2 -translate-y-1/2 shadow-[0_24px_60px_var(--window-shadow)] ring-1 ring-periwinkle/25"
           style={{ aspectRatio: `${img.width} / ${img.height}`, animationDelay: `${-i * 3}s` }}
         >
           <Image src={img.src} alt="" fill sizes="(min-width: 1024px) 46vw, 84vw" className="object-cover" />
@@ -81,7 +81,7 @@ export function LayerVisual({
   // Araç ekranı: kendi araç ve durum çubukları var; açıklama altında ayrı satır.
   if (tool) {
     return (
-      <div data-theme="dark" className="@container absolute inset-0 flex flex-col overflow-hidden bg-surface" role="img" aria-label={item.alt}>
+      <div className="@container absolute inset-0 flex flex-col overflow-hidden bg-tool after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_var(--color-tool-line)]" role="img" aria-label={item.alt}>
         <div className="relative min-h-0 flex-1">{tool}</div>
         <p className="shrink-0 border-t border-periwinkle/15 bg-ground px-3 py-2 text-small text-muted">{item.caption}</p>
       </div>
@@ -90,7 +90,7 @@ export function LayerVisual({
 
   /** Fotoğraf (duotone) ya da birden çok ekran görüntüsü (pencereler). */
   return (
-    <div data-theme="dark" className="@container absolute inset-0 overflow-hidden bg-surface">
+    <div className="@container absolute inset-0 overflow-hidden bg-tool after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_var(--color-tool-line)]">
       {item.images.length > 1 ? (
         <>
           <div aria-hidden="true" className="hero-glow absolute inset-0" />

@@ -1,13 +1,14 @@
 {
   "meta": {
     "siteTitle": "Ahtapot Medical Technologies",
-    "siteDescription": "We turn a need described in the clinic into a medical device that works in the field, end to end."
+    "homeTitle": "Ahtapot Medical Technologies · Medical device design and manufacturing",
+    "siteDescription": "Ahtapot Medical Technologies designs and manufactures medical devices in Istanbul, with mechanical design, electronics, firmware and application software developed in-house."
   },
   "company": {
     "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
     "shortName": "Ahtapot",
     "brandSub": "Medical Technologies",
-    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul, Türkiye",
+    "address": ["Ahmet Yesevi Mah. Kerem Sok.", "A Blok No:9 İç Kapı No:404", "34903 Pendik/İstanbul", "Türkiye"],
     "email": "info@ahtapot.ink",
     "phone": "+90 535 770 66 49"
   },
@@ -48,7 +49,7 @@
     "saha": "Field"
   },
   "capability": {
-    "heading": "From concept to field, five layers in one team",
+    "heading": "From mechanical design to field support",
     "progressLabel": "Layer",
     "items": {
       "mekanik": {
@@ -343,13 +344,7 @@
       "label": "Founder",
       "name": "Dr. Mustafa Can Yılmaz",
       "role": "Founder · Physician",
-      "bio": "Alongside medicine, works in software, electronics and mechanical design: defines the clinical requirements of each device and takes a hands-on part in its circuit, code and enclosure design.",
-      "areas": [
-        "Clinical requirements",
-        "Software",
-        "Electronics",
-        "Mechanics"
-      ]
+      "bio": "Alongside medicine, works in software, electronics and mechanical design: defines the clinical requirements of each device and takes a hands-on part in its circuit, code and enclosure design."
     }
   },
   "contact": {

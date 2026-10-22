@@ -28,6 +28,13 @@
   --color-wire: #2b3566;
   --color-node: #151a33;
   --color-node-on: #1d2445;
+  /* Yetkinlik araç ekranları: pencere zemini, izometrik yüzler, devre kartı. */
+  --color-tool: #0b0e1a;
+  --color-iso-top: #1b2140;
+  --color-iso-left: #141a33;
+  --color-iso-right: #10152b;
+  --color-pcb: #0f1530;
+  --color-tool-line: transparent;
 
   --font-display: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
@@ -46,6 +53,7 @@
 :root {
   --gutter: clamp(1rem, 3.2vw, 2.75rem);
   --header-h: 4.5rem;
+  --window-shadow: rgb(0 0 0 / 0.55);
   color-scheme: dark;
 }
 
@@ -74,6 +82,15 @@
   --color-wire: oklch(0.86 0.03 270.5);
   --color-node: oklch(0.955 0.012 275);
   --color-node-on: oklch(0.92 0.025 275);
+  /* Araç ekranları açık temada açık pencere (CAD/IDE açık arayüz gibi). */
+  --color-tool: oklch(0.99 0.003 275);
+  --color-iso-top: oklch(0.955 0.014 275);
+  --color-iso-left: oklch(0.915 0.022 275);
+  --color-iso-right: oklch(0.875 0.028 275);
+  --color-pcb: oklch(0.935 0.022 275);
+  /* Açık zeminde açık pencerenin kenarı. */
+  --color-tool-line: oklch(0.89 0.018 275);
+  --window-shadow: oklch(0.3 0.05 275 / 0.18);
 }
 
 /*
@@ -99,6 +116,12 @@
   --color-wire: #2b3566;
   --color-node: #151a33;
   --color-node-on: #1d2445;
+  --color-tool: #0b0e1a;
+  --color-iso-top: #1b2140;
+  --color-iso-left: #141a33;
+  --color-iso-right: #10152b;
+  --color-pcb: #0f1530;
+  --window-shadow: rgb(0 0 0 / 0.55);
 }
 
 /* Tema geçişi: View Transitions ile kısa bir çapraz geçiş (ThemeToggle). */
