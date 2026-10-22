@@ -68,6 +68,8 @@ export function organizationJsonLd(locale: AppLocale) {
         alternateName: [...new Set([tr.company.shortName, getLocaleContent("en").meta.siteTitle])],
         url: SITE_URL,
         logo: `${SITE_URL}/brand/logo-square.png`,
+        // Google bu düğümü yerel işletme olarak da okuyor; görsel yoksa uyarı veriyor.
+        image: `${SITE_URL}/og/${locale}.png`,
         description: c.meta.siteDescription,
         ...(tr.company.email ? { email: tr.company.email } : {}),
         ...(tr.company.phone ? { telephone: tr.company.phone } : {}),
