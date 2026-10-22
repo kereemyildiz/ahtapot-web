@@ -3,6 +3,7 @@
     "siteTitle": "Ahtapot Tıbbi Teknolojiler",
     "homeTitle": "Ahtapot Tıbbi Teknolojiler · Yerli tıbbi cihaz tasarımı ve üretimi",
     "siteDescription": "Ahtapot Tıbbi Teknolojiler, İstanbul'da medikal cihaz tasarlar ve üretir. Mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı ekip içinde geliştirilir.",
+    "llms": { "pages": "Sayfalar", "fullText": "Sitenin tüm metni (Türkçe ve İngilizce)" },
     "knowsAbout": [
       "Tıbbi cihaz tasarımı",
       "Medikal cihaz üretimi",

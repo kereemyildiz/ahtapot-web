@@ -3,6 +3,7 @@
     "siteTitle": "Ahtapot Medical Technologies",
     "homeTitle": "Ahtapot Medical Technologies · Medical device design and manufacturing",
     "siteDescription": "Ahtapot Medical Technologies designs and manufactures medical devices in Istanbul, with mechanical design, electronics, firmware and application software developed in-house.",
+    "llms": { "pages": "Pages", "fullText": "Full site text (Turkish and English)" },
     "knowsAbout": [
       "Medical device design",
       "Medical device manufacturing",

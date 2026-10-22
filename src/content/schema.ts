@@ -112,7 +112,14 @@ export const localeContentSchema = z
     // homeTitle: ana sayfanın arama sonucundaki başlığı (marka + ne yaptığı).
     // knowsAbout: yapılandırılmış verideki uzmanlık konuları (sayfada görünmez).
     meta: z
-      .object({ siteTitle: z.string(), homeTitle: z.string(), siteDescription: z.string(), knowsAbout: z.array(z.string()) })
+      .object({
+        siteTitle: z.string(),
+        homeTitle: z.string(),
+        siteDescription: z.string(),
+        // /llms.txt (yapay zekâ asistanları için özet) başlıkları.
+        llms: z.object({ pages: z.string(), fullText: z.string() }).strict(),
+        knowsAbout: z.array(z.string()),
+      })
       .strict(),
     company: z
       .object({

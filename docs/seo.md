@@ -41,6 +41,56 @@ için Google kök adresi gösteriyor, sorun değil). Ürün sayfaları henüz di
   `node tools/seo/indexnow.mjs` site haritasındaki adresleri Bing, Yandex ve diğerlerine bildirir
   (hesap gerekmez; Google IndexNow kullanmaz).
 
+## Yapay zekâ asistanları (ChatGPT, Gemini, Claude, Perplexity, Copilot)
+
+Asistanlar öneri verirken ya kendi eğitim bilgisinden ya da canlı aramadan yararlanır. Canlı aramada
+her biri başka bir dizine bakar: **Gemini** ve Google AI Overviews → Google; **ChatGPT** ve
+**Copilot** → Bing; **Claude** → Brave; **Perplexity** → kendi dizini + diğerleri. Bir dizinde yoksak
+o asistan bizi bulamaz.
+
+Durum (22 Ekim 2026): Google'da ana sayfa var; **Brave'de hiç yokuz**; Bing'i CAPTCHA yüzünden
+kontrol edemedim (Bing Webmaster Tools açılınca oradan görülür).
+
+Sitede yapılanlar:
+- `/robots.txt`: yapay zekâ botları (OAI-SearchBot, GPTBot, Claude-SearchBot, ClaudeBot,
+  PerplexityBot, Google-Extended, CCBot…) adıyla listelenir ve hepsine izin verilir. Eğitim botlarına
+  da izin bilinçli: modelin şirketi aramadan da tanıması için. Cloudflare bu botları engellemiyor
+  (22 Ekim'de her biri 200 aldı); Cloudflare panelindeki "AI botlarını engelle" ayarı açılırsa bu bozulur.
+- `/llms.txt` (kısa özet + bağlantılar) ve `/llms-full.txt` (sitenin tüm metni, TR + EN):
+  `src/lib/llms.ts`, metin tamamen `content/*.json`'dan. İçerik değişince kendiliğinden güncellenir.
+  `X-Robots-Tag: noindex`: Google'da sayfa gibi çıkmaz.
+- Tüm metin ilk HTML'de (JavaScript gerektirmez); yapılandırılmış veride şirket, kurucu (unvanıyla),
+  uzmanlık konuları ve Teknopol kaydı.
+
+Sizin yapacaklarınız (önem sırasıyla):
+1. **Bing Webmaster Tools** (yukarıda 3. madde): ChatGPT ve Copilot Bing'den okuyor; en kritik adım.
+2. **LinkedIn şirket sayfası** ve düzenli gönderiler: ChatGPT ve Copilot mesleki sorularda LinkedIn'i
+   sık kaynak gösteriyor. Şirket açıklaması sitedekiyle aynı olsun.
+3. **Tutarlı tanım**: Teknopol, LinkedIn, Google İşletme Profili, Crunchbase vb. her yerde aynı cümle
+   ("İstanbul'da tıbbi cihaz tasarlayan ve üreten…"). Asistanlar kaynaklar arası tutarlılığa bakar;
+   Teknopol'deki "yapay zekâ destekli karar destek" tanımı şu an bununla çelişiyor.
+4. **Wikidata kaydı** (https://www.wikidata.org): şirket için bir öğe (ad, kuruluş yeri İstanbul,
+   sektör tıbbi cihaz, resmi site, kurucu). Google bilgi paneli ve asistanlar varlık tanımada kullanır.
+   Şirket adına beyan olduğu için sizin açmanız gerekir.
+5. **Haber ve sektör sayfaları**: Teknopol haberleri, dernek/küme üyelik listeleri, üniversite iş
+   birliği duyuruları. "Önerilen firmalar" listesine girmek büyük ölçüde başkalarının hakkınızda
+   yazdıklarına bağlı.
+6. **Video** (fikir listesindeki tanıtım filmi): YouTube başlığı ve açıklamasında ürün adları ve
+   "doku yüzdürme su banyosu" gibi ifadeler; asistanlar videonun yazılı kısmını okur.
+
+Karışma riski: "Ahtapot" adı ASELSAN'ın AHTAPOT sistemi, TÜBİTAK/Pardus'un Ahtapot güvenlik yazılımı ve
+Ahtapot Robotik gibi başka işlerle ortak. Bunlarla bağınız yoksa `/llms.txt`'ye bunu söyleyen bir
+cümle eklenebilir (onayınızla).
+
+Takip: ayda bir aşağıdaki soruları ChatGPT, Gemini, Claude ve Perplexity'ye 3'er kez sorup
+"bahsedildi mi, hangi sayfa kaynak gösterildi" diye not edin (yanıtlar her seferinde değişir; tek
+deneme ölçüm değildir):
+- "Ahtapot Tıbbi Teknolojiler nedir, ne üretir?"
+- "Türkiye'de tıbbi cihaz tasarlayıp üreten yeni şirketler hangileri?"
+- "İstanbul'da medikal cihaz geliştirme yaptırabileceğim firma önerir misin?"
+- "Yerli doku yüzdürme su banyosu üreticisi var mı?"
+- "Türkiye'de geliştirilen dijital patoloji yazılımları hangileri?"
+
 ## Search Console'da yapılanlar
 
 - Alan adı mülkü (`ahtapot.ink`) doğrulanmış (kullanıcı).
