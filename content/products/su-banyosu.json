@@ -47,6 +47,10 @@
       "model3d": {
         "src": "/models/sb9k.glb",
         "anchors": "/models/sb9k.anchors.json",
+        "poster": {
+          "src": "/models/sb9k-poster.webp",
+          "box": { "left": -0.4945, "top": -0.3073, "width": 0.9139, "height": 0.7867 }
+        },
         "parts": [
           {
             "match": "govde",

@@ -1,0 +1,31 @@
+/*
+ * Modelin statik görüntüsü, WebGL görüntüleyicisinin kadrajıyla birebir:
+ * kamera dikey görüş açısı sabit, bu yüzden modelin ekrandaki boyutu yalnız
+ * kap yüksekliğine bağlı (cqh). Merkez, SB9KViewer → resize()'daki
+ * setViewOffset ile aynı kayar: geniş kapta (≥560 px) sola %5, aşağı %4,5;
+ * kare masaüstü sahnesinde (h/w > 0,6) aşağı %1.
+ */
+.poster {
+  --cx: 50cqw;
+  --cy: 50cqh;
+  position: absolute;
+  left: calc(var(--cx) + var(--l) * 100cqh);
+  top: calc(var(--cy) + var(--t) * 100cqh);
+  width: calc(var(--w) * 100cqh);
+  height: calc(var(--h) * 100cqh);
+  pointer-events: none;
+  transition: opacity 300ms ease-out;
+}
+
+@container (min-width: 560px) {
+  .poster {
+    --cx: 45cqw;
+    --cy: 54.5cqh;
+  }
+}
+
+@container (min-width: 560px) and (max-aspect-ratio: 5/3) {
+  .poster {
+    --cy: 51cqh;
+  }
+}

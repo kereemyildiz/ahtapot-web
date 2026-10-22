@@ -393,6 +393,15 @@ const productAssetsSchema = z
           .object({
             src: z.string(),
             anchors: z.string(),
+            // Yüklenirken gösterilen statik görüntü (aynı kameradan; tools/cad/README.md).
+            // box: kadraj merkezine göre konum ve boyut, kap yüksekliği biriminde.
+            poster: z
+              .object({
+                src: z.string(),
+                box: z.object({ left: z.number(), top: z.number(), width: z.number(), height: z.number() }).strict(),
+              })
+              .strict()
+              .optional(),
             parts: z.array(
               z
                 .object({
