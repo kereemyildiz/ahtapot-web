@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -5,6 +6,14 @@ import type { AppLocale } from "@/i18n/routing";
 import { localeHref } from "@/i18n/href";
 import { getMedia } from "@/content/media";
 import { Icon } from "@/components/brand/Icon";
+import { pageAlternates } from "@/lib/seo";
+
+export async function generateMetadata({ params }: PageProps<"/[locale]/kaynaklar">): Promise<Metadata> {
+  const locale = (await params).locale as AppLocale;
+  const t = await getTranslations({ locale, namespace: "credits" });
+  const tMeta = await getTranslations({ locale, namespace: "meta" });
+  return { title: `${t("title")} · ${tMeta("siteTitle")}`, alternates: pageAlternates(locale, "/kaynaklar") };
+}
 
 /**
  * Görsel kaynakları: açık lisanslı her fotoğrafın adı, yazarı ve lisansı

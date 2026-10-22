@@ -1,13 +1,14 @@
 {
   "meta": {
     "siteTitle": "Ahtapot Tıbbi Teknolojiler",
-    "siteDescription": "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir tıbbi cihaza uçtan uca dönüştürüyoruz."
+    "homeTitle": "Ahtapot Tıbbi Teknolojiler · Tıbbi cihaz tasarımı ve üretimi",
+    "siteDescription": "Ahtapot Tıbbi Teknolojiler, İstanbul'da tıbbi cihaz tasarlar ve üretir. Mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı ekip içinde geliştirilir."
   },
   "company": {
     "legalName": "Ahtapot Tıbbi Teknolojiler A.Ş.",
     "shortName": "Ahtapot",
     "brandSub": "Tıbbi Teknolojiler",
-    "address": "Ahmet Yesevi Mah. Kerem Sok. A Blok No:9 İç Kapı No:404, 34903 Pendik/İstanbul",
+    "address": ["Ahmet Yesevi Mah. Kerem Sok.", "A Blok No:9 İç Kapı No:404", "34903 Pendik/İstanbul"],
     "email": "info@ahtapot.ink",
     "phone": "+90 535 770 66 49"
   },
@@ -48,7 +49,7 @@
     "saha": "Saha"
   },
   "capability": {
-    "heading": "Fikirden sahaya, beş katman tek ekipte",
+    "heading": "Mekanik tasarımdan saha desteğine",
     "progressLabel": "Katman",
     "items": {
       "mekanik": {
@@ -343,13 +344,7 @@
       "label": "Kurucu",
       "name": "Dr. Mustafa Can Yılmaz",
       "role": "Kurucu · Tıp Doktoru",
-      "bio": "Hekimliğin yanı sıra yazılım, elektronik ve mekanik tasarımda da çalışıyor. Cihazların klinik gereksinimlerini tanımlıyor; devre, yazılım ve gövde tasarımında mühendislerle birlikte bizzat yer alıyor.",
-      "areas": [
-        "Klinik gereksinimler",
-        "Yazılım",
-        "Elektronik",
-        "Mekanik"
-      ]
+      "bio": "Hekimliğin yanı sıra yazılım, elektronik ve mekanik tasarımda da çalışıyor. Cihazların klinik gereksinimlerini tanımlıyor; devre, yazılım ve gövde tasarımında mühendislerle birlikte bizzat yer alıyor."
     }
   },
   "contact": {

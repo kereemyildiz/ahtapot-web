@@ -182,10 +182,10 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
     return () => window.clearInterval(id);
   }, [running]);
 
-  const swatches = ["var(--color-periwinkle)", "var(--color-brand)", "rgb(238 240 246 / 0.55)", "var(--color-muted)"];
+  const swatches = ["var(--color-periwinkle)", "var(--color-brand)", "color-mix(in oklab, var(--color-ink) 55%, transparent)", "var(--color-muted)"];
 
   return (
-    <div ref={host} className="absolute inset-0 flex flex-col bg-[#0b0e1a] text-[clamp(0.62rem,0.5rem+0.25vw,0.78rem)]">
+    <div ref={host} className="absolute inset-0 flex flex-col bg-tool text-[clamp(0.62rem,0.5rem+0.25vw,0.78rem)]">
       <div className="flex min-h-0 flex-1">
         {/* Katman paneli */}
         <aside className="hidden w-[25%] shrink-0 border-r border-periwinkle/15 p-3 sm:block" aria-hidden="true">
@@ -220,7 +220,7 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
             </defs>
 
             {/* Kart, toprak dolgusu (alt katman), kenar */}
-            <path d="M40 40 H520 L540 60 V370 L520 390 H40 Z" fill="#0f1530" />
+            <path d="M40 40 H520 L540 60 V370 L520 390 H40 Z" fill="var(--color-pcb)" />
             <rect x="40" y="40" width="500" height="350" fill="url(#pcb-hatch)" opacity="0.12" clipPath="url(#pcb-board)" />
             <path d="M40 40 H520 L540 60 V370 L520 390 H40 Z" fill="none" stroke="var(--color-muted)" strokeWidth="2" />
             {[
@@ -243,14 +243,14 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
             </g>
 
             {/* Serigrafi: gövde çerçeveleri ve etiketler */}
-            <g fill="none" stroke="rgb(238 240 246 / 0.4)" strokeWidth="1">
+            <g fill="none" stroke="color-mix(in oklab, var(--color-ink) 40%, transparent)" strokeWidth="1">
               <path d="M266 167 H334 V233 H266 Z M272 167 L266 173" />
               <path d="M138 100 H162 V140 H138 Z" />
               <path d="M432 76 H472 V130 H432 Z" />
               <path d="M96 236 H144 V338 H96 Z" />
               <path d="M210 240 H250 V260 H210 Z" />
             </g>
-            <g fontSize="9" fontFamily="var(--font-mono)" fill="rgb(238 240 246 / 0.55)">
+            <g fontSize="9" fontFamily="var(--font-mono)" fill="color-mix(in oklab, var(--color-ink) 55%, transparent)">
               {SILK.map(([t, x, y]) => (
                 <text key={t} x={x} y={y} textAnchor="middle">
                   {t}
@@ -287,7 +287,7 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
             {VIAS.map(([x, y]) => (
               <g key={`${x}${y}`}>
                 <circle cx={x} cy={y} r="5" fill="var(--color-periwinkle)" />
-                <circle cx={x} cy={y} r="2" fill="#0b0e1a" />
+                <circle cx={x} cy={y} r="2" fill="var(--color-tool)" />
               </g>
             ))}
 

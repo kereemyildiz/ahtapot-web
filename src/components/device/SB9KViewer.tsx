@@ -23,7 +23,6 @@ import {
   PlaneGeometry,
   Scene,
   SRGBColorSpace,
-  TextureLoader,
   Vector3,
   WebGLRenderer,
 } from "three";
@@ -119,7 +118,7 @@ const SEGS: Record<string, string> = {
 
 function drawDigits(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, h: number, on: string, off: string) {
   const w = h * 0.52;
-  const t = h * 0.12;
+  const t = h * 0.13;
   const gap = w * 0.4;
   let cx = x;
   const chars = text.split("");
@@ -128,7 +127,10 @@ function drawDigits(ctx: CanvasRenderingContext2D, text: string, x: number, y: n
     if (ch === ".") continue;
     const lit = SEGS[ch] ?? "";
     const seg = (name: string, sx: number, sy: number, sw: number, sh: number) => {
-      ctx.fillStyle = lit.includes(name) ? on : off;
+      const isOn = lit.includes(name);
+      ctx.fillStyle = isOn ? on : off;
+      ctx.shadowColor = isOn ? on : "transparent";
+      ctx.shadowBlur = isOn ? h * 0.08 : 0;
       ctx.fillRect(sx, sy, sw, sh);
     };
     const mid = y + h / 2 - t / 2;
@@ -143,6 +145,8 @@ function drawDigits(ctx: CanvasRenderingContext2D, text: string, x: number, y: n
     ctx.fillRect(cx + w + gap * 0.3, y + h - t, t, t);
     cx += w + gap;
   }
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "transparent";
 }
 
 // Ön yüz 77 × 35 mm, tuval 10 px/mm. Konumlar ENDA ET2011 kılavuzundaki ön
@@ -154,8 +158,7 @@ const TEAL = "#4fb3a2";
 function drawController(tex: CanvasTexture, s: ViewerState, blinkOff: boolean) {
   const c = tex.image as HTMLCanvasElement;
   const ctx = c.getContext("2d")!;
-  // Çizim 10 px/mm koordinatında; tuval 6 px/mm (ekranda daha fazlası görünmez,
-  // yükleme ve bellek ~3 kat azalır).
+  // Çizim 10 px/mm koordinatında (tuval de 10 px/mm: yazılar keskin kalsın).
   const W = 770;
   const H = 350;
   ctx.setTransform(c.width / W, 0, 0, c.height / H, 0, 0);
@@ -166,8 +169,8 @@ function drawController(tex: CanvasTexture, s: ViewerState, blinkOff: boolean) {
   ctx.strokeRect(3, 3, W - 6, H - 6);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = "600 22px ui-sans-serif, system-ui, sans-serif";
-  ctx.fillStyle = "#c9ccd3";
+  ctx.font = "700 24px ui-sans-serif, system-ui, sans-serif";
+  ctx.fillStyle = "#dfe2e8";
   ctx.fillText("°F", 104, 42);
   ctx.fillText("C/A2", 193, 42);
   ctx.fillText("SSR", 377, 42);
@@ -185,18 +188,18 @@ function drawController(tex: CanvasTexture, s: ViewerState, blinkOff: boolean) {
   led(377, s.on && s.ssr);
   const shown = s.on && !(s.blink && blinkOff) ? s.display : "";
   const digits = shown.replace(/\./g, "").length;
-  drawDigits(ctx, " ".repeat(Math.max(0, 4 - digits)) + shown, 128, 128, 124, "#ff3b2f", "#2a0e0e");
+  drawDigits(ctx, " ".repeat(Math.max(0, 4 - digits)) + shown, 128, 128, 124, "#ff4433", "#1f0a0a");
   // tuş bölmesi
   ctx.fillStyle = "#3a3d44";
   ctx.beginPath();
   ctx.roundRect(497, 56, 250, 270, 26);
   ctx.fill();
-  ctx.fillStyle = "#e6e8ec";
-  ctx.font = "600 34px ui-sans-serif, system-ui, sans-serif";
+  ctx.fillStyle = "#f1f2f5";
+  ctx.font = "700 34px ui-sans-serif, system-ui, sans-serif";
   ctx.fillText("°C", 544, 125);
-  ctx.font = "600 24px ui-sans-serif, system-ui, sans-serif";
+  ctx.font = "700 24px ui-sans-serif, system-ui, sans-serif";
   ctx.fillText("F", 634, 108);
-  ctx.font = "600 20px ui-sans-serif, system-ui, sans-serif";
+  ctx.font = "700 22px ui-sans-serif, system-ui, sans-serif";
   ctx.fillText("SET", 555, 186);
   ctx.fillStyle = TEAL;
   ctx.beginPath();
@@ -459,8 +462,9 @@ export default function SB9KViewer({
       height = h;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
-      // Geniş sahnede sağ üstte grafik paneli var: kadraj hafif sola-aşağı kayar.
-      if (w >= 560) camera.setViewOffset(w, h, w * 0.05, -h * 0.045, w, h);
+      // Geniş sahnede sağ üstte grafik paneli var: kadraj hafif sola-aşağı kayar
+      // (kare masaüstü sahnesinde altta ipucu satırı var, daha az aşağı).
+      if (w >= 560) camera.setViewOffset(w, h, w * 0.05, -h * (h / w > 0.6 ? 0.01 : 0.045), w, h);
       else camera.clearViewOffset();
       camera.updateProjectionMatrix();
       dirty = true;
@@ -808,7 +812,9 @@ export default function SB9KViewer({
         onError?.();
         return;
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 640 ? 1.5 : 2));
+      // En az 2x: 1x ekranlarda süper örnekleme (kenarlar, logo ve ekran
+      // yazısı keskin). Yalnız bir şey değişince çizildiği için maliyeti düşük.
+      renderer.setPixelRatio(Math.min(Math.max(window.devicePixelRatio, 2), 2.5));
       renderer.outputColorSpace = SRGBColorSpace;
       renderer.toneMapping = NeutralToneMapping;
       renderer.setClearColor(0x000000, 0);
@@ -863,11 +869,11 @@ export default function SB9KViewer({
       const tilt = -Math.atan2(upN.y, upN.z);
       // Kontrolcü ön yüzü (77 × 35 mm)
       const cvs = document.createElement("canvas");
-      cvs.width = 462;
-      cvs.height = 210;
+      cvs.width = 770;
+      cvs.height = 350;
       ctrlTex = new CanvasTexture(cvs);
       ctrlTex.colorSpace = SRGBColorSpace;
-      ctrlTex.anisotropy = 4;
+      ctrlTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
       const face = new Mesh(
         new PlaneGeometry(a.controller.width, a.controller.height),
         new MeshStandardMaterial({ map: ctrlTex, roughness: 0.35, metalness: 0, emissive: "#ffffff", emissiveMap: ctrlTex, emissiveIntensity: 0.5 })
@@ -887,20 +893,35 @@ export default function SB9KViewer({
       if (b0) hots.power = { el: btnPower.current, world: new Vector3(...b0.center), size: b0.width, min: 28, panel: true };
       if (b1) hots.light = { el: btnLight.current, world: new Vector3(...b1.center), size: b1.width, min: 28, panel: true };
 
-      // Logo (çizimde yok; panelin boş sol kısmına)
-      new TextureLoader().load("/brand/logo-full.png", (tex) => {
-        if (disposed) return;
+      // Logo (çizimde yok; panelin boş sol kısmına). Üründe açık renk baskı
+      // (ürün fotoğrafı): logonun şekli beyaz serigrafi olarak basılır.
+      const logoImg = new Image();
+      logoImg.onload = () => {
+        if (disposed || !renderer) return;
+        const img = logoImg;
+        const pc = document.createElement("canvas");
+        pc.width = img.naturalWidth;
+        pc.height = img.naturalHeight;
+        const pctx = pc.getContext("2d")!;
+        pctx.drawImage(img, 0, 0);
+        pctx.globalCompositeOperation = "source-in";
+        pctx.fillStyle = "#f6f4f8";
+        pctx.fillRect(0, 0, pc.width, pc.height);
+        const tex = new CanvasTexture(pc);
         tex.colorSpace = SRGBColorSpace;
-        tex.anisotropy = 8;
-        const img = tex.image as HTMLImageElement;
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
         const w = a.logo.width;
-        const h = (w * img.height) / img.width;
-        const logo = new Mesh(new PlaneGeometry(w, h), new MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.6 }));
+        const h = (w * img.naturalHeight) / img.naturalWidth;
+        const logo = new Mesh(
+          new PlaneGeometry(w, h),
+          new MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.55, emissive: "#ffffff", emissiveMap: tex, emissiveIntensity: 0.18 })
+        );
         logo.position.set(...a.logo.center).addScaledVector(upN, 0.0004);
         logo.rotation.x = tilt;
         root.add(logo);
         dirty = true;
-      });
+      };
+      logoImg.src = "/brand/logo-full.png";
 
       // Su: ortam haritası yerine küçük bir odayı (pencere, tavan) yansıtır.
       const envTex = roomCube();
@@ -974,7 +995,7 @@ export default function SB9KViewer({
       const maxV = new Vector3(hi[0], hi[1], Math.max(hi[2], trayPos.z + trayD / 2));
       const center = minV.clone().add(maxV).multiplyScalar(0.5);
       root.position.copy(center).negate();
-      dist = (maxV.clone().sub(minV).length() / 2 / Math.tan((camera.fov * Math.PI) / 360)) * 0.9;
+      dist = (maxV.clone().sub(minV).length() / 2 / Math.tan((camera.fov * Math.PI) / 360)) * 0.85;
 
       // Tezgâha düşen yumuşak temas gölgesi
       const sh = document.createElement("canvas");

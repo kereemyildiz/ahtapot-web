@@ -6,7 +6,7 @@ import { Words } from "@/components/motion/Words";
 import { FounderMark } from "./FounderMark";
 import { Pillars } from "./Pillars";
 
-type Founder = { label: string; name: string; role: string; bio: string; areas: string[] };
+type Founder = { label: string; name: string; role: string; bio: string };
 type Pillar = { title: string; text: string };
 
 /**
@@ -69,13 +69,6 @@ export async function About() {
           <p data-reveal="" className="mt-8 max-w-[46ch] text-lead leading-snug text-ink/90">
             {founder.bio}
           </p>
-          <ul data-reveal="" className="mt-8 flex flex-wrap gap-2">
-            {founder.areas.map((area, i) => (
-              <li key={area} className={`px-3 py-2 text-small ${i === 0 ? "bg-accent text-accent-ink" : "bg-surface-2 text-ink"}`}>
-                {area}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>

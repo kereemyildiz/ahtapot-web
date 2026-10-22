@@ -109,7 +109,8 @@ export function DeepZoom({ product, labels }: { product: Product; labels: Intera
         showNavigator: !!navEl,
         navigatorId: navEl ? navigatorId : undefined,
         navigatorAutoFade: false,
-        navigatorBackground: "#05060b",
+        // Temaya göre pencere zemini (bkz. globals.css --color-tool).
+        navigatorBackground: getComputedStyle(host.current).getPropertyValue("--color-tool").trim() || "#0b0e1a",
         navigatorBorderColor: "transparent",
         navigatorDisplayRegionColor: "#d7f89a",
         animationTime: 0.6,
@@ -353,7 +354,7 @@ export function DeepZoom({ product, labels }: { product: Product; labels: Intera
 
   return (
     // Dar ekranda daha uzun: araç çubuğu, ipucu ve büyütme düğmeleri sığsın.
-    <div ref={frame} data-theme="dark" className="relative aspect-[4/5] overflow-hidden bg-[#05060b] sm:aspect-[4/3]">
+    <div ref={frame} className="relative aspect-[4/5] overflow-hidden bg-tool after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_var(--color-tool-line)] sm:aspect-[4/3] lg:aspect-square lg:max-h-[78svh]">
       {!open ? (
         <button type="button" onClick={() => setOpen(true)} className="group absolute inset-0 block h-full w-full text-left">
           <Image

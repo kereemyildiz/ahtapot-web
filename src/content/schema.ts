@@ -106,14 +106,16 @@ const legalPageSchema = z
 
 export const localeContentSchema = z
   .object({
-    meta: z.object({ siteTitle: z.string(), siteDescription: z.string() }).strict(),
+    // homeTitle: ana sayfanın arama sonucundaki başlığı (marka + ne yaptığı).
+    meta: z.object({ siteTitle: z.string(), homeTitle: z.string(), siteDescription: z.string() }).strict(),
     company: z
       .object({
         legalName: z.string(),
         shortName: z.string(),
         // Logoda "Ahtapot" yazısının altındaki küçük satır.
         brandSub: z.string(),
-        address: z.string(),
+        // Satır satır (sokak, blok/kapı, posta kodu ve il).
+        address: z.array(z.string()).min(1),
         // TODO: gerçek e-posta / telefon — boşsa render edilmez.
         email: z.string(),
         phone: z.string(),
@@ -248,7 +250,6 @@ export const localeContentSchema = z
             name: z.string(),
             role: z.string(),
             bio: z.string(),
-            areas: z.array(z.string()),
           })
           .strict(),
       })

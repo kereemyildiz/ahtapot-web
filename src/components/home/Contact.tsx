@@ -27,20 +27,20 @@ export async function Contact() {
       </p>
 
       <div className="mt-[clamp(3rem,6vw,5rem)] grid gap-14 lg:grid-cols-12 lg:gap-12">
-        <div data-reveal="" className="lg:col-span-7">
+        <div data-reveal="" className="lg:col-span-6 xl:col-span-7">
           <Suspense fallback={null}>
             <ContactForm labels={getLocaleContent(locale).contact} kvkkHref={localeHref(locale, "/kvkk")} />
           </Suspense>
         </div>
 
-        <aside data-reveal="" className="lg:col-span-4 lg:col-start-9" aria-label={t("detailsHeading")}>
+        <aside data-reveal="" className="lg:col-span-5 lg:col-start-8 xl:col-span-4 xl:col-start-9" aria-label={t("detailsHeading")}>
           <p className="font-display text-[1.25rem] font-medium tracking-[-0.02em]">{t("detailsHeading")}</p>
           <div className="mt-8">
             {/* Ahtapotun kolları iletişim satırlarına uzanır (hero'nun kapanışı). */}
             <ContactReach
               brand={{ name: tCompany("shortName"), sub: tCompany("brandSub") }}
               rows={[
-                { icon: "pin", label: t("addressLabel"), lines: [tCompany("legalName"), tCompany("address")] },
+                { icon: "pin", label: t("addressLabel"), lines: [tCompany("legalName"), ...(tCompany.raw("address") as string[])] },
                 // TODO: gerçek e-posta content/*.json → company.email'e girilince görünür.
                 ...(email ? [{ icon: "mail" as const, label: t("emailLabel"), lines: [email], href: `mailto:${email}` }] : []),
                 ...(phone ? [{ icon: "phone" as const, label: t("phoneLabel"), lines: [phone], href: `tel:${phone.replace(/\s/g, "")}` }] : []),

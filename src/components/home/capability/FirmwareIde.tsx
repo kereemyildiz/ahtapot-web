@@ -162,7 +162,7 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
   ];
 
   return (
-    <div ref={host} className="absolute inset-0 flex flex-col bg-[#0b0e1a] font-mono text-[clamp(0.6rem,0.48rem+0.25vw,0.76rem)]" aria-hidden="true">
+    <div ref={host} className="absolute inset-0 flex flex-col bg-tool font-mono text-[clamp(0.6rem,0.48rem+0.25vw,0.76rem)]" aria-hidden="true">
       {/* Dosya sekmeleri ve durum */}
       <div className="flex h-9 shrink-0 items-center border-b border-periwinkle/15">
         {labels.files.map((f, i) => (
