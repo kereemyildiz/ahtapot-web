@@ -15,6 +15,24 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const pathname = usePathname();
 
+  // Yenileyince sayfa en üstten açılır: layout'taki betik sayfadan çıkarken
+  // tarayıcının konum geri yüklemesini kapatır ("manual"). Yükleme bitince
+  // yeniden açılır; ScrollTrigger açılıştaki değeri kaydedip her refresh'te
+  // geri yazdığı için onun API'siyle (yoksa "manual" kalır ve geri tuşu
+  // kaldığı yere dönmez).
+  useEffect(() => {
+    let id = 0;
+    const enable = () => {
+      id = window.setTimeout(() => ScrollTrigger.clearScrollMemory("auto"), 500);
+    };
+    if (document.readyState === "complete") enable();
+    else window.addEventListener("load", enable, { once: true });
+    return () => {
+      window.removeEventListener("load", enable);
+      window.clearTimeout(id);
+    };
+  }, []);
+
   // Route değişince sayfa yüksekliği değişir; Lenis ve ScrollTrigger
   // yeniden ölçmezse eski sınırda takılı kalır.
   useEffect(() => {

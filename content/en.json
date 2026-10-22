@@ -13,7 +13,7 @@
     "phone": "+90 535 770 66 49"
   },
   "nav": {
-    "kabiliyet": "Capabilities",
+    "kabiliyet": "Solutions",
     "urunler": "Products",
     "hakkimizda": "About",
     "iletisim": "Contact",
@@ -49,7 +49,7 @@
     "saha": "Field"
   },
   "capability": {
-    "heading": "From mechanical design to field support",
+    "heading": "Solutions",
     "progressLabel": "Layer",
     "items": {
       "mekanik": {

@@ -31,7 +31,7 @@ Bu bir jenerik "stack diyagramı" değil — markanın kendi logosundan türetil
 ```
 HERO            "Tıbbi cihaz, uçtan uca." + logodaki ahtapot, kolları 4 disipline uzanır (HeroNetwork);
                 modüle tıklayınca koldan sinyal akar, sayfa o yetkinlik adımına kayar (#kabiliyet-<katman>)
-YETKİNLİKLER    5 katman: solda adımlar, sağda sabit sahne; her katman bir mühendislik aracının çalışma ekranı
+ÇÖZÜMLER        5 katman: solda adımlar, sağda sabit sahne; her katman bir mühendislik aracının çalışma ekranı
                 mekanik (CAD: dönen tel kafes gövde, gizli kenarlar, ölçüler, kesit, model ağacı, komut satırı)
                 → elektronik (kart tasarımı: katmanlar, ayak izleri, 45° izler, net vurgusu, kural denetimi)
                 → gömülü (IDE: adım adım çalışan kod, izleme paneli, grafik, seri terminal; canlı PI modeli)
@@ -50,7 +50,9 @@ Ekip bölümü kullanıcı isteğiyle kaldırıldı; yalnız kurucu anlatılır 
 
 İlk hero dışındaki her bölüm aynı açılışla başlar: `SectionRule` (logodaki baş ve kanca kendini çizer, çizgi bölüm boyunca uzanır), başlık `Words` ile kelime kelime maskeden yükselir. Hero'nun giriş çizimi hero'ya geri dönünce ve logonun başına gelince yeniden oynar.
 
-Kullanıcının reddettikleri (tekrar ekleme): yetkinlikler başlığı "Fikirden sahaya, beş katman tek ekipte" ("beş katman tek ekip" söylemi; yerine sade "Mekanik tasarımdan saha desteğine"); kurucu açıklamasının altındaki alan çipleri (Klinik gereksinimler · Yazılım · …); kurucu görselinde tıp artısı/sağlık işareti; yetkinliklerde basit çizimler (araç ekranları gibi gerçekçi ve hareketli olmalı); saha görselinde tek bir su banyosu çizimi (şirket tıbbi cihaz üreticisi); Yetkinlikler'in giriş paragrafı; 1850 ↔ bugün karşılaştırması.
+Bölüm başlığı bölümün adıdır, tek kelimedir ve menüdeki adla aynıdır: Çözümler, Ürünler, Hakkımızda, İletişim (EN: Solutions, Products, About, Contact). Slogan başlık konmaz. "Çözümler" adını kullanıcı 14 seçenek arasından seçti.
+
+Kullanıcının reddettikleri (tekrar ekleme): "Yetkinlikler" adı (alışılmış değil) ve "Uzmanlık alanları" (iki kelime); slogan başlıklar "Fikirden sahaya, beş katman tek ekipte" ("beş katman tek ekip" söylemi) ve "Mekanik tasarımdan saha desteğine"; kurucu açıklamasının altındaki alan çipleri (Klinik gereksinimler · Yazılım · …); kurucu görselinde tıp artısı/sağlık işareti; yetkinliklerde basit çizimler (araç ekranları gibi gerçekçi ve hareketli olmalı); saha görselinde tek bir su banyosu çizimi (şirket tıbbi cihaz üreticisi); Yetkinlikler'in giriş paragrafı; 1850 ↔ bugün karşılaştırması.
 
 Dev dekoratif yazılar (sayfayı kaplayan "ahtapot" adı, ekranı dolduran fiiller) kullanıcı tarafından reddedildi; tekrar ekleme.
 
@@ -204,7 +206,7 @@ gsap.ticker.lagSmoothing(0)
 ```
 
 - React tarafında **her zaman `useGSAP`**, `useEffect` değil (zamanlayıcı/gözlemci gibi GSAP dışı abonelikler hariç). Selector'ları scope'la.
-- `gsap.matchMedia()` ile `prefers-reduced-motion` dallanması. Reduced motion açıksa: çizimler tek seferde çizili görünür, hiçbir içerik erişilemez hale gelmez. Giriş animasyonunun gizli başlangıç durumu yalnız `@media (scripting: enabled)` altında uygulanır. Layout'a inline `<script>` yalnız bir tane var: `<head>`'deki tema betiği (seçimi ilk boyamadan önce uygular). İstemcide çizilen `<script>` React 19'da uyarı verir ve çalışmaz; bu yüzden kök layout istemcide yeniden çizilmemeli: dil seçici `next/link` değil düz `<a>` (tam sayfa gezinme). Başka inline betik ekleme; `next/script` `beforeInteractive` App Router'da Next çalışma zamanıyla geç çalışır, tema için işe yaramaz.
+- `gsap.matchMedia()` ile `prefers-reduced-motion` dallanması. Reduced motion açıksa: çizimler tek seferde çizili görünür, hiçbir içerik erişilemez hale gelmez. Giriş animasyonunun gizli başlangıç durumu yalnız `@media (scripting: enabled)` altında uygulanır. Layout'a inline `<script>` yalnız bir tane var: `<head>`'deki betik (`HEAD_SCRIPT`): tema seçimini ilk boyamadan önce uygular ve yenilemede sayfanın en üstten açılmasını sağlar (kullanıcı isteği; tarayıcının konum geri yüklemesi bölümler sonradan yüklendiği için rastgele yere düşüyordu). Chrome `history.scrollRestoration`'ı hem sayfa değişirken hem geri yükleme anında okur: betik sayfadan çıkarken (`pagehide`) "manual" yazar, yenilemede adresteki `#bölüm`ü siler; yükleme bitince `SmoothScrollProvider` `ScrollTrigger.clearScrollMemory("auto")` ile açar. Değeri doğrudan `history.scrollRestoration = "auto"` ile değiştirme: ScrollTrigger açılıştaki değeri kaydedip her refresh'te geri yazar, uygulama içi geri tuşu kaldığı yere dönmez olur. İlk açılışta `#bölüm` bağlantısı ve geri/ileri tuşu normal çalışır. İstemcide çizilen `<script>` React 19'da uyarı verir ve çalışmaz; bu yüzden kök layout istemcide yeniden çizilmemeli: dil seçici `next/link` değil düz `<a>` (tam sayfa gezinme). Başka inline betik ekleme; `next/script` `beforeInteractive` App Router'da Next çalışma zamanıyla geç çalışır, tema için işe yaramaz.
 - **LCP adayı gizlenmez:** hero metni opaklıkla değil yalnız transform ile girer (`.hero-rise`).
 - **Scroll-jack yok:** kullanıcı scroll kontrolünü asla kaybetmez. Tekerlek olayını yakalayan etkileşimler (deepzoom) yalnız kullanıcı tıklayınca ya da Ctrl/⌘ ile yakalar ve o sırada `data-lenis-prevent` taşır; imleç çıkınca bırakır. Turntable/simülatör tekerleğe hiç dokunmaz, yalnız sürükleme.
 - GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz. Tema rengini GSAP'la tween'leme (tema değişince eski renk satır içinde kalır): 0..1 bir değişken tween'le, rengi CSS'te `color-mix` ile token'lardan karıştır (`.scrub-word` → `--lit`, `.pillar-node` → `--on`).

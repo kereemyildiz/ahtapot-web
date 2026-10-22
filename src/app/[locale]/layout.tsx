@@ -10,8 +10,22 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import "../globals.css";
 
-// Seçilen tema ilk boyamadan önce (varsayılan koyu; bkz. ThemeToggle).
-const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
+// <head>'deki tek betik, ilk boyamadan önce çalışır:
+// 1) Seçilen tema (varsayılan koyu; bkz. ThemeToggle).
+// 2) Yenileyince sayfa en üstten açılır (kullanıcı isteği). Tarayıcının konum
+//    geri yüklemesi, bölümler sonradan yüklenip sayfa boyu değiştiği için
+//    rastgele bir yere düşüyordu; adresteki #bölüm de oraya atlatıyordu.
+//    Chrome değeri hem sayfa değişirken hem geri yükleme anında okur: sayfadan
+//    çıkarken (pagehide) "manual" yazılır ve yükleme boyunca öyle kalır;
+//    yükleme bitince SmoothScrollProvider "auto"ya döndürür (uygulama içi geri
+//    tuşu kaldığı yere döner). İlk açılışta #bölüm bağlantısı çalışır;
+//    yenilemede #bölüm adresten silinir.
+const HEAD_SCRIPT =
+  `try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}` +
+  `try{var h=history,n=performance.getEntriesByType("navigation")[0];` +
+  `if(n&&n.type==="reload"&&location.hash)h.replaceState(h.state,"",location.pathname+location.search);` +
+  `addEventListener("pagehide",function(){h.scrollRestoration="manual"});` +
+  `addEventListener("pageshow",function(e){if(e.persisted)h.scrollRestoration="auto"})}catch(e){}`;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -63,7 +77,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       <head>
         {/* Kök layout istemcide yeniden çizilmez (dil değişimi tam sayfa
             gezinme): betik yalnız sunucu HTML'inde çalışır, uyarı vermez. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
       </head>
       <body className="min-h-full">
         <SmoothScrollProvider>
