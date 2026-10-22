@@ -31,7 +31,7 @@ Bu bir jenerik "stack diyagramı" değil — markanın kendi logosundan türetil
 ```
 HERO            "Tıbbi cihaz, uçtan uca." + logodaki ahtapot, kolları 4 disipline uzanır (HeroNetwork);
                 modüle tıklayınca koldan sinyal akar, sayfa o yetkinlik adımına kayar (#kabiliyet-<katman>)
-YETKİNLİKLER    5 katman: solda adımlar, sağda sabit sahne; her katman bir mühendislik aracının çalışma ekranı
+ÇÖZÜMLER        5 katman: solda adımlar, sağda sabit sahne; her katman bir mühendislik aracının çalışma ekranı
                 mekanik (CAD: dönen tel kafes gövde, gizli kenarlar, ölçüler, kesit, model ağacı, komut satırı)
                 → elektronik (kart tasarımı: katmanlar, ayak izleri, 45° izler, net vurgusu, kural denetimi)
                 → gömülü (IDE: adım adım çalışan kod, izleme paneli, grafik, seri terminal; canlı PI modeli)
@@ -50,7 +50,9 @@ Ekip bölümü kullanıcı isteğiyle kaldırıldı; yalnız kurucu anlatılır 
 
 İlk hero dışındaki her bölüm aynı açılışla başlar: `SectionRule` (logodaki baş ve kanca kendini çizer, çizgi bölüm boyunca uzanır), başlık `Words` ile kelime kelime maskeden yükselir. Hero'nun giriş çizimi hero'ya geri dönünce ve logonun başına gelince yeniden oynar.
 
-Kullanıcının reddettikleri (tekrar ekleme): yetkinlikler başlığı "Fikirden sahaya, beş katman tek ekipte" ("beş katman tek ekip" söylemi; yerine sade "Mekanik tasarımdan saha desteğine"); kurucu açıklamasının altındaki alan çipleri (Klinik gereksinimler · Yazılım · …); kurucu görselinde tıp artısı/sağlık işareti; yetkinliklerde basit çizimler (araç ekranları gibi gerçekçi ve hareketli olmalı); saha görselinde tek bir su banyosu çizimi (şirket tıbbi cihaz üreticisi); Yetkinlikler'in giriş paragrafı; 1850 ↔ bugün karşılaştırması.
+Bölüm başlığı bölümün adıdır, tek kelimedir ve menüdeki adla aynıdır: Çözümler, Ürünler, Hakkımızda, İletişim (EN: Solutions, Products, About, Contact). Slogan başlık konmaz. "Çözümler" adını kullanıcı 14 seçenek arasından seçti.
+
+Kullanıcının reddettikleri (tekrar ekleme): "Yetkinlikler" adı (alışılmış değil) ve "Uzmanlık alanları" (iki kelime); slogan başlıklar "Fikirden sahaya, beş katman tek ekipte" ("beş katman tek ekip" söylemi) ve "Mekanik tasarımdan saha desteğine"; kurucu açıklamasının altındaki alan çipleri (Klinik gereksinimler · Yazılım · …); kurucu görselinde tıp artısı/sağlık işareti; yetkinliklerde basit çizimler (araç ekranları gibi gerçekçi ve hareketli olmalı); saha görselinde tek bir su banyosu çizimi (şirket tıbbi cihaz üreticisi); Yetkinlikler'in giriş paragrafı; 1850 ↔ bugün karşılaştırması.
 
 Dev dekoratif yazılar (sayfayı kaplayan "ahtapot" adı, ekranı dolduran fiiller) kullanıcı tarafından reddedildi; tekrar ekleme.
 

@@ -13,7 +13,7 @@
     "phone": "+90 535 770 66 49"
   },
   "nav": {
-    "kabiliyet": "Yetkinlikler",
+    "kabiliyet": "Çözümler",
     "urunler": "Ürünler",
     "hakkimizda": "Hakkımızda",
     "iletisim": "İletişim",
@@ -49,7 +49,7 @@
     "saha": "Saha"
   },
   "capability": {
-    "heading": "Mekanik tasarımdan saha desteğine",
+    "heading": "Çözümler",
     "progressLabel": "Katman",
     "items": {
       "mekanik": {
