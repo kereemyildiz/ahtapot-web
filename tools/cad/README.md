@@ -36,6 +36,29 @@ Renkler, katmanlar ve "İçini gösterin" hareketleri burada değil, ürün
 verisinde: `content/products/su-banyosu.json` → `assets.simulator.model3d.parts`.
 Renk değiştirmek için modeli yeniden üretmek gerekmez.
 
+## Poster (yüklenirken görünen görüntü)
+
+`public/models/sb9k-poster.webp`: WebGL modeli yüklenene kadar (~1 sn) onun yerinde
+duran, aynı kameradan çizilmiş saydam zeminli görüntü (`device/SB9KPoster.tsx`).
+Eskiden bu sürede CSS çizim modeli görünüyordu (kullanıcı: "önce eski model
+render'lanıyor"). Model, renkler, ışık ya da kamera (`dist`, `yaw`, `pitch`,
+`setViewOffset`) değişince yeniden çekilmeli:
+
+1. `pnpm dev`; Chrome'da sayfayı, WebGL bağlamını `preserveDrawingBuffer: true`
+   ile açacak bir başlangıç betiğiyle yükle (`HTMLCanvasElement.prototype.getContext`
+   sarmalanır). Görünüm alanı genişliği 560 px'ten dar olmalı (kadraj kaydırması
+   yok, merkez = tuval merkezi); ör. 540 px, DPR 3.
+2. Simülatöre ~1 ekran kala bekle (görüntüleyici hazır, cihaz kapalı), sonra
+   simülatöre kaydır: cihaz kendiliğinden açılır. ~0,6 sn sonra (ekran ~22 °C)
+   tuvali 2B tuvale çiz, alfa > 6 olan piksellerin sınır kutusuna kırp,
+   `toDataURL("image/webp", 0.9)`.
+3. Kutuyu tuval yüksekliği biriminde ve tuval merkezine göre yaz:
+   `left = (x0 − W/2)/H`, `top = (y0 − H/2)/H`, `width = w/H`, `height = h/H` →
+   ürün verisinde `model3d.poster.box`.
+4. Doğrula: görüntüleyiciyi bekletip (`requestIdleCallback` tutulur) posterin,
+   sonra modelin ekran görüntüsünü al; ikisi üst üste oturmalı (masaüstü, tablet,
+   telefon).
+
 ## Nasıl çalışır
 
 SolidWorks 2015+ dosyası ZIP benzeri bir kapsayıcı: bölüm başlığı

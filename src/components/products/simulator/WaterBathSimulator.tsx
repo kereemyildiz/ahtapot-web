@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { gsap, useGSAP } from "@/lib/gsapSetup";
 import type { Product, ProductLayer } from "@/content/schema";
 import { ControllerFace, ControllerKey, PushButton, WaterBathModel, WaterBathSteam } from "@/components/device/WaterBathModel";
+import { SB9KPoster } from "@/components/device/SB9KPoster";
 import type { InteractionLabels } from "../ProductInteractionView";
 import { useOffscreenPause } from "@/lib/useOffscreenPause";
 import { MiniTrend } from "./MiniTrend";
@@ -84,10 +85,13 @@ export function WaterBathSimulator({
   const params: WaterBathParams = useMemo(() => readParams(config?.params ?? {}), [config]);
   const presets = config?.presets ?? [];
   const model3d = config?.model3d;
-  // WebGL modeli yüklenene kadar (ya da hiç yüklenemezse) çizim modeli görünür.
+  // WebGL modeli yüklenene kadar modelin statik görüntüsü (poster) görünür;
+  // çizim (CSS) modeli yalnız WebGL hiç yüklenemezse ya da poster yoksa.
   const [webgl, setWebgl] = useState<"loading" | "ready" | "failed">(model3d ? "loading" : "failed");
-  // three.js ve model (~150 KB JS + ~190 KB model) ancak simülatör ekrana
-  // yaklaşınca yüklenir; o zamana kadar hafif çizim modeli görünür.
+  const poster = model3d?.poster;
+  const [posterGone, setPosterGone] = useState(false);
+  // three.js ve model (~150 KB JS + ~290 KB model) ancak simülatör ekrana
+  // yaklaşınca yüklenir; o zamana kadar poster görünür.
   const [near, setNear] = useState(false);
 
   const [initial] = useState(() => createState(params));
@@ -155,6 +159,13 @@ export function WaterBathSimulator({
     io.observe(area);
     return () => io.disconnect();
   }, [model3d]);
+
+  // Model çizilince poster söner (300 ms), sonra DOM'dan kalkar.
+  useEffect(() => {
+    if (webgl !== "ready" || posterGone) return;
+    const id = window.setTimeout(() => setPosterGone(true), 400);
+    return () => window.clearTimeout(id);
+  }, [webgl, posterGone]);
 
   // Boşta önceden indir: modül ve model, simülatöre gelmeden hazır olsun
   // (indirme ve modülün çalışması kaydırma sırasına denk gelmesin).
@@ -388,37 +399,41 @@ export function WaterBathSimulator({
           style={{ background: "radial-gradient(48% 62% at 50% 38%, rgb(62 82 224 / 0.2), transparent 100%)" }}
         />
         {/* Gerçek CAD modeli (WebGL); hazır olunca çizim modelinin yerini alır. */}
-        {model3d && near && webgl !== "failed" ? (
-          <div className="absolute inset-x-0 bottom-[14%] top-[18%] lg:bottom-[11%] lg:top-[16%]">
-            <SB9KViewer
-              config={model3d}
-              state={viewerState}
-              labels={{
-                power: `${t.powerButton}: ${snap.on ? t.on : t.off}`,
-                light: `${t.lightButton}: ${lightOn ? t.on : t.off}`,
-                set: t.setKey,
-                up: t.increase,
-                down: t.decrease,
-                model: labels.modelAlt,
-                slideTake: t.slideTake,
-                slideRefill: t.slideRefill,
-              }}
-              onPower={() => set((s) => (s.on = !s.on))}
-              onLight={() => set((s) => (s.light = !s.light))}
-              onSet={pressSet}
-              onStep={step}
-              onMounted={setMounted}
-              onRefill={() => setMounted(null)}
-              onSection={setLook}
-              onReady={() => setWebgl("ready")}
-              onError={() => setWebgl("failed")}
-            />
+        {model3d && webgl !== "failed" ? (
+          <div className="absolute inset-x-0 bottom-[14%] top-[18%] [container-type:size] lg:bottom-[11%] lg:top-[16%]">
+            {/* Poster görüntüleyicinin altında: model ilk karesini çizince üstünü örter. */}
+            {poster && !posterGone ? <SB9KPoster src={poster.src} box={poster.box} hidden={webgl === "ready"} /> : null}
+            {near ? (
+              <SB9KViewer
+                config={model3d}
+                state={viewerState}
+                labels={{
+                  power: `${t.powerButton}: ${snap.on ? t.on : t.off}`,
+                  light: `${t.lightButton}: ${lightOn ? t.on : t.off}`,
+                  set: t.setKey,
+                  up: t.increase,
+                  down: t.decrease,
+                  model: labels.modelAlt,
+                  slideTake: t.slideTake,
+                  slideRefill: t.slideRefill,
+                }}
+                onPower={() => set((s) => (s.on = !s.on))}
+                onLight={() => set((s) => (s.light = !s.light))}
+                onSet={pressSet}
+                onStep={step}
+                onMounted={setMounted}
+                onRefill={() => setMounted(null)}
+                onSection={setLook}
+                onReady={() => setWebgl("ready")}
+                onError={() => setWebgl("failed")}
+              />
+            ) : null}
           </div>
         ) : null}
-        {/* Çizim modeli: WebGL yokken ya da model yüklenirken. Gerçek model
-            hazır olunca tamamen kalkar (saydam bırakmak her 100 ms'de büyük bir
-            DOM ağacını yeniden çizdiriyordu). */}
-        {webgl !== "ready" ? (
+        {/* Çizim modeli: WebGL yokken (ya da poster tanımlı değilken model
+            yüklenirken). Gerçek model hazır olunca tamamen kalkar (saydam
+            bırakmak her 100 ms'de büyük bir DOM ağacını yeniden çizdiriyordu). */}
+        {webgl === "failed" || (webgl === "loading" && !poster) ? (
         <div className="absolute inset-x-0 bottom-[12%] top-[22%]">
           <WaterBathModel
             ref={model}
@@ -485,7 +500,7 @@ export function WaterBathSimulator({
         <div className="absolute inset-x-4 bottom-4 flex items-end justify-end gap-3 sm:justify-between">
           {/* Dar ekranda model bu satıra kadar iner; ipucu yalnız sm ve üstünde. */}
           <p className="pointer-events-none hidden max-w-[60%] text-small text-muted sm:block">
-            {webgl === "ready" ? t.panelHintSlides : t.panelHint}
+            {webgl === "ready" || (webgl === "loading" && poster) ? t.panelHintSlides : t.panelHint}
           </p>
           <button type="button" onClick={() => setExploded((v) => !v)} aria-pressed={exploded} className="btn btn-quiet min-h-0 py-2.5 text-small">
             <Icon name="layers" className="size-4" />
