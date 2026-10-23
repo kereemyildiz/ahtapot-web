@@ -177,13 +177,73 @@ Bunlar hesap açma, kimlik doğrulama veya şirket adına beyan gerektiriyor; Cl
    üniversite iş birlikleri, distribütör sayfaları, haberler. "Medikal cihaz üretimi" gibi genel
    aramalarda sıralamayı en çok bunlar belirler.
 
-## Sonraki adım (karar sizde)
+## Sıralama planı (23 Ekim 2026)
 
-Genel aramalarda organik sıralama için tek sayfa yetmez: aramayı karşılayan ayrı sayfalar gerekir.
-Örnekler: "Tıbbi cihaz yerlileştirme" (şirketin odağı; yurt dışından gelen bir cihazın Türkiye'de
-yeniden tasarlanıp üretilmesi nasıl işler), "Doku yüzdürme su banyosu nedir, nasıl kullanılır"
-(SB-9K'ya bağlanır), "Dijital patoloji nedir" (AhtaPatolog'a bağlanır). Metinler doğrulanmış
-bilgiyle yazılmalı (mevzuat kısıtları geçerli).
+Hedef (kullanıcı): "ahtapot teknoloji", "dijital patoloji yazılımı", "yerli tıbbi cihaz",
+"medikal / tıbbi cihaz üretimi" aramalarında en üstte çıkmak.
+
+Her aramada eksik olan ne (sayfa mı, tanınırlık ve bağlantı mı):
+
+| Arama | Bugün | İlk sayfada kimler var | Eksik |
+|---|---|---|---|
+| ahtapot teknoloji | ilk 20'de yokuz | aynı adlı başka firma (Ro Paket), Ahtapot Robotik, Pardus Ahtapot | tanınırlık: Google bu adı başka firmanın sanıyor |
+| dijital patoloji yazılımı | yokuz | Virasoft, Roche, Leica, Memorial, Siemens (ürün ve çözüm sayfaları) | sayfa ve bağlantı: AhtaPatolog sayfası 141 kelime, ana başlığında "dijital patoloji" geçmiyor |
+| yerli tıbbi cihaz | yokuz | TRT Haber, MASSİAD, TÜSEB, KOSGEB, üretici firmalar | konu sayfası, haber, dernek kaydı |
+| medikal / tıbbi cihaz üretimi | yokuz | Karel'in fason üretim (EMS) sayfası, OSTİM Medikal Küme, TİTCK, SEİS, MASSİAD, TÜMDEF; harita kutusu | hizmet sayfası, dernek kaydı, İşletme Profili |
+
+Google'ın arama önerileri (insanların gerçekte ne yazdığı): "dijital patoloji nedir / sistemleri /
+cihazı / yapay zeka / slayt tarama cihazı"; "tıbbi cihaz üretimi yapan firmalar / için gerekli
+belgeler / nedir"; "yerli tıbbi cihaz üretimi"; "tıbbi cihaz üreticileri derneği". "dijital patoloji
+yazılımı" için öneri çıkmıyor: az aranıyor, "dijital patoloji sistemi" ve "nedir" daha çok aranıyor.
+
+### Sitede (Claude yapar, metni kullanıcı doğrular)
+1. **AhtaPatolog sayfasını genişletmek.** Ana başlığın altında "dijital patoloji yazılımı" ifadesi
+   geçer. Bölümler: ne işe yarar; özellikler (WSI/SVS görüntüleme, işaretleme, alan ve uzunluk ölçümü,
+   vaka yönetimi); iş akışı; sık sorulanlar ("Tanı koyar mı?" Hayır, patoloğun incelemesi için bir
+   araçtır); geliştirme durumu. Sayfadaki, tarayıcıda çalışan gerçek WSI görüntüleyici rakiplerde yok.
+2. **SB-9K sayfasını genişletmek.** "doku yüzdürme su banyosu" aramasında 3. sıradayız. Metin
+   kılavuzdan alınır: parafin türüne göre sıcaklık, LED aydınlatma, teflon hazne, ikincil termostat.
+   Doğrulanmamış CE, ±0,1 °C ve 10 yıl yedek parça ifadeleri yazılmaz.
+3. **Yeni sayfalar.** Menüde tek kelimelik bir bölümün altında toplanır (ör. "Rehber"):
+   - "Dijital patoloji nedir?": AhtaPatolog'a bağlanır.
+   - "Tıbbi cihaz yerlileştirme / yerli tıbbi cihaz üretimi": şirketin odağı, SB-9K örneğiyle.
+     Yerlilik oranı gibi sayılar ancak belgeyle yazılır.
+   - "Tıbbi cihaz tasarım ve üretim hizmeti": yalnız şirket başka firmalara veya hastanelere tasarım
+     ve üretim hizmeti veriyorsa (kullanıcıya soruldu).
+   - İsteğe bağlı: "Doku yüzdürme su banyosu nedir, nasıl kullanılır?"
+4. Ana sayfadan ve ürün sayfalarından bu sayfalara iç bağlantı verilir. Her sayfa iki dilde olur,
+   site haritasına, hreflang'e ve içerik yoluna (breadcrumb) eklenir.
+
+### Site dışında (kullanıcı yapar; öncelik sırasıyla)
+1. **Google İşletme Profili**: "medikal cihaz üretimi" aramasındaki harita kutusu ve marka
+   aramalarında sağdaki şirket kutusu için (bilgiler aşağıda, "Sizin yapmanız gerekenler").
+2. **Teknopol kaydı**: siteye bağlantı eklenir, ad düzeltilir. Kayıt üç marka aramasında ilk sayfada.
+3. **LinkedIn şirket sayfası** ve gönderiler (Teknogirişim Rozeti, ürünler).
+4. **Dernek üyeliği**: MASSİAD (Marmara bölgesindeki tıbbi cihaz üreticileri; massiad.org.tr) ve
+   TÜMDEF (federasyon; tumdef.org). Üye listeleri "medikal cihaz üretimi" ve "tıbbi cihaz üreticileri"
+   aramalarında ilk sayfada; listede siteye bağlantı istenir. OSTİM Medikal Küme Ankara'da.
+5. **Haber**: SB-9K'nın Türkiye'de tasarlanıp üretilmesi üzerine bir basın bülteni. Gönderilecek
+   yerler: Teknopol haberleri, sektör yayınları (Medikal Akademi, Ekonomi Gazetesi sektör haberleri),
+   ajanslar. "yerli tıbbi cihaz" aramasında 1. sırada bir haber var (TRT Haber).
+6. **Yerli Malı Belgesi** (bu bir iş kararı): yerli katkı oranı %51 ve üzeri olan ürüne oda verir.
+   Kamu ihalelerinde %15 fiyat avantajı sağlar; sanayi sicil belgesi ve kapasite raporu ister. Alınırsa
+   belge numarasıyla sitede yazılabilir.
+7. **Dijital patoloji tarafı**: patoloji kongrelerinde (Türk Patoloji Derneği) görünürlük,
+   üniversitelerin patoloji bölümleriyle gerçek iş birlikleri ve bunların duyuruları.
+8. Bing Webmaster, Yandex Webmaster, Wikidata (aşağıdaki listede).
+
+Kural: bağlantı satın alınmaz (Google'ın bağlantı spam politikası). Ücretli bir yerleşim varsa
+bağlantısı `nofollow` ya da `sponsored` olmalı. Bağlantı metnini karşı taraf seçer.
+
+### Beklenti
+- **ahtapot teknoloji**: profiller açıldıktan sonra haftalar ile aylar içinde 1. sayfa. Bu adın
+  sahibi başka bir firma; 1. sıra gerçekçi değil.
+- **dijital patoloji yazılımı**: sayfa genişletmesi ve birkaç bağlantıyla 3–6 ayda 1. sayfa hedefi.
+  Üst sıralar ürün piyasaya çıkıp referans aldıkça gelir.
+- **yerli tıbbi cihaz, medikal cihaz üretimi**: 6–12 ay. Rakipler devlet kurumları, dernekler, büyük
+  firmalar ve haber siteleri. Dernek listeleri, harita kutusu ve haberle ilk sayfa mümkün; 1. sıra
+  garanti edilemez.
+- Ölçüm: Search Console ayda bir; aynı aramaların sırası 30. ve 90. günde yeniden kontrol edilir.
 
 ## Beklenti
 
