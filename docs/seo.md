@@ -1,19 +1,36 @@
 # SEO — arama motorunda görünme
 
-## Durum (22 Ekim 2026)
+## Durum (23 Ekim 2026)
 
-Google'da yalnız ana sayfa dizinde (`https://ahtapot.ink` adresiyle; kök `/tr`'ye 307 ile yönlendiği
-için Google kök adresi gösteriyor, sorun değil). Ürün sayfaları henüz dizinde değildi.
+Google'da 7 sayfa dizinde: ana sayfa (`https://ahtapot.ink` adresiyle; kök `/tr`'ye 307 ile yönlendiği
+için Google kök adresi gösteriyor, sorun değil), `/en`, iki dilde iki ürün sayfası, `/en/gizlilik`.
+22 Ekim'de yalnız ana sayfa vardı. Ana sayfanın sonuçtaki başlığı henüz eskisi; yeniden taramayla
+değişir. Search Console'da veri henüz çok az (28 günde 2 gösterim).
 
 | Arama | Durum | Gerçekçi hedef |
 |---|---|---|
-| ahtapot tıbbi | 1. sıra | korunur |
-| ahtapot medikal | yokuz; Teknopol kaydı çıkıyor | 1. sayfa: açıklamada artık "medikal" geçiyor, İşletme Profili ile güçlenir |
+| ahtapot tıbbi | 1. ve 3. sıra | korunur |
+| ahtapot tıbbi teknolojiler | 1., 3., 4. ve 9. sıra; 2. sırada Teknopol kaydı | korunur |
+| ahtapot medikal | 1. sıra (22 Ekim'de yoktuk) | korunur |
+| ahtapot teknolojileri | 7. sıra | üst sıralar: İşletme Profili, LinkedIn, bağlantılar |
+| ahtapot teknoloji | ilk 20'de yokuz; Teknopol kaydımız 6. sırada | aşağıya bakın |
 | ahtapot elektronik | yokuz; ASELSAN'ın AHTAPOT sistemi ve tripodlar | zor; marka bilinirliği ve bağlantılarla uzun vadede |
 | ahtapot | hayvan, yemek, başka firmalar | kısa vadede gerçekçi değil; marka paneli İşletme Profili ile gelebilir |
 | doku yüzdürme su banyosu | distribütörler (Lauda, Biobase…) | 1. sayfa: SB-9K sayfası dizine girince |
 | dijital patoloji yazılımı | Virasoft, Roche, Leica… | ürün sayfası başlığında artık bu ifade var; üst sıralar içerik ve bağlantı ister |
 | medikal / tıbbi cihaz üretimi, tıbbi cihazlar | dernekler, TİTCK, büyük firmalar + **harita sonuçları** | harita kutusu (İşletme Profili); organik için ayrı içerik sayfası gerekir |
+
+**"ahtapot teknoloji"**: bu ad başka bir firmanın. Ahtapot Yazılım Teknolojileri'nin alan adı
+`ahtapotteknoloji.com`, Instagram hesabı `@ahtapot.teknoloji`; ilk sayfanın çoğu bu firmanın sitesi,
+Instagram'ı, LinkedIn'i ve Ahtapot Robotik. Bu aramada 1. sıra gerçekçi değil; 1. sayfa gerçekçi.
+Bunun için sitede yapılacak bir şey kalmadı. İlk sayfaya giren sonuçlar sitenin dışındaki kayıtlar:
+- Google İşletme Profili: marka aramalarında sağda şirket kutusu çıkar.
+- LinkedIn şirket sayfası: bu aramada Ahtapot Yazılım'ın LinkedIn sayfası ilk sayfada.
+- Teknopol kaydı: bu aramada zaten 6. sırada. Kayıtta sitemize bağlantı yoksa eklettirin.
+- İsteğe bağlı Instagram hesabı: bu aramada Instagram profilleri iki kez ilk sayfada.
+
+"Ahtapot Teknoloji" adını sitede ya da yapılandırılmış veride diğer ad (`alternateName`) olarak
+kullanmayın. Başka bir firmanın markası; Google iki şirketi tek şirket sanabilir.
 
 ## Sitede yapılanlar (kod)
 
@@ -79,8 +96,8 @@ Sizin yapacaklarınız (önem sırasıyla):
 6. **Video** (fikir listesindeki tanıtım filmi): YouTube başlığı ve açıklamasında ürün adları ve
    "doku yüzdürme su banyosu" gibi ifadeler; asistanlar videonun yazılı kısmını okur.
 
-Karışma riski: "Ahtapot" adı ASELSAN'ın AHTAPOT sistemi, TÜBİTAK/Pardus'un Ahtapot güvenlik yazılımı ve
-Ahtapot Robotik gibi başka işlerle ortak. Bunlarla bağınız yoksa `/llms.txt`'ye bunu söyleyen bir
+Karışma riski: "Ahtapot" adı ASELSAN'ın AHTAPOT sistemi, TÜBİTAK/Pardus'un Ahtapot güvenlik yazılımı,
+Ahtapot Robotik ve Ahtapot Yazılım Teknolojileri (ahtapotteknoloji.com) gibi başka işlerle ortak. Bunlarla bağınız yoksa `/llms.txt`'ye bunu söyleyen bir
 cümle eklenebilir (onayınızla).
 
 Takip: ayda bir aşağıdaki soruları ChatGPT, Gemini, Claude ve Perplexity'ye 3'er kez sorup
@@ -146,6 +163,9 @@ Bunlar hesap açma, kimlik doğrulama veya şirket adına beyan gerektiriyor; Cl
    - Gerçek fotoğraflar: logo, ofis/atölye, ürün. Doğrulama genelde video ile.
 2. **Teknopol İstanbul kaydını düzelttirin** (https://teknopolistanbul.com/firma/ahtapot-tibbi-teknolojiler-a-s/):
    ad "Ahtapot Tıbb**ı**" yazılmış → "Ahtapot Tıbbi Teknolojiler A.Ş."; e-posta boş → `info@ahtapot.ink`.
+   Kayıtta sitemize bağlantı yoksa `https://ahtapot.ink` eklensin. Kayıt "ahtapot teknoloji", "ahtapot medikal" ve
+   "ahtapot tıbbi teknolojiler" aramalarında ilk sayfada; bu sayfadan gelen bağlantı siteye doğrudan
+   güç verir. (23 Ekim'de Teknopol sitesi kapalıydı, 522 hatası verdi; bağlantı kontrol edilemedi.)
    Açıklama esas sözleşmedeki faaliyet konusundan alınmış (doğru ama çok geniş: yapay zekâ, robotik,
    biyoinformatik…); isterseniz sitedeki kısa tanımla değiştirilmesini isteyebilirsiniz.
 3. **Bing Webmaster Tools** (https://www.bing.com/webmasters): Google hesabıyla girip "Search
