@@ -4,12 +4,13 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 
 | Ne | Durum |
 |---|---|
-| Alan adı | `ahtapot.ink`, GoDaddy'de kayıtlı; nameserver'lar `kyrie` / `raquel.ns.cloudflare.com`; zone Free planda aktif |
+| Alan adı | `ahtapot.ink`, GoDaddy'de kayıtlı; nameserver'lar `kyrie` / `raquel.ns.cloudflare.com`; zone Free planda aktif. 20 Ekim 2026'da süresi doldu, 24 Ekim'de GoDaddy'de 1 yıl yenilendi: bitiş **20 Ekim 2027** (§5.8) |
 | Worker | `ahtapot-web`, GitHub `main`'e her push'ta Workers Builds ile otomatik yayın; diğer dallar önizleme sürümü (`upload`) |
 | Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
 | Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
-| DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı |
-| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `info-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/info-yonlendirme.js`); `talep@ahtapot.ink` → a.keremyildiz99@gmail.com |
+| DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı (`p=quarantine`: alan adı adına giden e-posta Resend'den çıkmalı, §5.7) |
+| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `info-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/info-yonlendirme.js`); `talep@` ve `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com |
+| Giden e-posta | Gmail "Farklı adresten gönder" + Resend SMTP (§5.7). a.keremyildiz99: `info@` ve `kerem@`, anahtar `gmail-kerem` (4 Kasım 2026). jrsweet8: `info@` ve `mustafa@`, anahtar `gmail-mustafa` (kurulumu kendisi yapıyor) |
 | Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `info@ahtapot.ink`, Reply-To formu dolduran kişi |
 | Form secret'ları | `RESEND_API_KEY` (yalnız gönderim yetkili anahtar), `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`; üçü de Secret, yalnız Production |
 | Doğrulama (21 Ekim 2026) | Canlı formdan test: Resend "Delivered", Email Routing "Forwarded" |
@@ -51,7 +52,7 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 | CPU | İstek başına 10 ms | Sayfalar önceden üretilmiş; yayından sonra panelden ölçülmeli (§6) |
 | Görsel optimizasyonu | Ayda 5.000 benzersiz dönüşüm | Birkaç yüz. Aşılırsa yeni dönüşüm hata verir, **ücret çıkmaz** |
 | Email Routing | Ücretsiz | Gelen e-postaların yönlendirmesi |
-| Resend | Ayda 3.000, günde 100 e-posta, 3 alan adı | Talep formu |
+| Resend | Ayda 3.000, günde 100 e-posta, 3 alan adı | Talep formu ve Gmail'den giden e-posta, kota ortak |
 
 Sınır aşılırsa ücret çıkmaz:
 - **Cloudflare:** hesapta kart yok; kendiliğinden ücretli plana geçmez. Günlük
@@ -296,8 +297,49 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
   `rsend` CNAME (DNS only). Birkaç dakikada "verified".
 - Resend'in gönderim kayıtları (`send`, `rsend`) alt alan adında olduğu için
   kök alandaki Email Routing MX'leriyle çakışmaz.
+- **Kişisel adresler:** `kerem@`, `mustafa@` birer "Send to an email" kuralı.
+  Yeni kişi: hedef Gmail'i Destination addresses'e ekle (doğrulama
+  bağlantısına kendisi tıklar), sonra kuralı aç. Adres sayısının ücreti yok.
+- **Gmail'den `@ahtapot.ink` adresiyle göndermek:** Gmail → Ayarlar → Hesaplar
+  ve İçe Aktarma → "Postayı şu adresten gönder" → Başka bir e-posta adresi
+  ekle. Yalnız bilgisayardan yapılır, telefon uygulamasında bu ayar yok.
+  - SMTP: `smtp.resend.com`, bağlantı noktası `465`, SSL; kullanıcı adı
+    `resend`, şifre kişinin Resend anahtarı.
+  - `info@` (ortak adres): ad "Ahtapot Tıbbi Teknolojiler", "Takma ad olarak
+    değerlendir" **işaretsiz**. Kişisel adres: kişinin adı, işaretli. "Farklı
+    bir yanıt adresi" boş kalır; yanıtlar gönderen adrese döner.
+  - Gmail adrese bir onay e-postası yollar; Email Routing onu Gmail'e iletir,
+    bağlantıya tıklanır.
+  - Aynı sayfada "Bir iletiyi yanıtlarken" → **İletinin gönderildiği adresten
+    yanıtla**. `info@`'ya gelen e-postanın yanıtı kendiliğinden `info@`'dan
+    çıkar.
+  - Gmail'in kendi sunucusuyla (SMTP'siz) gönderilen `@ahtapot.ink` e-postası
+    DMARC'tan geçmez ve `p=quarantine` yüzünden spam'e düşer. Resend'in DKIM
+    imzası (`resend._domainkey`) geçer.
+  - Gönderilenler kişinin kendi Gmail'inde kalır; `info@`'dan verilen yanıtı
+    diğer kişi görmez (gerekirse Bilgi/CC).
+  - "Başka bir e-posta adresi ekle" ayrı bir açılır pencerede açılıyor; Claude
+    in Chrome o pencereye erişemiyor, formu kişi kendisi doldurur.
+- **Resend anahtarları:** kişi başına bir anahtar; izin **Sending access**,
+  alan adı yalnız `ahtapot.ink`. Anahtar yalnız oluşturulduğu an gösterilir;
+  kurulum yapılacağı sırada açılır. Bilgisayar ya da hesap kaybolursa Resend →
+  API keys'ten o anahtar silinir, diğerleri etkilenmez.
 - Alan adında ileride gerçek posta kutusu (Microsoft 365, Google Workspace)
   açılırsa Email Routing kapatılır; MX kayıtlarını o sağlayıcınınkiler alır.
+
+### 5.8 Alan adı yenileme
+- Kayıt GoDaddy'de; yenileme GoDaddy'den yapılır. Cloudflare'e taşınan yalnız
+  DNS. Süre dolarsa site ve e-posta birlikte kapanır. GoDaddy'nin makalesine
+  göre ~19. güne kadar normal fiyatla yenilenir, sonra ~80 $ geri alma ücreti,
+  ~25. günde açık artırma.
+- GoDaddy'nin `.ink` yenilemesi ~50 $/yıl; Cloudflare Registrar maliyetine
+  satıyor, ~25 $/yıl (Ekim 2026 fiyatları).
+- **Cloudflare'e taşıma:** 4 Aralık 2026'dan sonra (bitişten 45 gün önce
+  taşınırsa GoDaddy'ye ödenen yıl geri alınabilir). Taşıma bir yıl ekler.
+  Cloudflare hesabına kart gerekir; karttan yalnız alan adı ücreti çekilir.
+  GoDaddy'de kilit açılır, yetki kodu alınır, Cloudflare → Domain
+  Registration → Transfer Domains.
+- Güncel bitiş tarihi: `curl -sL https://rdap.godaddy.com/v1/domain/ahtapot.ink`.
 
 ---
 
@@ -361,3 +403,6 @@ paylaşmadığı için kaba bir caydırıcı. Spam gelirse:
 - Vercel adil kullanım (Hobby ticari değil): https://vercel.com/docs/limits/fair-use-guidelines
 - Netlify kredi sistemi: https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work/
 - Resend fiyatı: https://resend.com/pricing
+- Resend SMTP: https://resend.com/docs/send-with-smtp
+- Cloudflare'e alan adı taşıma: https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/
+- Cloudflare Registrar TLD listesi: https://www.cloudflare.com/tld-policies
