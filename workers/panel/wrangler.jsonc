@@ -18,7 +18,9 @@
     "ROUTER_WORKER": "eposta-yonlendirme",
     // Resend planı değişirse güncellenir.
     "RESEND_DAILY_LIMIT": "100",
-    "RESEND_MONTHLY_LIMIT": "3000"
+    "RESEND_MONTHLY_LIMIT": "3000",
+    // Resend hesabının açıldığı gün (21 Ekim 2026). Aylık dönem bundan hesaplanır.
+    "RESEND_CYCLE_DAY": "21"
   },
   "observability": { "enabled": true }
   // Secret'lar panelde girilir, repo public: ADMIN_EMAILS, CF_API_TOKEN,

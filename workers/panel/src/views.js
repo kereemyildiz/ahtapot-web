@@ -30,6 +30,12 @@ const dateFormat = new Intl.DateTimeFormat("tr-TR", {
   timeZone: "Europe/Istanbul",
 });
 
+const periodFormat = new Intl.DateTimeFormat("tr-TR", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+
 const number = (value) => value.toLocaleString("tr-TR");
 
 export function escapeHtml(value) {
@@ -185,9 +191,9 @@ ${MESSAGES[ok] ? `<p class="notice" role="status">${icon("check")}<span>${MESSAG
 <h2 id="kota">Giden e-posta</h2>
 <dl class="usage">
 ${usageBlock("Bugün", usage.daily, limits.daily)}
-${usageBlock("Bu ay", usage.monthly, limits.monthly)}
+${usageBlock(`Bu ay (${periodFormat.format(limits.period.start)} – ${periodFormat.format(limits.period.end)})`, usage.monthly, limits.monthly)}
 </dl>
-<p class="hint">Resend kotası. Form ve tüm kişiler ortak kullanır, her alıcı ayrı sayılır. Günlük kota 03:00'te yenilenir.</p>
+<p class="hint">Resend kotası. Form ve tüm kişiler ortak kullanır, her alıcı ayrı sayılır. Günlük kota 03:00'te yenilenir. Ay dönemi hesabın açıldığı güne göre hesaplanır, kesin sayı <a href="https://resend.com/settings/usage" target="_blank" rel="noreferrer">Resend'de</a>.</p>
 </section>
 <section aria-labelledby="kayit">
 <h2 id="kayit">Son işlemler</h2>

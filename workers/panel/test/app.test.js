@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, mock, test } from "node:test";
 import { sessionCookie } from "../src/auth.js";
 import app from "../src/index.js";
-import { createResend } from "../src/resend.js";
+import { createResend, quotaPeriod } from "../src/resend.js";
 import { parseNewAddress, parseRecipient } from "../src/validate.js";
 import { escapeHtml, gmailInstructions } from "../src/views.js";
 import { DOMAIN, memoryKv, ROUTER, rule } from "./fakes.js";
@@ -19,6 +19,7 @@ function makeEnv(overrides = {}) {
     GOOGLE_CLIENT_ID: "client",
     GOOGLE_CLIENT_SECRET: "secret",
     RESEND_API_KEY: "re",
+    RESEND_CYCLE_DAY: "1",
     RESEND_DAILY_LIMIT: "100",
     RESEND_MONTHLY_LIMIT: "3000",
     ROUTER_WORKER: ROUTER,
@@ -113,6 +114,44 @@ test("kullanım bu ayla sınırlı, gün UTC'ye göre ve her alıcı ayrı sayı
   const usage = await createResend(makeEnv()).usage(now);
   assert.deepEqual(usage, { daily: 3, monthly: 4 });
   assert.equal(globalThis.fetch.mock.callCount(), 1);
+});
+
+test("kullanım dönem başından sayılır, takvim ayından değil", async () => {
+  const now = new Date("2026-11-05T12:00:00Z");
+  mock.method(globalThis, "fetch", async () =>
+    Response.json({
+      has_more: false,
+      data: [
+        { id: "1", created_at: "2026-11-02 09:00:00.0+00", to: ["a"] },
+        { id: "2", created_at: "2026-10-21 14:53:39.044000+00", to: ["a"] },
+        { id: "3", created_at: "2026-10-20 23:59:00.0+00", to: ["a"] },
+      ],
+    }),
+  );
+  const usage = await createResend(makeEnv({ RESEND_CYCLE_DAY: "21" })).usage(now);
+  assert.equal(usage.monthly, 2);
+});
+
+const day = (value) => new Date(value).toISOString().slice(0, 10);
+
+for (const [now, cycle, start, end] of [
+  ["2026-11-05T12:00:00Z", 21, "2026-10-21", "2026-11-20"],
+  ["2026-11-20T23:59:00Z", 21, "2026-10-21", "2026-11-20"],
+  ["2026-11-21T00:00:00Z", 21, "2026-11-21", "2026-12-20"],
+  ["2027-01-03T12:00:00Z", 21, "2026-12-21", "2027-01-20"],
+  ["2027-02-28T12:00:00Z", 31, "2027-02-28", "2027-03-30"],
+  ["2026-11-05T12:00:00Z", 1, "2026-11-01", "2026-11-30"],
+]) {
+  test(`dönem ${now}, gün ${cycle}: ${start} - ${end}`, () => {
+    const period = quotaPeriod(new Date(now), cycle);
+    assert.deepEqual([day(period.start), day(period.end)], [start, end]);
+  });
+}
+
+test("panel dönem tarihlerini gösterir", async () => {
+  stubApis([rule("r1", "kerem", "kerem@gmail.com", "Kerem")]);
+  const body = await (await authed("/", {}, makeEnv({ RESEND_CYCLE_DAY: "21" }))).text();
+  assert.match(body, /Bu ay \(\d+ \S+ – \d+ \S+\)/);
 });
 
 test("kullanım sonraki sayfalardan da okunur", async () => {

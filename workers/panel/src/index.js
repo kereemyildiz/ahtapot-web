@@ -19,7 +19,7 @@ import {
 } from "./auth.js";
 import { createCloudflare } from "./cloudflare.js";
 import { UserError } from "./errors.js";
-import { createResend } from "./resend.js";
+import { createResend, quotaPeriod } from "./resend.js";
 import { createStore } from "./store.js";
 import { isValidLocal, parseNewAddress, parseRecipient, PROTECTED_ADDRESSES } from "./validate.js";
 import { confirmPage, dashboardPage, errorPage, loginPage, setupPage } from "./views.js";
@@ -33,6 +33,7 @@ const REQUIRED_ENV = [
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "RESEND_API_KEY",
+  "RESEND_CYCLE_DAY",
   "ROUTER_WORKER",
   "SESSION_SECRET",
 ];
@@ -162,6 +163,7 @@ async function handlePanel(request, env, url, session) {
     const limits = {
       daily: Number(env.RESEND_DAILY_LIMIT),
       monthly: Number(env.RESEND_MONTHLY_LIMIT),
+      period: quotaPeriod(new Date(), Number(env.RESEND_CYCLE_DAY)),
     };
     return html(
       dashboardPage({
