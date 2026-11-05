@@ -1,6 +1,6 @@
 // E-posta paneli (admin.ahtapot.ink). Siteden ayrı yayınlanır:
 //   npx wrangler deploy --config workers/panel/wrangler.jsonc
-// Kurulum ve secret listesi: docs/deploy-cloudflare.md §5.9
+// Kurulum ve secret listesi: docs/deploy-cloudflare.md §5.8
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "ahtapot-panel",
