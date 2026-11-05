@@ -4,12 +4,13 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 
 | Ne | Durum |
 |---|---|
-| Alan adı | `ahtapot.ink`, GoDaddy'de kayıtlı; nameserver'lar `kyrie` / `raquel.ns.cloudflare.com`; zone Free planda aktif. 20 Ekim 2026'da süresi doldu, 24 Ekim'de GoDaddy'de 1 yıl yenilendi: bitiş **20 Ekim 2027** (§5.8) |
+| Alan adı | `ahtapot.ink`, GoDaddy'de kayıtlı; nameserver'lar `kyrie` / `raquel.ns.cloudflare.com`; zone Free planda aktif. 20 Ekim 2026'da süresi doldu, 24 Ekim'de GoDaddy'de 1 yıl yenilendi: bitiş **20 Ekim 2027** (§5.9) |
 | Worker | `ahtapot-web`, GitHub `main`'e her push'ta Workers Builds ile otomatik yayın; diğer dallar önizleme sürümü (`upload`) |
 | Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
 | Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
 | DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı (`p=quarantine`: alan adı adına giden e-posta Resend'den çıkmalı, §5.7) |
-| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `info-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/info-yonlendirme.js`); `talep@` ve `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com |
+| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `eposta-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/eposta-yonlendirme.js`); `talep@` ve `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com |
+| E-posta paneli | `admin.ahtapot.ink` (§5.8) |
 | Giden e-posta | Gmail "Farklı adresten gönder" + Resend SMTP (§5.7). a.keremyildiz99: `info@` ve `kerem@`, anahtar `gmail-kerem` (4 Kasım 2026). jrsweet8: `info@` ve `mustafa@`, anahtar `gmail-mustafa` (kurulumu kendisi yapıyor) |
 | Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `info@ahtapot.ink`, Reply-To formu dolduran kişi |
 | Form secret'ları | `RESEND_API_KEY` (yalnız gönderim yetkili anahtar), `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`; üçü de Secret, yalnız Production |
@@ -284,12 +285,12 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
   "Add missing records" (3 MX, `cf2024-1._domainkey` DKIM, SPF) → Destination
   addresses → Gmail adresi (Cloudflare hesabının adresi olduğu için doğrudan
   "Verified") → Routing rules: `talep@` → Send to an email → Gmail;
-  `info@` → Send to a Worker → `info-yonlendirme`.
-- **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. `info@` bu yüzden
-  `workers/info-yonlendirme.js`'teki Email Worker'a bağlı; Worker iletiyi
-  listedeki her adrese `message.forward` ile iletir. Yeni alıcı: önce
-  Destination addresses'e ekle (doğrulama e-postasındaki bağlantı tıklanmalı),
-  sonra `HEDEFLER` listesine ekleyip Worker'ı panelden yeniden yayınla.
+  `info@` → Send to a Worker → `eposta-yonlendirme`.
+- **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. Tek alıcılı adres
+  doğrudan iletilir; ikinci alıcı eklenince panel kuralı
+  `workers/eposta-yonlendirme.js` Worker'ına çevirir, alıcılar KV'de
+  `adres-hedefleri` haritasından okunur. Bire inince kural yeniden doğrudan
+  iletime döner. KV okunamazsa dosyadaki `YEDEK_HEDEFLER` kullanılır.
 - **Resend:** Domains → Add → `ahtapot.ink`, bölge **Ireland (eu-west-1)**
   (sonradan değişmez), Return-Path `send`, takip kapalı, receiving kapalı
   (gelen posta Email Routing'de). **Auto configure** Cloudflare'in Domain
@@ -327,7 +328,40 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
 - Alan adında ileride gerçek posta kutusu (Microsoft 365, Google Workspace)
   açılırsa Email Routing kapatılır; MX kayıtlarını o sağlayıcınınkiler alır.
 
-### 5.8 Alan adı yenileme
+### 5.8 E-posta paneli
+`admin.ahtapot.ink` (`workers/panel/`, Worker `ahtapot-panel`). Tüm adresler tek
+listede: adres açar ve siler, adrese alıcı ekler ve çıkarır, Resend anahtarı üretir,
+giden e-posta sayısını ve son işlemleri gösterir. `info@` ve `talep@` silinemez,
+alıcıları değiştirilebilir. Tasarım:
+`docs/superpowers/specs/2026-11-05-eposta-paneli-design.md`.
+
+- **Yayın:** `npx wrangler deploy --config workers/panel/wrangler.jsonc`. `main`
+  akışına bağlı değil, canlı siteye dokunmaz. Testler: `pnpm test:panel`.
+- **Yönlendirme Worker'ı:** `npx wrangler deploy --config
+  workers/eposta-yonlendirme.wrangler.jsonc`. Alıcı değişikliği en çok bir dakikada
+  yayılır.
+- **Kullanım sayısı:** Resend kotayı yalnız gönderim yanıtında döndürür; panel
+  `/emails` listesinden sayar. Gün UTC'ye göre (TSİ 03:00), her alıcı ayrı.
+- **Bekleyen alıcı:** Cloudflare doğrulanmamış adrese kural açtırmaz. Panel kişiyi
+  KV'de `bekleyenler`e yazar, doğrulanınca panelin ilk açılışında kendisi ekler.
+- **`Referrer-Policy`:** `no-referrer` yapılmamalı; tarayıcı formlarda `Origin: null`
+  yollar ve panel her POST'u reddeder.
+- **Giriş:** Google OAuth, proje `ahtapot-panel`, uygulama test modunda (girişte
+  "doğrulanmadı" uyarısı çıkar, Devam denir). Yeni yönetici hem Google Auth Platform
+  → Audience → Test users listesine hem `ADMIN_EMAILS` secret'ına eklenir.
+- **Secret'lar** (Worker → Settings, repo'ya yazılmaz): `ADMIN_EMAILS` (virgülle),
+  `CF_API_TOKEN` (yalnız Email Routing Addresses + Rules, Edit; zone `ahtapot.ink`),
+  `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY` (`panel`, Full
+  access: anahtar üretmek için gerekir), `SESSION_SECRET` (rastgele; değişirse
+  açık oturumlar kapanır). Eksik secret varsa panel 503 döner.
+- **Resend planı değişirse:** `wrangler.jsonc` → `RESEND_DAILY_LIMIT`,
+  `RESEND_MONTHLY_LIMIT`.
+- **Dikkat:** `wrangler kv namespace create --binding` kökteki `wrangler.jsonc`'e
+  yazar ve onu yeniden biçimlendirir; KV binding'i siteye girmemeli.
+- **Sızıntı şüphesinde:** panel Worker'ındaki `CF_API_TOKEN` ve `RESEND_API_KEY`
+  iptal edilip yenilenir, `SESSION_SECRET` değiştirilir.
+
+### 5.9 Alan adı yenileme
 - Kayıt GoDaddy'de; yenileme GoDaddy'den yapılır. Cloudflare'e taşınan yalnız
   DNS. Süre dolarsa site ve e-posta birlikte kapanır. GoDaddy'nin makalesine
   göre ~19. güne kadar normal fiyatla yenilenir, sonra ~80 $ geri alma ücreti,
