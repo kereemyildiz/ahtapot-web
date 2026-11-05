@@ -1,0 +1,11 @@
+// info@ iletme Worker'ı. Email Routing'deki info@ kuralı bu ada bağlı.
+//   npx wrangler deploy --config workers/info-yonlendirme.wrangler.jsonc
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "info-yonlendirme",
+  "main": "info-yonlendirme.js",
+  "workers_dev": false,
+  "compatibility_date": "2026-10-01",
+  "kv_namespaces": [{ "binding": "PANEL_KV", "id": "212d5ffc567b4ffdb51e647cc8eb667d" }],
+  "observability": { "enabled": true }
+}

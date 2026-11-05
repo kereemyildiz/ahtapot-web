@@ -1,0 +1,25 @@
+// E-posta paneli (admin.ahtapot.ink). Siteden ayrı yayınlanır:
+//   npx wrangler deploy --config workers/panel/wrangler.jsonc
+// Kurulum ve secret listesi: docs/deploy-cloudflare.md §5.9
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "ahtapot-panel",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  // Panel yalnız kendi alan adından açılır: Google dönüş adresi tek, kopya adres yok.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "admin.ahtapot.ink", "custom_domain": true }],
+  "kv_namespaces": [{ "binding": "PANEL_KV", "id": "212d5ffc567b4ffdb51e647cc8eb667d" }],
+  "vars": {
+    "DOMAIN": "ahtapot.ink",
+    "CF_ACCOUNT_ID": "691839f97d6ce514b28d5d218c418080",
+    "CF_ZONE_ID": "04037e49771157bdec83012d868be601",
+    // Resend planı değişirse güncellenir.
+    "RESEND_DAILY_LIMIT": "100",
+    "RESEND_MONTHLY_LIMIT": "3000"
+  },
+  "observability": { "enabled": true }
+  // Secret'lar panelde girilir, repo public: ADMIN_EMAILS, CF_API_TOKEN,
+  // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, RESEND_API_KEY, SESSION_SECRET.
+}
