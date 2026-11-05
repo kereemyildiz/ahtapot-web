@@ -341,7 +341,11 @@ alıcıları değiştirilebilir. Tasarım:
   workers/eposta-yonlendirme.wrangler.jsonc`. Alıcı değişikliği en çok bir dakikada
   yayılır.
 - **Kullanım sayısı:** Resend kotayı yalnız gönderim yanıtında döndürür; panel
-  `/emails` listesinden sayar. Gün UTC'ye göre (TSİ 03:00), her alıcı ayrı.
+  `/emails` listesinden sayar. Gün UTC'ye göre (TSİ 03:00), her alıcı ayrı. Aylık
+  dönem takvim ayı değil ve Resend tarihini göstermiyor; panel hesabın açıldığı
+  günden (`RESEND_CYCLE_DAY`, 21) hesaplar. Bu varsayım 5 Kasım'da Resend'in 14
+  sayısıyla tuttu ama 21 Kasım'dan sonra Usage sayfasıyla karşılaştırılmalı (son 30
+  gün de olabilir). Kesin sayı: Resend → Settings → Usage.
 - **Bekleyen alıcı:** Cloudflare doğrulanmamış adrese kural açtırmaz. Panel kişiyi
   KV'de `bekleyenler`e yazar, doğrulanınca panelin ilk açılışında kendisi ekler.
 - **`Referrer-Policy`:** `no-referrer` yapılmamalı; tarayıcı formlarda `Origin: null`

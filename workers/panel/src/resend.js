@@ -10,6 +10,21 @@ function parseCreatedAt(value) {
   return Date.parse(value.replace(" ", "T").replace(/(\.\d{3})\d*/, "$1").replace(/\+00$/, "Z"));
 }
 
+// Resend aylık dönemi takvim ayı değil ve tarihini hiçbir yerde göstermiyor. Dönem,
+// hesabın açıldığı günden başlıyor varsayılır (RESEND_CYCLE_DAY); 5 Kasım 2026'da
+// Resend'in kendi sayısıyla tutuyordu, ama belgelenmiş değil.
+export function quotaPeriod(now, cycleDay) {
+  const anchor = (year, month) =>
+    Date.UTC(year, month, Math.min(cycleDay, new Date(Date.UTC(year, month + 1, 0)).getUTCDate()));
+
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const startsThisMonth = now.getTime() >= anchor(year, month);
+  const start = anchor(year, startsThisMonth ? month : month - 1);
+  const next = anchor(year, startsThisMonth ? month + 1 : month);
+  return { start, end: next - 86_400_000 };
+}
+
 const recipientCount = (email) =>
   (email.to?.length ?? 0) + (email.cc?.length ?? 0) + (email.bcc?.length ?? 0);
 
@@ -46,7 +61,7 @@ export function createResend(env) {
     // Bu yüzden gönderim listesinden sayılır. Her alıcı kotadan ayrı düşer.
     async usage(now = new Date()) {
       const dayStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-      const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+      const { start } = quotaPeriod(now, Number(env.RESEND_CYCLE_DAY));
       const usage = { daily: 0, monthly: 0 };
       let after = null;
 
@@ -54,7 +69,7 @@ export function createResend(env) {
         const body = await call(`/emails?limit=${PAGE_SIZE}${after ? `&after=${after}` : ""}`);
         for (const email of body.data ?? []) {
           const sentAt = parseCreatedAt(email.created_at);
-          if (sentAt < monthStart) return usage;
+          if (sentAt < start) return usage;
           usage.monthly += recipientCount(email);
           if (sentAt >= dayStart) usage.daily += recipientCount(email);
         }
