@@ -15,6 +15,7 @@
     "DOMAIN": "ahtapot.ink",
     "CF_ACCOUNT_ID": "691839f97d6ce514b28d5d218c418080",
     "CF_ZONE_ID": "04037e49771157bdec83012d868be601",
+    "ROUTER_WORKER": "eposta-yonlendirme",
     // Resend planı değişirse güncellenir.
     "RESEND_DAILY_LIMIT": "100",
     "RESEND_MONTHLY_LIMIT": "3000"

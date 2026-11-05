@@ -1,33 +1,38 @@
 export const DOMAIN = "ahtapot.ink";
+export const ROUTER = "eposta-yonlendirme";
 
 export function rule(id, local, target, name = "") {
   return {
     id,
     name,
     matchers: [{ type: "literal", field: "to", value: `${local}@${DOMAIN}` }],
-    actions: target
-      ? [{ type: "forward", value: [target] }]
-      : [{ type: "worker", value: ["info-yonlendirme"] }],
+    actions: target ? [{ type: "forward", value: [target] }] : [{ type: "worker", value: [ROUTER] }],
   };
 }
 
-export function fakeDeps({ rules = [], addresses = [], keys = [], info = [], pending = [] } = {}) {
+export function fakeDeps({ rules = [], addresses = [], keys = [], routes = {}, pending = [] } = {}) {
   const state = {
     rules: [...rules],
     addresses: [...addresses],
     keys: [...keys],
-    info: [...info],
+    routes: structuredClone(routes),
     pending: [...pending],
     log: [],
     calls: [],
   };
   let nextId = 1;
 
+  const asRule = (id, { name, address, gmail }) => rule(id, address.split("@")[0], gmail, name);
+
   const cf = {
     listRules: async () => [...state.rules],
-    createRule: async ({ name, address, gmail }) => {
+    createRule: async (input) => {
       state.calls.push("createRule");
-      state.rules.push(rule(`r${nextId++}`, address.split("@")[0], gmail, name));
+      state.rules.push(asRule(`r${nextId++}`, input));
+    },
+    updateRule: async (id, input) => {
+      state.calls.push("updateRule");
+      state.rules = state.rules.map((item) => (item.id === id ? asRule(id, input) : item));
     },
     deleteRule: async (id) => {
       state.calls.push("deleteRule");
@@ -45,7 +50,8 @@ export function fakeDeps({ rules = [], addresses = [], keys = [], info = [], pen
   };
 
   const resend = {
-    listKeys: async () => ({ keys: [...state.keys], quota: { daily: 3, monthly: 40 } }),
+    listKeys: async () => [...state.keys],
+    usage: async () => ({ daily: 3, monthly: 40 }),
     createKey: async (name) => {
       state.calls.push("createKey");
       state.keys.push({ id: `k${nextId++}`, name });
@@ -58,9 +64,9 @@ export function fakeDeps({ rules = [], addresses = [], keys = [], info = [], pen
   };
 
   const store = {
-    getInfoTargets: async () => [...state.info],
-    setInfoTargets: async (list) => {
-      state.info = [...list];
+    getRoutes: async () => structuredClone(state.routes),
+    setRoutes: async (routes) => {
+      state.routes = structuredClone(routes);
     },
     getPending: async () => [...state.pending],
     setPending: async (list) => {
@@ -72,7 +78,10 @@ export function fakeDeps({ rules = [], addresses = [], keys = [], info = [], pen
     },
   };
 
-  return { state, deps: { cf, resend, store, actor: "yonetici@gmail.com", domain: DOMAIN } };
+  return {
+    state,
+    deps: { cf, resend, store, actor: "yonetici@gmail.com", domain: DOMAIN, routerWorker: ROUTER },
+  };
 }
 
 export function memoryKv(initial = {}) {

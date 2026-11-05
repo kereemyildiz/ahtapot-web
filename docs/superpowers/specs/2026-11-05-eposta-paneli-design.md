@@ -1,6 +1,23 @@
 # E-posta paneli tasarımı
 
-Durum: onaylandı (2026-11-05). Kullanıcı e-posta kişi işlemlerini Claude olmadan
+Durum: onaylandı (2026-11-05), aynı gün kullanıcı geri bildirimiyle genel modele
+geçirildi. Aşağıda kişi/`info@` ayrımı geçen yerlerin yerine "Genel model" geçerlidir.
+
+## Genel model (geçerli)
+
+Tek nesne vardır: adres. Her adresin 1..N alıcısı olur; `info@`, `talep@`, `kerem@`
+aynı listede, aynı kurallarla durur. Kullanıcı `info@`'ya özel alanı ("info@ alıyor")
+reddetti. Tek alıcı doğrudan iletilir, ikincisi eklenince kural
+`eposta-yonlendirme` Worker'ına geçer, alıcılar KV'de `adres-hedefleri` haritasında
+durur. Yalnız `info@` ve `talep@` silinemez. Doğrulama bekleyen alıcı panel açılınca
+kendiliğinden eklenir, "Kurulumu tamamla" adımı yoktur. Anahtar adrese bağlıdır, ama
+talimat kişinin alıcısı olduğu bütün adresleri içerir. Kullanım `/emails` listesinden
+sayılır, çünkü Resend kota başlıklarını okuma isteklerinde döndürmez.
+
+Görünüm: taste-skill "Data terminal" uygulama stili, sitenin koyu renkleri ve yazı
+tipleri. Alıcılar adresten çıkan dik açılı kollarla gösterilir (logodaki çizgi).
+
+Durum: ilk sürüm (2026-11-05). Kullanıcı e-posta kişi işlemlerini Claude olmadan
 `admin.ahtapot.ink` üzerinden yapmak istiyor.
 
 ## Kapsam

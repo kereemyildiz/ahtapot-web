@@ -3,6 +3,16 @@ import { ServiceError } from "./errors.js";
 const API = "https://api.cloudflare.com/client/v4";
 const PAGE_SIZE = 50;
 
+// Tek alıcı doğrudan iletilir; birden fazlası yönlendirme Worker'ından geçer.
+function ruleBody({ name, address, gmail, worker }) {
+  return JSON.stringify({
+    name,
+    enabled: true,
+    matchers: [{ type: "literal", field: "to", value: address }],
+    actions: gmail ? [{ type: "forward", value: [gmail] }] : [{ type: "worker", value: [worker] }],
+  });
+}
+
 export function createCloudflare(env) {
   const rulesPath = `/zones/${env.CF_ZONE_ID}/email/routing/rules`;
   const addressesPath = `/accounts/${env.CF_ACCOUNT_ID}/email/routing/addresses`;
@@ -37,16 +47,9 @@ export function createCloudflare(env) {
   return {
     listRules: () => listAll(rulesPath),
 
-    createRule: ({ name, address, gmail }) =>
-      call(rulesPath, {
-        method: "POST",
-        body: JSON.stringify({
-          name,
-          enabled: true,
-          matchers: [{ type: "literal", field: "to", value: address }],
-          actions: [{ type: "forward", value: [gmail] }],
-        }),
-      }),
+    createRule: (rule) => call(rulesPath, { method: "POST", body: ruleBody(rule) }),
+
+    updateRule: (id, rule) => call(`${rulesPath}/${id}`, { method: "PUT", body: ruleBody(rule) }),
 
     deleteRule: (id) => call(`${rulesPath}/${id}`, { method: "DELETE" }),
 

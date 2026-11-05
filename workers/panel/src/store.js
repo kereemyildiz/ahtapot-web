@@ -1,23 +1,22 @@
-const INFO_KEY = "info-hedefleri";
+const ROUTES_KEY = "adres-hedefleri";
 const PENDING_KEY = "bekleyenler";
 const LOG_KEY = "islem-kaydi";
 const LOG_LIMIT = 50;
 
 export function createStore(kv) {
-  const readList = async (key) => (await kv.get(key, "json")) ?? [];
-  const writeList = (key, list) => kv.put(key, JSON.stringify(list));
-
   return {
-    getInfoTargets: () => readList(INFO_KEY),
-    setInfoTargets: (targets) => writeList(INFO_KEY, targets),
+    // { "info@ahtapot.ink": ["a@gmail.com", "b@gmail.com"] }: birden fazla alıcılı adresler.
+    getRoutes: async () => (await kv.get(ROUTES_KEY, "json")) ?? {},
+    setRoutes: (routes) => kv.put(ROUTES_KEY, JSON.stringify(routes)),
 
-    getPending: () => readList(PENDING_KEY),
-    setPending: (pending) => writeList(PENDING_KEY, pending),
+    // Gmail'i doğrulanınca alıcı olacaklar: { name, local, address, gmail }.
+    getPending: async () => (await kv.get(PENDING_KEY, "json")) ?? [],
+    setPending: (pending) => kv.put(PENDING_KEY, JSON.stringify(pending)),
 
-    getLog: () => readList(LOG_KEY),
+    getLog: async () => (await kv.get(LOG_KEY, "json")) ?? [],
     async addLog(actor, text, at = new Date().toISOString()) {
-      const log = await readList(LOG_KEY);
-      await writeList(LOG_KEY, [{ at, actor, text }, ...log].slice(0, LOG_LIMIT));
+      const log = (await kv.get(LOG_KEY, "json")) ?? [];
+      await kv.put(LOG_KEY, JSON.stringify([{ at, actor, text }, ...log].slice(0, LOG_LIMIT)));
     },
   };
 }

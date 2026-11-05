@@ -9,7 +9,7 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 | Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
 | Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
 | DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı (`p=quarantine`: alan adı adına giden e-posta Resend'den çıkmalı, §5.7) |
-| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `info-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/info-yonlendirme.js`); `talep@` ve `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com |
+| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `eposta-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/eposta-yonlendirme.js`); `talep@` ve `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com |
 | E-posta paneli | `admin.ahtapot.ink` (§5.8) |
 | Giden e-posta | Gmail "Farklı adresten gönder" + Resend SMTP (§5.7). a.keremyildiz99: `info@` ve `kerem@`, anahtar `gmail-kerem` (4 Kasım 2026). jrsweet8: `info@` ve `mustafa@`, anahtar `gmail-mustafa` (kurulumu kendisi yapıyor) |
 | Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `info@ahtapot.ink`, Reply-To formu dolduran kişi |
@@ -285,12 +285,12 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
   "Add missing records" (3 MX, `cf2024-1._domainkey` DKIM, SPF) → Destination
   addresses → Gmail adresi (Cloudflare hesabının adresi olduğu için doğrudan
   "Verified") → Routing rules: `talep@` → Send to an email → Gmail;
-  `info@` → Send to a Worker → `info-yonlendirme`.
-- **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. `info@` bu yüzden
-  `workers/info-yonlendirme.js`'teki Email Worker'a bağlı; Worker iletiyi
-  listedeki her adrese `message.forward` ile iletir. Alıcılar e-posta panelinden
-  seçilir (§5.8) ve KV'den okunur; KV okunamazsa dosyadaki `YEDEK_HEDEFLER`
-  kullanılır.
+  `info@` → Send to a Worker → `eposta-yonlendirme`.
+- **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. Tek alıcılı adres
+  doğrudan iletilir; ikinci alıcı eklenince panel kuralı
+  `workers/eposta-yonlendirme.js` Worker'ına çevirir, alıcılar KV'de
+  `adres-hedefleri` haritasından okunur. Bire inince kural yeniden doğrudan
+  iletime döner. KV okunamazsa dosyadaki `YEDEK_HEDEFLER` kullanılır.
 - **Resend:** Domains → Add → `ahtapot.ink`, bölge **Ireland (eu-west-1)**
   (sonradan değişmez), Return-Path `send`, takip kapalı, receiving kapalı
   (gelen posta Email Routing'de). **Auto configure** Cloudflare'in Domain
@@ -329,15 +329,23 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
   açılırsa Email Routing kapatılır; MX kayıtlarını o sağlayıcınınkiler alır.
 
 ### 5.8 E-posta paneli
-`admin.ahtapot.ink` (`workers/panel/`, Worker `ahtapot-panel`). Kişi ekler ve
-çıkarır, Resend anahtarı üretir, `info@` alıcılarını seçer, kotayı ve son 50 işlemi
-gösterir. Tasarım: `docs/superpowers/specs/2026-11-05-eposta-paneli-design.md`.
+`admin.ahtapot.ink` (`workers/panel/`, Worker `ahtapot-panel`). Tüm adresler tek
+listede: adres açar ve siler, adrese alıcı ekler ve çıkarır, Resend anahtarı üretir,
+giden e-posta sayısını ve son işlemleri gösterir. `info@` ve `talep@` silinemez,
+alıcıları değiştirilebilir. Tasarım:
+`docs/superpowers/specs/2026-11-05-eposta-paneli-design.md`.
 
 - **Yayın:** `npx wrangler deploy --config workers/panel/wrangler.jsonc`. `main`
   akışına bağlı değil, canlı siteye dokunmaz. Testler: `pnpm test:panel`.
-- **`info@` Worker'ı:** `npx wrangler deploy --config
-  workers/info-yonlendirme.wrangler.jsonc`. KV'deki `info-hedefleri` listesini
-  okur, değişiklik en çok bir dakikada yayılır.
+- **Yönlendirme Worker'ı:** `npx wrangler deploy --config
+  workers/eposta-yonlendirme.wrangler.jsonc`. Alıcı değişikliği en çok bir dakikada
+  yayılır.
+- **Kullanım sayısı:** Resend kotayı yalnız gönderim yanıtında döndürür; panel
+  `/emails` listesinden sayar. Gün UTC'ye göre (TSİ 03:00), her alıcı ayrı.
+- **Bekleyen alıcı:** Cloudflare doğrulanmamış adrese kural açtırmaz. Panel kişiyi
+  KV'de `bekleyenler`e yazar, doğrulanınca panelin ilk açılışında kendisi ekler.
+- **`Referrer-Policy`:** `no-referrer` yapılmamalı; tarayıcı formlarda `Origin: null`
+  yollar ve panel her POST'u reddeder.
 - **Giriş:** Google OAuth, proje `ahtapot-panel`, uygulama test modunda (girişte
   "doğrulanmadı" uyarısı çıkar, Devam denir). Yeni yönetici hem Google Auth Platform
   → Audience → Test users listesine hem `ADMIN_EMAILS` secret'ına eklenir.

@@ -1,3 +1,13 @@
+import {
+  addAddress,
+  addRecipient,
+  applyVerifiedPending,
+  deleteAddress,
+  findAddress,
+  issueKey,
+  loadOverview,
+  removeRecipient,
+} from "./addresses.js";
 import { CSS, SCRIPT } from "./assets.js";
 import {
   clearSessionCookie,
@@ -9,19 +19,9 @@ import {
 } from "./auth.js";
 import { createCloudflare } from "./cloudflare.js";
 import { UserError } from "./errors.js";
-import {
-  addPerson,
-  cancelPending,
-  completePerson,
-  findPersonForConfirm,
-  loadOverview,
-  removePerson,
-  rotateKey,
-  setInfoRecipient,
-} from "./people.js";
 import { createResend } from "./resend.js";
 import { createStore } from "./store.js";
-import { isValidLocal, parseNewPerson } from "./validate.js";
+import { isValidLocal, parseNewAddress, parseRecipient, PROTECTED_ADDRESSES } from "./validate.js";
 import { confirmPage, dashboardPage, errorPage, loginPage, setupPage } from "./views.js";
 
 const REQUIRED_ENV = [
@@ -33,20 +33,22 @@ const REQUIRED_ENV = [
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "RESEND_API_KEY",
+  "ROUTER_WORKER",
   "SESSION_SECRET",
 ];
 
 const SECURITY_HEADERS = {
   "Cache-Control": "no-store",
   "Content-Security-Policy":
-    "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
-  "Referrer-Policy": "no-referrer",
+    "default-src 'none'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; img-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+  // no-referrer olmaz: tarayıcı formlarda Origin'i "null" yollar ve POST kontrolü reddeder.
+  "Referrer-Policy": "same-origin",
   "Strict-Transport-Security": "max-age=31536000",
   "X-Content-Type-Options": "nosniff",
   "X-Robots-Tag": "noindex, nofollow",
 };
 
-const PERSON_PATH = /^\/kisi\/([a-z0-9._-]+)\/(tamamla|iptal|cikar|anahtar|info)$/;
+const ADDRESS_PATH = /^\/adres\/([a-z0-9._-]+)\/(alici\/cikar|alici|sil|anahtar)$/;
 
 function html(body, status = 200, extraHeaders = {}) {
   return new Response(body, {
@@ -64,7 +66,11 @@ function redirect(location, extraHeaders = {}) {
 
 function asset(body, type) {
   return new Response(body, {
-    headers: { "Content-Type": type, "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" },
+    headers: {
+      "Content-Type": type,
+      "Cache-Control": "no-cache",
+      "X-Content-Type-Options": "nosniff",
+    },
   });
 }
 
@@ -83,51 +89,54 @@ async function handleLogin(request, env, url) {
   }
 }
 
-function confirmFor(action, person, email) {
-  const path = `/kisi/${person.local}/${action}`;
-  if (action === "cikar") {
+async function confirmFor(action, deps, local, email) {
+  if (action === "sil") {
+    if (PROTECTED_ADDRESSES[local]) {
+      throw new UserError(`${local}@${deps.domain} silinemez: ${PROTECTED_ADDRESSES[local]}.`);
+    }
     return confirmPage({
       email,
-      title: `${person.address} çıkarılsın mı?`,
-      text: "Adres kapanır ve kişinin anahtarı iptal edilir. Bu adrese gelen mailler artık iletilmez. Bu işlem geri alınamaz; aynı adres yeniden eklenebilir.",
-      action: path,
-      button: "Kişiyi çıkarın",
+      title: `${local}@${deps.domain} silinsin mi?`,
+      text: "Bu adrese gelen mailler artık iletilmez ve adresin anahtarı iptal edilir. Aynı adres yeniden açılabilir.",
+      action: `/adres/${local}/sil`,
+      button: "Adresi silin",
     });
   }
+
+  const { address } = await findAddress(deps, local);
   return confirmPage({
     email,
-    title: `${person.address} anahtarı yenilensin mi?`,
-    text: "Eski anahtar iptal edilir. Kişi Gmail'deki şifreyi yenisiyle değiştirene kadar bu adresten gönderemez.",
-    action: path,
+    title: `${address} anahtarı yenilensin mi?`,
+    text: "Eski anahtar iptal edilir. Kişi Gmail'deki şifreyi yenisiyle değiştirene kadar bu anahtarla gönderemez.",
+    action: `/adres/${local}/anahtar`,
     button: "Anahtarı yenileyin",
   });
 }
 
-async function handlePerson(request, deps, env, session, local, action) {
-  const email = session.email;
+async function handleAddress(request, deps, env, email, local, action) {
   const domain = env.DOMAIN;
 
   if (request.method === "GET") {
-    if (action !== "cikar" && action !== "anahtar") return null;
-    return html(confirmFor(action, await findPersonForConfirm(deps, local), email));
+    if (action !== "sil" && action !== "anahtar") return null;
+    return html(await confirmFor(action, deps, local, email));
   }
 
   switch (action) {
-    case "tamamla":
-      return html(setupPage({ email, domain, person: await completePerson(deps, local) }));
-    case "iptal":
-      await cancelPending(deps, local);
-      return redirect("/?ok=iptal");
-    case "cikar":
-      await removePerson(deps, local);
-      return redirect("/?ok=cikarildi");
-    case "anahtar":
-      return html(setupPage({ email, domain, person: await rotateKey(deps, local), renewed: true }));
-    case "info": {
+    case "alici": {
       const form = await request.formData();
-      await setInfoRecipient(deps, local, form.get("durum") === "ac");
-      return redirect("/?ok=info");
+      const result = await addRecipient(deps, local, parseRecipient(form, domain));
+      return redirect(`/?ok=${result}`);
     }
+    case "alici/cikar": {
+      const form = await request.formData();
+      await removeRecipient(deps, local, parseRecipient(form, domain));
+      return redirect("/?ok=alici_cikti");
+    }
+    case "sil":
+      await deleteAddress(deps, local);
+      return redirect("/?ok=silindi");
+    case "anahtar":
+      return html(setupPage({ email, issued: await issueKey(deps, local) }));
     default:
       return null;
   }
@@ -140,6 +149,7 @@ async function handlePanel(request, env, url, session) {
     store: createStore(env.PANEL_KV),
     actor: session.email,
     domain: env.DOMAIN,
+    routerWorker: env.ROUTER_WORKER,
   };
   const { pathname } = url;
 
@@ -148,13 +158,15 @@ async function handlePanel(request, env, url, session) {
   }
 
   if (request.method === "GET" && pathname === "/") {
-    const overview = await loadOverview(deps);
-    const limits = { daily: Number(env.RESEND_DAILY_LIMIT), monthly: Number(env.RESEND_MONTHLY_LIMIT) };
+    await applyVerifiedPending(deps);
+    const limits = {
+      daily: Number(env.RESEND_DAILY_LIMIT),
+      monthly: Number(env.RESEND_MONTHLY_LIMIT),
+    };
     return html(
       dashboardPage({
-        overview,
+        overview: await loadOverview(deps),
         email: session.email,
-        domain: env.DOMAIN,
         limits,
         ok: url.searchParams.get("ok"),
       }),
@@ -165,14 +177,14 @@ async function handlePanel(request, env, url, session) {
     return redirect("/giris", { "Set-Cookie": clearSessionCookie() });
   }
 
-  if (request.method === "POST" && pathname === "/kisi") {
-    await addPerson(deps, parseNewPerson(await request.formData(), env.DOMAIN));
-    return redirect("/?ok=eklendi");
+  if (request.method === "POST" && pathname === "/adres") {
+    const result = await addAddress(deps, parseNewAddress(await request.formData(), env.DOMAIN));
+    return redirect(`/?ok=${result}`);
   }
 
-  const match = pathname.match(PERSON_PATH);
+  const match = pathname.match(ADDRESS_PATH);
   if (match && isValidLocal(match[1])) {
-    const response = await handlePerson(request, deps, env, session, match[1], match[2]);
+    const response = await handleAddress(request, deps, env, session.email, match[1], match[2]);
     if (response) return response;
   }
 
@@ -185,7 +197,9 @@ async function route(request, env) {
 
   if (pathname === "/stil.css") return asset(CSS, "text/css; charset=utf-8");
   if (pathname === "/panel.js") return asset(SCRIPT, "text/javascript; charset=utf-8");
-  if (pathname === "/robots.txt") return asset("User-agent: *\nDisallow: /\n", "text/plain; charset=utf-8");
+  if (pathname === "/robots.txt") {
+    return asset("User-agent: *\nDisallow: /\n", "text/plain; charset=utf-8");
+  }
 
   // Yapılandırma eksikse panel kapalı kalır: boş SESSION_SECRET ile oturum imzalanmamalı.
   if (REQUIRED_ENV.some((name) => !env[name])) {

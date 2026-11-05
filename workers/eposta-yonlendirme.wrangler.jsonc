@@ -1,0 +1,12 @@
+// Birden fazla alıcılı adresleri ileten Worker. Panel bu ada kural bağlar
+// (panelin ROUTER_WORKER değişkeni).
+//   npx wrangler deploy --config workers/eposta-yonlendirme.wrangler.jsonc
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "eposta-yonlendirme",
+  "main": "eposta-yonlendirme.js",
+  "workers_dev": false,
+  "compatibility_date": "2026-10-01",
+  "kv_namespaces": [{ "binding": "PANEL_KV", "id": "212d5ffc567b4ffdb51e647cc8eb667d" }],
+  "observability": { "enabled": true }
+}

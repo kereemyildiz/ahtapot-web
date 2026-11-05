@@ -1,10 +1,13 @@
 import { UserError } from "./errors.js";
 
-// Panelden değiştirilemeyen adresler.
-export const SYSTEM_LOCALS = ["info", "talep"];
+// Silinemeyen adresler ve nedenleri. Alıcıları yine değiştirilebilir.
+export const PROTECTED_ADDRESSES = {
+  info: "Sitede yayında",
+  talep: "Form kullanıyor",
+};
 
 const RESERVED_LOCALS = [
-  ...SYSTEM_LOCALS,
+  ...Object.keys(PROTECTED_ADDRESSES),
   "abuse",
   "admin",
   "hostmaster",
@@ -24,10 +27,20 @@ export function isValidLocal(local) {
   return local.length <= MAX_LOCAL_LENGTH && LOCAL_PATTERN.test(local);
 }
 
-export function parseNewPerson(form, domain) {
+export function parseRecipient(form, domain) {
+  const gmail = String(form.get("gmail") ?? "").trim().toLowerCase();
+  if (!EMAIL_PATTERN.test(gmail)) {
+    throw new UserError("Alıcının e-posta adresini kontrol edin.");
+  }
+  if (gmail.endsWith(`@${domain}`)) {
+    throw new UserError(`Alıcı ${domain} adresi olamaz, kişinin kendi Gmail'ini yazın.`);
+  }
+  return gmail;
+}
+
+export function parseNewAddress(form, domain) {
   const name = String(form.get("name") ?? "").trim();
   const local = String(form.get("local") ?? "").trim().toLowerCase();
-  const gmail = String(form.get("gmail") ?? "").trim().toLowerCase();
 
   if (!name || name.length > MAX_NAME_LENGTH) {
     throw new UserError(`Ad 1 ile ${MAX_NAME_LENGTH} karakter arasında olmalı.`);
@@ -40,12 +53,5 @@ export function parseNewPerson(form, domain) {
   if (RESERVED_LOCALS.includes(local)) {
     throw new UserError(`${local}@${domain} ayrılmış bir adres, başka bir ad seçin.`);
   }
-  if (!EMAIL_PATTERN.test(gmail)) {
-    throw new UserError("Gmail adresini kontrol edin.");
-  }
-  if (gmail.endsWith(`@${domain}`)) {
-    throw new UserError(`Yönlendirme hedefi ${domain} adresi olamaz, kişinin kendi Gmail'ini yazın.`);
-  }
-
-  return { name, local, gmail, info: form.get("info") === "on" };
+  return { name, local, gmail: parseRecipient(form, domain) };
 }

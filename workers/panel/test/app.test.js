@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, mock, test } from "node:test";
 import { sessionCookie } from "../src/auth.js";
 import app from "../src/index.js";
-import { parseNewPerson } from "../src/validate.js";
+import { createResend } from "../src/resend.js";
+import { parseNewAddress, parseRecipient } from "../src/validate.js";
 import { escapeHtml, gmailInstructions } from "../src/views.js";
-import { DOMAIN, memoryKv, rule } from "./fakes.js";
+import { DOMAIN, memoryKv, ROUTER, rule } from "./fakes.js";
 
 const ORIGIN = "https://admin.ahtapot.ink";
 
@@ -20,8 +21,11 @@ function makeEnv(overrides = {}) {
     RESEND_API_KEY: "re",
     RESEND_DAILY_LIMIT: "100",
     RESEND_MONTHLY_LIMIT: "3000",
+    ROUTER_WORKER: ROUTER,
     SESSION_SECRET: "test-secret",
-    PANEL_KV: memoryKv({ "info-hedefleri": JSON.stringify(["kerem@gmail.com"]) }),
+    PANEL_KV: memoryKv({
+      "adres-hedefleri": JSON.stringify({ [`info@${DOMAIN}`]: ["kerem@gmail.com", "m@gmail.com"] }),
+    }),
     ...overrides,
   };
 }
@@ -29,11 +33,15 @@ function makeEnv(overrides = {}) {
 function stubApis(rules = []) {
   mock.method(globalThis, "fetch", async (url) => {
     const path = String(url);
-    if (path.includes("api.resend.com")) {
-      return Response.json(
-        { data: [{ id: "k1", name: "gmail-kerem", last_used_at: "2026-11-04T10:00:00Z" }] },
-        { headers: { "x-resend-daily-quota": "7", "x-resend-monthly-quota": "120" } },
-      );
+    if (path.includes("api.resend.com/api-keys")) {
+      return Response.json({ data: [{ id: "k1", name: "gmail-kerem", last_used_at: "2026-11-04T10:00:00Z" }] });
+    }
+    if (path.includes("api.resend.com/emails")) {
+      const created_at = new Date().toISOString().replace("T", " ").replace("Z", "000+00");
+      return Response.json({
+        has_more: false,
+        data: [{ id: "e1", created_at, to: ["a@b.co", "c@d.co"], cc: null, bcc: null }],
+      });
     }
     if (path.includes("/email/routing/rules")) return Response.json({ success: true, result: rules });
     return Response.json({ success: true, result: [] });
@@ -62,7 +70,7 @@ test("oturumsuz ziyaret girişe yönlenir ve veriye dokunmaz", async () => {
 test("oturumsuz POST da girişe yönlenir", async () => {
   stubApis();
   const response = await app.fetch(
-    new Request(`${ORIGIN}/kisi/kerem/cikar`, { method: "POST", headers: { Origin: ORIGIN } }),
+    new Request(`${ORIGIN}/adres/kerem/sil`, { method: "POST", headers: { Origin: ORIGIN } }),
     makeEnv(),
   );
   assert.equal(response.status, 303);
@@ -74,18 +82,50 @@ test("eksik yapılandırmada panel kapalı kalır", async () => {
   assert.equal(response.status, 503);
 });
 
-test("panel kişileri ve kotayı gösterir", async () => {
+test("panel tüm adresleri, alıcıları ve kotayı gösterir", async () => {
   stubApis([rule("r1", "kerem", "kerem@gmail.com", "Kerem"), rule("r2", "info", null)]);
   const response = await authed("/");
   const body = await response.text();
 
   assert.equal(response.status, 200);
-  assert.ok(body.includes("kerem@ahtapot.ink"));
-  assert.ok(body.includes("7 / 100"));
-  assert.ok(body.includes("120 / 3.000"));
+  assert.ok(body.includes(">kerem<span>@ahtapot.ink"));
+  assert.ok(body.includes(">info<span>@ahtapot.ink"));
+  assert.ok(body.includes("m@gmail.com"));
+  assert.ok(body.includes("2 <span>/ 100</span>"));
+  assert.ok(body.includes("2 <span>/ 3.000</span>"));
   assert.equal(response.headers.get("Cache-Control"), "no-store");
   assert.equal(response.headers.get("X-Robots-Tag"), "noindex, nofollow");
   assert.match(response.headers.get("Content-Security-Policy"), /frame-ancestors 'none'/);
+});
+
+test("kullanım bu ayla sınırlı, gün UTC'ye göre ve her alıcı ayrı sayılır", async () => {
+  const now = new Date("2026-11-05T12:00:00Z");
+  mock.method(globalThis, "fetch", async () =>
+    Response.json({
+      has_more: true,
+      data: [
+        { id: "1", created_at: "2026-11-05 09:00:00.123456+00", to: ["a"], cc: ["b"], bcc: ["c"] },
+        { id: "2", created_at: "2026-11-04 23:00:00.1+00", to: ["a"], cc: null, bcc: null },
+        { id: "3", created_at: "2026-10-31 23:00:00.000000+00", to: ["a"], cc: null, bcc: null },
+      ],
+    }),
+  );
+  const usage = await createResend(makeEnv()).usage(now);
+  assert.deepEqual(usage, { daily: 3, monthly: 4 });
+  assert.equal(globalThis.fetch.mock.callCount(), 1);
+});
+
+test("kullanım sonraki sayfalardan da okunur", async () => {
+  const now = new Date("2026-11-05T12:00:00Z");
+  const fetchMock = mock.method(globalThis, "fetch", async (url) => {
+    const first = !String(url).includes("after=");
+    return Response.json({
+      has_more: first,
+      data: [{ id: first ? "1" : "2", created_at: "2026-11-05 09:00:00.0+00", to: ["a"] }],
+    });
+  });
+  assert.deepEqual(await createResend(makeEnv()).usage(now), { daily: 2, monthly: 2 });
+  assert.ok(String(fetchMock.mock.calls[1].arguments[0]).includes("after=1"));
 });
 
 test("kişi adı kaçırılarak yazılır", async () => {
@@ -98,8 +138,8 @@ test("kişi adı kaçırılarak yazılır", async () => {
 
 test("Origin başlığı olmayan veya yabancı POST reddedilir", async () => {
   stubApis();
-  const missing = await authed("/kisi/kerem/cikar", { method: "POST" });
-  const foreign = await authed("/kisi/kerem/cikar", {
+  const missing = await authed("/adres/kerem/sil", { method: "POST" });
+  const foreign = await authed("/adres/kerem/sil", {
     method: "POST",
     headers: { Origin: "https://evil.example" },
   });
@@ -109,16 +149,24 @@ test("Origin başlığı olmayan veya yabancı POST reddedilir", async () => {
   assert.equal(globalThis.fetch.mock.callCount(), 0);
 });
 
-test("sistem adresinin çıkarma onayı açılmaz", async () => {
+test("aynı kökenden POST kabul edilir ve tarayıcı Origin yollayabilir", async () => {
+  stubApis();
+  const response = await authed("/cikis", { method: "POST", headers: { Origin: ORIGIN } });
+
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get("Referrer-Policy"), "same-origin");
+});
+
+test("korunan adresin silme onayı açılmaz", async () => {
   stubApis([rule("r1", "talep", "kerem@gmail.com")]);
-  const response = await authed("/kisi/talep/cikar");
-  assert.equal(response.status, 404);
+  const response = await authed("/adres/talep/sil");
+  assert.equal(response.status, 400);
 });
 
 test("geçersiz yol 404 döner", async () => {
   stubApis();
   assert.equal((await authed("/yok")).status, 404);
-  assert.equal((await authed("/kisi/kerem/tamamla")).status, 404);
+  assert.equal((await authed("/adres/kerem/alici")).status, 404);
 });
 
 test("servis hatası yön veren bir hata sayfasına döner", async () => {
@@ -136,15 +184,15 @@ function form(values) {
   return data;
 }
 
-const valid = { name: " Ahmet Yılmaz ", local: "Ahmet.Yilmaz", gmail: "Ahmet@Gmail.com", info: "on" };
+const valid = { name: " Ahmet Yılmaz ", local: "Ahmet.Yilmaz", gmail: "Ahmet@Gmail.com" };
 
 test("form alanları temizlenir", () => {
-  assert.deepEqual(parseNewPerson(form(valid), DOMAIN), {
+  assert.deepEqual(parseNewAddress(form(valid), DOMAIN), {
     name: "Ahmet Yılmaz",
     local: "ahmet.yilmaz",
     gmail: "ahmet@gmail.com",
-    info: true,
   });
+  assert.equal(parseRecipient(form({ gmail: " A@B.co " }), DOMAIN), "a@b.co");
 });
 
 for (const [label, change] of [
@@ -160,31 +208,29 @@ for (const [label, change] of [
   ["kendi alan adına yönlendirme", { gmail: `kerem@${DOMAIN}` }],
 ]) {
   test(`form reddeder: ${label}`, () => {
-    assert.throws(() => parseNewPerson(form({ ...valid, ...change }), DOMAIN));
+    assert.throws(() => parseNewAddress(form({ ...valid, ...change }), DOMAIN));
   });
 }
 
-test("talimat SMTP bilgilerini ve anahtarı içerir", () => {
-  const text = gmailInstructions({
-    name: "Ahmet",
-    address: `ahmet@${DOMAIN}`,
-    token: "re_abc",
-    info: true,
-    domain: DOMAIN,
-  });
+const issued = {
+  address: `ahmet@${DOMAIN}`,
+  token: "re_abc",
+  sendAs: [
+    { address: `ahmet@${DOMAIN}`, name: "Ahmet", shared: false },
+    { address: `info@${DOMAIN}`, name: "Ahtapot Tıbbi Teknolojiler", shared: true },
+  ],
+};
+
+test("talimat SMTP bilgilerini, anahtarı ve diğer adresleri içerir", () => {
+  const text = gmailInstructions(issued);
   assert.ok(text.includes("smtp.resend.com"));
   assert.ok(text.includes("Şifre: re_abc"));
-  assert.ok(text.includes(`info@${DOMAIN}`));
+  assert.ok(text.includes(`E-posta adresi: info@${DOMAIN}`));
+  assert.ok(text.includes("işaretini kaldırın"));
 });
 
-test("info@ almayan kişinin talimatında info@ adımı yok", () => {
-  const text = gmailInstructions({
-    name: "Ahmet",
-    address: `ahmet@${DOMAIN}`,
-    token: "re_abc",
-    info: false,
-    domain: DOMAIN,
-  });
+test("tek adresli kişinin talimatında başka adres yok", () => {
+  const text = gmailInstructions({ ...issued, sendAs: issued.sendAs.slice(0, 1) });
   assert.equal(text.includes(`info@${DOMAIN}`), false);
 });
 
