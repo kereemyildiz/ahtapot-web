@@ -100,7 +100,7 @@ details > summary::-webkit-details-marker { display: none; }
   display: grid; gap: 14px;
   width: min(420px, 100%); padding: 20px;
   background: var(--surface);
-  box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+  border: 1px solid var(--wire);
 }
 label { display: block; color: var(--muted); font-size: 14px; }
 input[type="text"], input[type="email"], textarea {
