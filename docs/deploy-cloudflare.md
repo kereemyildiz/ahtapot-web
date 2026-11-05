@@ -289,7 +289,7 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
 - **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. `info@` bu yüzden
   `workers/info-yonlendirme.js`'teki Email Worker'a bağlı; Worker iletiyi
   listedeki her adrese `message.forward` ile iletir. Alıcılar e-posta panelinden
-  seçilir (§5.9) ve KV'den okunur; KV okunamazsa dosyadaki `YEDEK_HEDEFLER`
+  seçilir (§5.8) ve KV'den okunur; KV okunamazsa dosyadaki `YEDEK_HEDEFLER`
   kullanılır.
 - **Resend:** Domains → Add → `ahtapot.ink`, bölge **Ireland (eu-west-1)**
   (sonradan değişmez), Return-Path `send`, takip kapalı, receiving kapalı
