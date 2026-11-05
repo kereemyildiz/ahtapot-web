@@ -197,8 +197,8 @@ test("aynı kökenden POST kabul edilir ve tarayıcı Origin yollayabilir", asyn
 });
 
 test("korunan adresin silme onayı açılmaz", async () => {
-  stubApis([rule("r1", "talep", "kerem@gmail.com")]);
-  const response = await authed("/adres/talep/sil");
+  stubApis([rule("r1", "info", null)]);
+  const response = await authed("/adres/info/sil");
   assert.equal(response.status, 400);
 });
 

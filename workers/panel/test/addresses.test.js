@@ -52,7 +52,7 @@ test("genel görünüm tüm adresleri aynı listede gösterir", async () => {
     rows[0].recipients.map((item) => item.email),
     [KEREM, MUSTAFA],
   );
-  assert.equal(rows[0].protectedReason, "Sitede yayında");
+  assert.equal(rows[0].protectedReason, "Site ve form kullanıyor");
   assert.equal(rows[0].sendsWithRecipientKeys, true);
   assert.equal(rows[1].key.id, "k-kerem");
   assert.equal(rows[1].protectedReason, null);
@@ -196,15 +196,14 @@ test("Worker'daki adres silinince KV kaydı da gider", async () => {
 
 test("korunan adresler silinemez", async () => {
   const { deps, state } = fakeDeps(base());
-  await assert.rejects(deleteAddress(deps, "talep"), UserError);
   await assert.rejects(deleteAddress(deps, "info"), UserError);
   assert.equal(state.rules.length, 4);
 });
 
 test("korunan adresin alıcısı değiştirilebilir", async () => {
   const { deps, state } = fakeDeps(base());
-  await addRecipient(deps, "talep", MUSTAFA);
-  assert.deepEqual(state.routes[`talep@${DOMAIN}`], [KEREM, MUSTAFA]);
+  await removeRecipient(deps, "info", MUSTAFA);
+  assert.equal(state.rules.find((item) => item.id === "info").actions[0].type, "forward");
 });
 
 test("anahtar yenileme önce yenisini üretir, sonra eskisini siler", async () => {
