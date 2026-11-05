@@ -9,7 +9,7 @@ Durum (20 Ekim 2026): **yayında → https://ahtapot.ink**
 | Özel alan adları | `ahtapot.ink`, `www.ahtapot.ink` (panel → Worker → Domains) |
 | Yönlendirmeler | `www` → kök (Redirect Rule, 301, sorgu dizesi korunur); HTTP → HTTPS ("Always Use HTTPS") |
 | DNS | GoDaddy Website Builder kayıtları (2 A, `www` ve `_domainconnect` CNAME) silindi; `_dmarc` TXT kaldı (`p=quarantine`: alan adı adına giden e-posta Resend'den çıkmalı, §5.7) |
-| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `eposta-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/eposta-yonlendirme.js`); `talep@` ve `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com |
+| Gelen e-posta | Cloudflare Email Routing (posta kutusu yok, yönlendirme): `info@ahtapot.ink` → `eposta-yonlendirme` Email Worker'ı → a.keremyildiz99@gmail.com ve jrsweet8@gmail.com (kod: `workers/eposta-yonlendirme.js`); `kerem@` → a.keremyildiz99@gmail.com; `mustafa@` → jrsweet8@gmail.com; güncel liste panelde (§5.8) |
 | E-posta paneli | `admin.ahtapot.ink` (§5.8) |
 | Giden e-posta | Gmail "Farklı adresten gönder" + Resend SMTP (§5.7). a.keremyildiz99: `info@` ve `kerem@`, anahtar `gmail-kerem` (4 Kasım 2026). jrsweet8: `info@` ve `mustafa@`, anahtar `gmail-mustafa` (kurulumu kendisi yapıyor) |
 | Form e-postası | Resend, bölge İrlanda (eu-west-1); gönderen `Ahtapot Web Sitesi <site@ahtapot.ink>`, alıcı `info@ahtapot.ink`, Reply-To formu dolduran kişi |
@@ -284,7 +284,7 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
 - **Email Routing:** Cloudflare → alan adı → Email → Email Routing →
   "Add missing records" (3 MX, `cf2024-1._domainkey` DKIM, SPF) → Destination
   addresses → Gmail adresi (Cloudflare hesabının adresi olduğu için doğrudan
-  "Verified") → Routing rules: `talep@` → Send to an email → Gmail;
+  "Verified") → Routing rules:
   `info@` → Send to a Worker → `eposta-yonlendirme`.
 - **Birden fazla alıcı:** bir kural yalnız tek hedefe gider. Tek alıcılı adres
   doğrudan iletilir; ikinci alıcı eklenince panel kuralı
@@ -331,8 +331,8 @@ doldurulur, her deploy aynı alan adlarını kodla tanımlar.
 ### 5.8 E-posta paneli
 `admin.ahtapot.ink` (`workers/panel/`, Worker `ahtapot-panel`). Tüm adresler tek
 listede: adres açar ve siler, adrese alıcı ekler ve çıkarır, Resend anahtarı üretir,
-giden e-posta sayısını ve son işlemleri gösterir. `info@` ve `talep@` silinemez,
-alıcıları değiştirilebilir. Tasarım:
+giden e-posta sayısını ve son işlemleri gösterir. `info@` silinemez (site ve form kullanıyor), alıcıları
+değiştirilebilir. Tasarım:
 `docs/superpowers/specs/2026-11-05-eposta-paneli-design.md`.
 
 - **Yayın:** `npx wrangler deploy --config workers/panel/wrangler.jsonc`. `main`

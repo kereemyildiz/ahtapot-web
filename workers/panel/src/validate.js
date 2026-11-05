@@ -2,8 +2,7 @@ import { UserError } from "./errors.js";
 
 // Silinemeyen adresler ve nedenleri. Alıcıları yine değiştirilebilir.
 export const PROTECTED_ADDRESSES = {
-  info: "Sitede yayında",
-  talep: "Form kullanıyor",
+  info: "Site ve form kullanıyor",
 };
 
 const RESERVED_LOCALS = [

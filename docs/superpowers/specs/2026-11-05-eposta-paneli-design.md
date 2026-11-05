@@ -9,7 +9,7 @@ Tek nesne vardır: adres. Her adresin 1..N alıcısı olur; `info@`, `talep@`, `
 aynı listede, aynı kurallarla durur. Kullanıcı `info@`'ya özel alanı ("info@ alıyor")
 reddetti. Tek alıcı doğrudan iletilir, ikincisi eklenince kural
 `eposta-yonlendirme` Worker'ına geçer, alıcılar KV'de `adres-hedefleri` haritasında
-durur. Yalnız `info@` ve `talep@` silinemez. Doğrulama bekleyen alıcı panel açılınca
+durur. Yalnız `info@` silinemez; `talep@` kullanılmadığı için 5 Kasım 2026'da kaldırıldı (form `CONTACT_EMAIL_TO` ile `info@` adresine gönderir). Doğrulama bekleyen alıcı panel açılınca
 kendiliğinden eklenir, "Kurulumu tamamla" adımı yoktur. Anahtar adrese bağlıdır, ama
 talimat kişinin alıcısı olduğu bütün adresleri içerir. Kullanım `/emails` listesinden
 sayılır, çünkü Resend kota başlıklarını okuma isteklerinde döndürmez.
