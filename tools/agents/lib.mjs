@@ -151,7 +151,7 @@ export function run(cmd, args, { cwd = process.cwd(), echo = false, stream = pro
 }
 
 /** Değer alan bayraklar (`--base develop` gibi boşlukla da yazılabilir); diğerleri açık/kapalı. */
-const VALUE_FLAGS = ["base", "files", "file"];
+const VALUE_FLAGS = ["base", "files", "file", "stop"];
 
 export function parseArgs(argv) {
   const flags = {};
