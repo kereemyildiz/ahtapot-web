@@ -11,7 +11,8 @@
 //   3. Dalın ucu için TAM doğrulama kaydı var ve geçmiş (verify.mjs).
 //   4. Dal develop'un en son hâlinin üstünde (develop dalın atası). Böylece birleşen ağaç,
 //      doğrulanan ağacın ta kendisi olur; "ayrı ayrı geçti, birlikte bozuldu" olmaz.
-//      Değilse worktree'de: git rebase develop → verify.mjs → tekrar.
+//      Dal geride ama çakışmıyorsa --yes ile bu script kendisi rebase + verify yapar (merge kuyruğu);
+//      yalnız gerçek çakışmada iş sahibi worktree'de rebase edip çözer.
 import path from "node:path";
 import { BASE_BRANCH, fail, findWorktree, git, isDirty, listWorktrees, mainRoot, parseArgs, readVerify, run } from "./lib.mjs";
 
@@ -37,6 +38,30 @@ if (git(["status", "--porcelain", "--untracked-files=no"], { cwd: root })) {
 }
 if (isDirty(wt.path)) problems.push(`${branch} worktree'sinde commit edilmemiş değişiklik var.`);
 
+// Merge kuyruğu (GitHub merge queue / Gas Town Refinery ilkesi): dal geride kaldıysa ama develop'la
+// çakışmıyorsa yazarına "rebase et" demeyiz; birleştiren taraf (bu script) --yes ile kendisi rebase
+// edip yeniden doğrular. Yalnız gerçek çakışmada iş sahibine döner. Plan modunda (--yes yok) hiçbir
+// şeye dokunulmaz, yalnız ne yapılacağı söylenir.
+const behind = git(["merge-base", "--is-ancestor", BASE_BRANCH, branch], { cwd: root, allowFail: true }) === null;
+const cleanMerge = git(["merge-tree", "--write-tree", "--no-messages", BASE_BRANCH, branch], { cwd: root, allowFail: true }) !== null;
+if (behind && cleanMerge && !isDirty(wt.path)) {
+  if (!flags.yes) {
+    log(`• ${branch} geride ama çakışma yok: --yes ile önce kendisi rebase edilip yeniden doğrulanacak.`);
+  } else {
+    log(`• ${branch} geride, çakışma yok → rebase + tam doğrulama (merge kuyruğu)…`);
+    const rb = await run("git", ["rebase", BASE_BRANCH], { cwd: wt.path });
+    if (rb.code !== 0) {
+      await run("git", ["rebase", "--abort"], { cwd: wt.path });
+      fail(`Rebase beklenmedik biçimde başarısız; geri alındı. İş sahibi çözmeli:\n${rb.out.trim()}`);
+    }
+    const vr = await run("node", [path.join(wt.path, "tools/agents/verify.mjs")], { cwd: wt.path });
+    log(vr.out.trim().split(/\r?\n/).map((l) => `  ${l}`).join("\n"));
+    if (vr.code !== 0) fail("Rebase sonrası doğrulama geçmedi; iş sahibine geri gönderin.");
+  }
+} else if (behind && !cleanMerge) {
+  problems.push(`${branch} ile ${BASE_BRANCH} ÇAKIŞIYOR → iş sahibi worktree'de git rebase ${BASE_BRANCH} ile çözmeli.`);
+}
+
 const tip = git(["rev-parse", branch], { cwd: root });
 const v = readVerify(wt.path);
 if (!v) problems.push("Doğrulama kaydı yok → worktree'de: node tools/agents/verify.mjs");
@@ -45,7 +70,7 @@ else if (!v.full) problems.push("Yalnız hızlı doğrulama var (build yok) → 
 else if (!v.ok) problems.push("Doğrulama başarısız → hatayı düzeltin, tekrar doğrulayın.");
 
 const upToDate = git(["merge-base", "--is-ancestor", BASE_BRANCH, branch], { cwd: root, allowFail: true }) !== null;
-if (!upToDate) {
+if (!upToDate && !(behind && cleanMerge)) {
   problems.push(`${branch}, ${BASE_BRANCH}'un son hâlinin üstünde değil → worktree'de: git rebase ${BASE_BRANCH}, sonra tekrar doğrulayın.`);
 }
 
@@ -91,9 +116,10 @@ if (!flags.keep) {
   if (res.code !== 0) log("• Worktree silinemedi; elle: node tools/agents/wt-remove.mjs " + branch);
 }
 
-// Geride kalan açık işler: develop ilerledi, onlar rebase etmeli. Erken rebase = küçük çakışma.
-// Orkestratör bu listeyi ilgili worker'lara iletir.
-const behind = listWorktrees(root)
+// Geride kalan açık işler: develop ilerledi. Çakışmayanlara bir şey söylemeye gerek yok, kendi
+// merge'lerinde bu script rebase eder. Yalnız ÇAKIŞANLARIN sahibine haber verilir (erken çözüm =
+// küçük çakışma).
+const lagging = listWorktrees(root)
   .filter((w) => !w.main && w.branch && w.branch !== branch)
   .map((w) => {
     const n = Number(git(["rev-list", "--count", `${w.branch}..${BASE_BRANCH}`], { cwd: root }));
@@ -101,8 +127,14 @@ const behind = listWorktrees(root)
     return { branch: w.branch, n, clean };
   })
   .filter((r) => r.n > 0);
-if (behind.length) {
+if (lagging.length) {
   log("");
-  log(`Geride kalan açık işler (worktree'lerinde git rebase ${BASE_BRANCH} + verify):`);
-  for (const r of behind) log(`  ${r.clean ? "•" : "✗"} ${r.branch}: ${r.n} commit geride${r.clean ? "" : " — ÇAKIŞMA var, worker çözmeli"}`);
+  log("Geride kalan açık işler:");
+  for (const r of lagging) {
+    log(
+      r.clean
+        ? `  • ${r.branch}: ${r.n} commit geride, çakışma yok (merge sırasında otomatik rebase edilir; haber gerekmez)`
+        : `  ✗ ${r.branch}: ${r.n} commit geride, ÇAKIŞMA var → sahibine haber verin, worktree'de git rebase ${BASE_BRANCH} ile çözsün`,
+    );
+  }
 }

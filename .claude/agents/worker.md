@@ -27,7 +27,14 @@ Sen ahtapot-web projesinde bir **worker**'sın. Kullanıcıyla değil, seni baş
   `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - **Görsel değişiklik:** görev tanımındaki portta `pnpm dev -p <port>` aç, Chrome DevTools MCP ile
   ekran görüntüsü al (masaüstü + 390 px, gerekiyorsa açık/koyu), dosya yollarını rapora yaz,
-  sunucuyu kapat.
+  sunucuyu kapat (`node tools/agents/servers.mjs --stop <port>`) ve açtığın tarayıcı sayfalarını kapat.
+- **Standart kontrol listesi** (görev tanımı söylemese de, arayüze ya da harekete dokunan her
+  değişiklikte ölç ve rapora yaz): `prefers-reduced-motion: reduce` emülasyonu (hareket yok, içerik
+  tam, sayfa yanıt veriyor), 1440 ve 390 px, koyu ve açık tema, TR ve EN, konsolda hata yok.
+  Bir düzeltme yalnız normal modda denendiği için reduced-motion'da sekmeyi donduran sonsuz döngüyle
+  gelmişti.
+- **Kenar durumları:** boş liste, eksik veri, tek öğe. Kendini yeniden çağıran döngü (`Promise.all`,
+  `requestAnimationFrame`, zamanlayıcı) boş girdide hiç kurulmasın.
 
 ## Yapma
 Merge, push, `develop`'a dokunmak, `.claude/` ayarları ya da CLAUDE.md'yi değiştirmek (görev açıkça
