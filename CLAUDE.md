@@ -316,5 +316,5 @@ Birden çok oturum aynı checkout'ta çalışınca birbirinin dosyasını eziyor
 - Her iş kendi worktree'sinde: `node tools/agents/wt-new.mjs <ad>` (repo'nun yanında `ahtapot-web.worktrees/<ad>`, `develop`'tan, `pnpm install` dahil). Claude Code'un kendi açtığı worktree'ler de `WorktreeCreate` hook'uyla aynı script'ten geçer.
 - İş bitince worktree içinde commit → `node tools/agents/verify.mjs` → orkestratöre rapor. Worker `develop`'a kendisi merge etmez.
 - Kullanıcıyla konuşan tek oturum orkestratördür: işi böler, worker'a verir, `status.mjs` ile izler, sonucu doğrular, kullanıcı onaylayınca `merge.mjs --yes` ile birleştirir.
-- `pnpm run …` bu makinede çalışmıyor (pnpm yalnız corepack'te; bağımlılık denetimi PATH'teki `pnpm`'i arıyor). Doğrulama için `verify.mjs`, tek komut için `node_modules/.bin/<araç>`.
+- `pnpm` PATH'te (corepack kısayolu `%APPDATA%\npm`'de, `package.json`'daki sürüme sabit). Doğrulama için yine `verify.mjs`: dört adımı tek komutta, kısa çıktıyla ve build sırasıyla çalıştırır.
 - Ayrıntı, gerekçeler ve ölçümler: `tools/agents/README.md`.

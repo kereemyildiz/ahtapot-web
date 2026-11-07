@@ -2,5 +2,56 @@
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "gsap-skills@gsap-skills": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(node tools/agents/*)",
+      "PowerShell(node tools/agents/*)",
+      "Bash(pnpm install*)",
+      "PowerShell(pnpm install*)",
+      "Bash(pnpm run lint*)",
+      "PowerShell(pnpm run lint*)",
+      "Bash(pnpm run typecheck*)",
+      "PowerShell(pnpm run typecheck*)",
+      "Bash(pnpm run test:panel*)",
+      "PowerShell(pnpm run test:panel*)",
+      "Bash(pnpm run build*)",
+      "PowerShell(pnpm run build*)"
+    ],
+    "ask": [
+      "Bash(git push * main*)",
+      "PowerShell(git push * main*)",
+      "Bash(*pnpm*deploy*)",
+      "PowerShell(*pnpm*deploy*)",
+      "Bash(*pnpm*upload*)",
+      "PowerShell(*pnpm*upload*)",
+      "Bash(*wrangler deploy*)",
+      "PowerShell(*wrangler deploy*)"
+    ]
+  },
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/tools/agents/wt-new.mjs\" --hook",
+            "timeout": 300,
+            "statusMessage": "Worktree açılıyor (develop'tan, repo dışında, pnpm install)…"
+          }
+        ]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/tools/agents/wt-remove.mjs\" --hook",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
   }
 }
