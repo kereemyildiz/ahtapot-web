@@ -200,7 +200,7 @@
   },
   "product": {
     "heading": "Ürünler",
-    "intro": "Her ürünün kartında hangi katmanları içerdiğini görebilirsiniz.",
+    "intro": "Her ürünün hangi katmanlardan oluştuğunu adının altında görebilirsiniz.",
     "statusAvailable": "Piyasada",
     "inDevelopmentBadge": "Geliştirme aşamasında",
     "layersLabel": "Üründeki katmanlar",
@@ -526,7 +526,7 @@
     "pillars": [
       {
         "title": "Yedek parçada kısa yol",
-        "text": "Tasarımı ve üretimi burada olduğu için bozulan bir parçayı çoğu zaman yurt dışından beklemeniz gerekmez."
+        "text": "Cihazın tasarımı ve üretimi burada olduğu için bozulan bir parçayı çoğu zaman yurt dışından beklemeniz gerekmez."
       },
       {
         "title": "Kullanılacağı yere göre",

@@ -200,7 +200,7 @@
   },
   "product": {
     "heading": "Products",
-    "intro": "Each product card shows which layers went into it.",
+    "intro": "Under each product name you can see which layers went into it.",
     "statusAvailable": "On the market",
     "inDevelopmentBadge": "In development",
     "layersLabel": "Layers in this product",
@@ -507,7 +507,7 @@
   },
   "about": {
     "heading": "About",
-    "lead": "Ahtapot Medical Technologies was founded by a physician to design and build in Türkiye the medical devices that hospitals and laboratories now import.",
+    "lead": "A physician founded Ahtapot Medical Technologies so that the medical devices hospitals and laboratories now import could be designed and built in Türkiye.",
     "body": "Because we develop our devices ourselves, the drawings and the source code stay with us. Changing a part or releasing an update does not wait on another company.",
     "facts": [
       {
