@@ -301,7 +301,7 @@
         {
           "heading": "Doku yüzdürme su banyosu nedir?",
           "body": [
-            "Doku yüzdürme su banyosu (flotasyon banyosu), histopatoloji laboratuvarında mikrotom ile lam arasındaki adımda kullanılır. Mikrotomda kesilen 3–5 µm kalınlığındaki parafin kesitler kesim sırasında sıkışır ve kırışır. Kesit, parafinin erime noktasının biraz altındaki suyun yüzeyine bırakılır; parafin yumuşar, kesit gerilip düzleşir ve lama alınmaya hazır hale gelir.",
+            "Doku yüzdürme su banyosu (flotasyon banyosu), histopatoloji laboratuvarında mikrotom ile lam arasındaki adımda kullanılır. Mikrotomda kesilen 3–5 µm kalınlığındaki parafin kesitler kesim sırasında sıkışır ve kırışır. Kesit, parafinin erime noktasının biraz altındaki suyun yüzeyine bırakılır; parafin yumuşar, kesit gerilip düzleşir ve lama alınmaya hazır hâle gelir.",
             "Genel laboratuvar su banyosundan farkı amacındadır: genel su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletir, doku yüzdürme banyosu ise suyun yüzeyinde çalışır. Bu yüzden SB-9K'nın haznesi mat siyahtır ve içten aydınlatılır: yarı saydam kesit ve üzerindeki kırışıklıklar koyu zeminde açıkça görünür."
           ]
         },
@@ -318,7 +318,7 @@
         {
           "heading": "Su sıcaklığı nasıl seçilir?",
           "body": [
-            "Genel kural, suyu kullandığınız parafinin erime noktasının yaklaşık 8–10 °C altında tutmaktır. Su soğuksa kesit tam açılmaz ve kırışık kalır; fazla sıcaksa parafin erir ve kesit dağılabilir."
+            "Su, kullandığınız parafinin erime noktasının altında tutulur; doğru değer parafinin türüne göre değişir. Su soğuksa kesit tam açılmaz ve kırışık kalır; fazla sıcaksa parafin erir ve kesit dağılabilir."
           ],
           "items": [
             "Erime noktası 56–58 °C olan parafin: 44–50 °C",
@@ -393,7 +393,7 @@
             },
             {
               "q": "Kesit neden kırışık kalıyor ya da dağılıyor?",
-              "a": "Kırışık kalıyorsa su, parafini yumuşatacak kadar sıcak değildir. Kesit dağılıyorsa su fazla sıcaktır. Sıcaklığı kullandığınız parafinin erime noktasına göre ayarlayın; genel kural erime noktasının 8–10 °C altıdır."
+              "a": "Kırışık kalıyorsa su, parafini yumuşatacak kadar sıcak değildir. Kesit dağılıyorsa su fazla sıcaktır. Sıcaklığı kullandığınız parafinin erime noktasına göre ayarlayın: erime noktası 56–58 °C olan parafin için 44–50 °C, 52–54 °C olan parafin için 38–42 °C önerilir."
             },
             {
               "q": "Ayar sıcaklığı nasıl değiştirilir?",

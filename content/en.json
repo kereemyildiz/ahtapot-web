@@ -318,7 +318,7 @@
         {
           "heading": "Choosing the water temperature",
           "body": [
-            "As a rule of thumb, keep the water about 8–10 °C below the melting point of your paraffin. Too cool and the section stays wrinkled; too warm and the wax melts and the section may break apart."
+            "Keep the water below the melting point of your paraffin; the right value depends on the type of paraffin. Too cool and the section stays wrinkled; too warm and the wax melts and the section may break apart."
           ],
           "items": [
             "Paraffin melting at 56–58 °C: 44–50 °C",
@@ -393,7 +393,7 @@
             },
             {
               "q": "Why does the section stay wrinkled or break apart?",
-              "a": "If it stays wrinkled, the water is not warm enough to soften the paraffin. If it breaks apart, the water is too warm. Set the temperature from the melting point of your paraffin; the rule of thumb is 8–10 °C below it."
+              "a": "If it stays wrinkled, the water is not warm enough to soften the paraffin. If it breaks apart, the water is too warm. Set the temperature from the melting point of your paraffin: 44–50 °C for paraffin melting at 56–58 °C, 38–42 °C for paraffin melting at 52–54 °C."
             },
             {
               "q": "How do I change the setpoint?",
