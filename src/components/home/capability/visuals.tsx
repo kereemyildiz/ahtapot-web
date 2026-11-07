@@ -60,8 +60,8 @@ function ScreenStack({ images, alt, active }: { images: MediaImage[]; alt: strin
     };
     play();
     return () => {
+      // Süren tur biter ve son karede kalır; yeni tur başlamaz.
       alive = false;
-      anims.forEach((a) => a.pause());
     };
   }, [running]);
 
