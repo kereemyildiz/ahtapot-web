@@ -2,7 +2,7 @@
   "meta": {
     "siteTitle": "Ahtapot Medical Technologies",
     "homeTitle": "Ahtapot Medical Technologies · Medical device design and manufacturing",
-    "siteDescription": "Ahtapot Medical Technologies designs and manufactures medical devices in Istanbul, with mechanical design, electronics, firmware and application software developed in-house.",
+    "siteDescription": "Ahtapot Medical Technologies designs and manufactures medical devices in Istanbul. Its own engineers handle the mechanical design, electronics, firmware and application software.",
     "llms": { "pages": "Pages", "fullText": "Full site text (Turkish and English)" },
     "knowsAbout": [
       "Medical device design",
@@ -43,7 +43,7 @@
   },
   "hero": {
     "title": "Medical devices, end to end.",
-    "lead": "We turn a need described in the clinic into a device that works in the field, end to end.",
+    "lead": "We take a need described in the clinic and turn it into a device that works in the field.",
     "primaryCta": "Book a meeting",
     "secondaryCta": "Explore the products",
     "visualAlt": "The meander mark from the Ahtapot logo, its four arms reaching into mechanics, electronics, firmware and software.",
@@ -67,7 +67,7 @@
     "items": {
       "mekanik": {
         "title": "Mechanical design",
-        "sentence": "We design enclosures, mechanisms and tolerances with manufacturability in mind from day one, from 3D model to drawing to prototype.",
+        "sentence": "We design each enclosure around how it will be made and how a technician will open it.",
         "deliverables": [
           "3D CAD modelling",
           "Drawings and tolerancing",
@@ -78,7 +78,7 @@
       },
       "elektronik": {
         "title": "Electronics design",
-        "sentence": "We design the electronics from schematic to board layout, shaping the sensing, power and control stages around what the device needs.",
+        "sentence": "Our boards are drawn for the exact space they occupy inside the enclosure.",
         "deliverables": [
           "Schematic design",
           "PCB layout",
@@ -89,7 +89,7 @@
       },
       "gomulu": {
         "title": "Firmware",
-        "sentence": "We write the software that runs on the device: sensor acquisition, control algorithms and the interlocks that keep it safe.",
+        "sentence": "If a sensor fails, our control code puts the device into a safe state.",
         "deliverables": [
           "Control algorithms",
           "Hardware drivers",
@@ -100,7 +100,7 @@
       },
       "uygulama": {
         "title": "Application software",
-        "sentence": "From the device screen to the web application, we design user interfaces together with the people who will use them.",
+        "sentence": "The people who will use a screen every day help us design it.",
         "deliverables": [
           "Device interface",
           "Web application",
@@ -111,7 +111,7 @@
       },
       "saha": {
         "title": "Field support",
-        "sentence": "Installation, user training, scheduled maintenance and software updates: we support the device throughout its service life.",
+        "sentence": "We install the device on site and show the people who will use it how it works. In the years that follow, we handle its maintenance and software updates.",
         "deliverables": [
           "Installation",
           "Training",
@@ -119,7 +119,7 @@
           "Updates"
         ],
         "caption": "Devices in the field: remote monitoring, maintenance and updates (illustrative)",
-        "alt": "Different medical devices in a healthcare facility, with monitoring links to a service centre, calibration and a software update."
+        "alt": "Different medical devices in a healthcare facility, each linked to a service centre. Installation, training, calibration and an update run on them in turn."
       }
     },
     "visuals": {
@@ -200,17 +200,17 @@
   },
   "product": {
     "heading": "Products",
-    "intro": "Two products from the same team: a device that works on the lab bench and an imaging application that runs in the browser.",
+    "intro": "Each product card shows which layers went into it.",
     "statusAvailable": "On the market",
     "inDevelopmentBadge": "In development",
-    "layersLabel": "Layers inside",
+    "layersLabel": "Layers in this product",
     "detailsCta": "Explore the product",
     "quoteCta": "Request a quote",
     "demoCta": "Request a demo",
     "dragHint": "Drag to rotate",
     "featuresHeading": "Features",
     "backToProducts": "Back to products",
-    "screensHeading": "From the interface",
+    "screensHeading": "Screens",
     "modelAlt": "A rotatable drawing of the SB-9K tissue flotation bath.",
     "viewer": {
       "sampleNote": "A 6144 × 6144 pixel crop from a real H&E slide.",
@@ -234,7 +234,7 @@
       "hintPolygon": "Click to add vertices; click the first point or press Enter to finish.",
       "hintRect": "Click two opposite corners.",
       "hintRuler": "Click two points to measure the distance between them.",
-      "measureNote": "Measurements use the slide's real pixel size (µm/px)."
+      "measureNote": "The viewer calculates measurements from the slide's real pixel size (µm/px)."
     },
     "simulator": {
       "powerButton": "Power button",
@@ -271,14 +271,14 @@
       "slideTake": "Take a slide from the tray and lift the section off the water",
       "slideRefill": "Load clean slides into the tray",
       "slideFlat": "Section mounted flat and stretched.",
-      "slideWrinkled": "The section stayed wrinkled on the slide: let it flatten first, and if the water is cold, wait until it reaches the setpoint.",
-      "slideTooHot": "The section broke apart on the slide: the water is too hot for this paraffin, lower the setpoint.",
+      "slideWrinkled": "The section stayed wrinkled on the slide. Give it time to flatten, and if the water is still cold, wait for it to reach the setpoint.",
+      "slideTooHot": "The section broke apart on the slide. The water is too hot for this paraffin, so lower the setpoint.",
       "chartTitle": "Last 40 minutes",
       "chartTemp": "Water",
       "chartSet": "Set",
-      "panelHint": "To change the setpoint, press SET on the controller, then ▲/▼; drag to rotate.",
-      "panelHintSlides": "SET, then ▲/▼ for the setpoint. Click a slide in the tray at the front to pick up the section; drag to rotate.",
-      "disclaimer": "Illustrative simulation based on 2 L of water, a 200 W heater and a simple heat-loss model; how the section looks on the water and on the slide is illustrative too and does not represent the product's specifications. Time runs 90× faster."
+      "panelHint": "To change the setpoint, press SET on the controller, then ▲/▼. Drag to rotate the bath.",
+      "panelHintSlides": "SET, then ▲/▼ for the setpoint. Click a slide in the tray at the front to pick up the section. Drag to rotate the bath.",
+      "disclaimer": "This simulation is illustrative and does not reflect the product's specifications. It assumes 2 L of water, a 200 W heater and a simple heat-loss model. The section's appearance on the water and on the slide is illustrative too, and time runs 90× faster."
     }
   },
   "products": {
@@ -287,7 +287,7 @@
       "tagline": "Stretches paraffin sections from the microtome on a water surface held at a constant temperature, ready to be picked up on a slide.",
       "metaTitle": "SB-9K histology water bath · tissue flotation bath",
       "metaDescription": "Tissue flotation water bath for histopathology and histology labs. Stretches paraffin sections on a temperature-controlled water surface; PTFE-coated reservoir, LED lighting, PID control.",
-      "description": "A tissue flotation water bath for histopathology labs. The matte black PTFE-coated aluminium reservoir makes translucent sections only a few microns thick stand out against a dark background, and LED illumination makes wrinkles easy to follow. A PID controller drives the silicone heater beneath the reservoir. In the simulation you can change the setpoint, watch the section flatten and pick it up on a slide.",
+      "description": "A tissue flotation water bath for histopathology labs. Translucent sections only a few microns thick stand out against the matte black PTFE-coated aluminium reservoir, and LED illumination makes wrinkles easy to spot. A PID controller drives the silicone heater beneath the reservoir. In the simulation you can change the setpoint, watch the section flatten and pick it up on a slide.",
       "features": [
         "PID temperature control with a digital LED display",
         "Matte black PTFE-coated aluminium reservoir",
@@ -301,8 +301,8 @@
         {
           "heading": "What is a tissue flotation bath?",
           "body": [
-            "A tissue flotation bath sits between the microtome and the slide in a histopathology lab. Paraffin sections cut at 3–5 µm compress and wrinkle during sectioning. Floated on water held a little below the melting point of the paraffin, the wax softens and the section relaxes flat, ready to be picked up on a slide.",
-            "It differs from a general laboratory water bath in what it is for: a general bath keeps tubes and samples at a set temperature, while a flotation bath works at the water surface. That is why the SB-9K reservoir is matte black and lit from inside: the translucent section and its wrinkles stand out clearly against the dark background."
+            "A tissue flotation bath sits between the microtome and the slide in a histopathology lab. Paraffin sections cut at 3–5 µm compress and wrinkle during sectioning. When the section is floated on water held a little below the melting point of the paraffin, the wax softens and the section relaxes flat, ready to be picked up on a slide.",
+            "A general laboratory water bath keeps tubes and samples at a set temperature. A flotation bath works at the water surface instead. That is why the SB-9K reservoir is matte black and lit from inside, so the translucent section and its wrinkles stand out clearly against the dark background."
           ]
         },
         {
@@ -445,7 +445,7 @@
           "heading": "What is digital pathology?",
           "body": [
             "In digital pathology, the tissue section on a glass slide is scanned at high resolution with a slide scanner. The result is called a whole-slide image (WSI). The pathologist examines the section on screen rather than at the microscope: panning, zooming and annotating, while the image can be archived and shared with a colleague.",
-            "AhtaPatolog is the software side of that workflow. It opens and organises scanned slides and gives the pathologist the tools for the review. Scanning slides requires a slide scanner; AhtaPatolog works with the scanned images."
+            "AhtaPatolog is the software side of that workflow. It opens and organises scanned slides and gives the pathologist the tools for the review. Scanning the slides themselves requires a separate slide scanner."
           ]
         },
         {
@@ -507,16 +507,12 @@
   },
   "about": {
     "heading": "About",
-    "lead": "Ahtapot Medical Technologies is a medical device company founded by a physician. Our aim is to design and build in Türkiye the medical devices that are sourced from abroad today.",
-    "body": "We develop the mechanics, electronics and software of each device ourselves. Because the design knowledge stays with us, we never wait on anyone to change a part, add a feature or ship an update.",
+    "lead": "Ahtapot Medical Technologies was founded by a physician to design and build in Türkiye the medical devices that hospitals and laboratories now import.",
+    "body": "Because we develop our devices ourselves, the drawings and the source code stay with us. Changing a part or releasing an update does not wait on another company.",
     "facts": [
       {
         "label": "Based in",
         "value": "Istanbul"
-      },
-      {
-        "label": "Focus",
-        "value": "Localising medical devices"
       },
       {
         "label": "Disciplines",
@@ -529,30 +525,30 @@
     ],
     "pillars": [
       {
-        "title": "Designed and built locally",
-        "text": "Every layer of the device is designed and prepared for production in Türkiye, reducing dependence on imports for spare parts, maintenance and updates."
+        "title": "A shorter wait for parts",
+        "text": "With design and production here, a broken part seldom has to come from abroad."
       },
       {
-        "title": "A physician's perspective",
-        "text": "Requirements are defined by a physician who knows the clinic from the inside. Each device is designed around where it will be used and who will use it."
+        "title": "Designed for where it is used",
+        "text": "Before we draw anything, we work out where the device will stand and whose hands it will be in. The SB-9K reservoir is matte black so that a translucent section shows up on the bench."
       },
       {
-        "title": "End-to-end responsibility",
-        "text": "From the first drawing to maintenance in the field, we run every stage ourselves, so every matter has a single point of contact."
+        "title": "The designers maintain it",
+        "text": "The engineers who designed the device also maintain it. When you call about a fault or an update, you speak to someone who knows it."
       }
     ],
     "founder": {
       "label": "Founder",
       "name": "Dr. Mustafa Can Yılmaz",
       "role": "Founder · Physician",
-      "bio": "Alongside medicine, works in software, electronics and mechanical design: defines the clinical requirements of each device and takes a hands-on part in its circuit, code and enclosure design."
+      "bio": "Dr. Yılmaz writes the clinical requirements for each device, then works on its circuits, code and enclosure with the engineers."
     }
   },
   "contact": {
     "heading": "Contact",
     "promptLine1": "Product information, demos, distribution or partnerships.",
-    "promptLine2": "Send us your request; we reply within two working days.",
-    "next": "Your message is delivered to our team by email and is not stored in a database.",
+    "promptLine2": "We reply to every request within two working days.",
+    "next": "Your message comes straight to our team by email. We do not keep it in a database.",
     "detailsHeading": "Contact details",
     "addressLabel": "Address",
     "emailLabel": "Email",
@@ -585,7 +581,7 @@
     "submitting": "Sending…",
     "success": {
       "title": "Your request has been received.",
-      "body": "We will get back to you within two working days."
+      "body": "We will reply within two working days."
     },
     "errors": {
       "nameRequired": "Please enter your full name.",
@@ -595,7 +591,7 @@
       "messageTooShort": "Your message should be at least 10 characters.",
       "consentRequired": "Please tick the consent box to continue.",
       "rateLimited": "We received too many requests in a short time. Please try again in a few minutes.",
-      "sendFailed": "Your request could not be sent right now. Please try again shortly or write to our address.",
+      "sendFailed": "Your request could not be sent right now. Please try again shortly or email us directly.",
       "generic": "The message could not be sent. Please try again."
     }
   },
@@ -619,7 +615,7 @@
   },
   "credits": {
     "title": "Image credits",
-    "intro": "Product and interface images belong to Ahtapot. The photographs below are openly licensed and shown color-adjusted on this site."
+    "intro": "Product and screen images belong to Ahtapot. The photographs below are openly licensed and shown colour-adjusted on this site."
   },
   "kvkk": {
     "title": "Privacy notice (KVKK)",

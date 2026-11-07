@@ -2,7 +2,7 @@
   "meta": {
     "siteTitle": "Ahtapot Tıbbi Teknolojiler",
     "homeTitle": "Ahtapot Tıbbi Teknolojiler · Yerli tıbbi cihaz tasarımı ve üretimi",
-    "siteDescription": "Ahtapot Tıbbi Teknolojiler, İstanbul'da medikal cihaz tasarlar ve üretir. Mekanik tasarım, elektronik, gömülü yazılım ve uygulama yazılımı ekip içinde geliştirilir.",
+    "siteDescription": "Ahtapot Tıbbi Teknolojiler İstanbul'da medikal cihaz tasarlıyor ve üretiyor. Cihazın mekanik tasarımını, elektroniğini, gömülü yazılımını ve uygulama yazılımını kendi mühendisleri yapıyor.",
     "llms": { "pages": "Sayfalar", "fullText": "Sitenin tüm metni (Türkçe ve İngilizce)" },
     "knowsAbout": [
       "Tıbbi cihaz tasarımı",
@@ -43,10 +43,10 @@
   },
   "hero": {
     "title": "Tıbbi cihaz, uçtan uca.",
-    "lead": "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir cihaza uçtan uca dönüştürüyoruz.",
+    "lead": "Klinikte tarif edilen bir ihtiyacı sahada çalışan bir cihaza dönüştürüyoruz.",
     "primaryCta": "Görüşme talep edin",
     "secondaryCta": "Ürünleri inceleyin",
-    "visualAlt": "Ahtapot logosundaki meander işareti; dört kolu mekanik, elektronik, gömülü yazılım ve uygulama katmanlarına uzanıyor.",
+    "visualAlt": "Ahtapot logosundaki meander işareti. Dört kolu mekanik, elektronik, gömülü yazılım ve uygulama katmanlarına uzanıyor.",
     "callouts": {
       "mekanik": "Gövde ve mekanizma",
       "elektronik": "Devre ve sensörler",
@@ -67,7 +67,7 @@
     "items": {
       "mekanik": {
         "title": "Mekanik tasarım",
-        "sentence": "Gövde, mekanizma ve toleransları üretilebilirliği baştan gözeterek tasarlıyoruz; 3B modelden teknik resme ve prototipe kadar.",
+        "sentence": "Bir gövdeyi çizerken nasıl üretileceğini ve servis için nasıl açılacağını da düşünüyoruz.",
         "deliverables": [
           "3B CAD modelleme",
           "Teknik resim ve toleranslandırma",
@@ -78,7 +78,7 @@
       },
       "elektronik": {
         "title": "Elektronik tasarım",
-        "sentence": "Şematikten kart yerleşimine kadar elektroniği tasarlıyor; sensör, güç ve kontrol katlarını cihazın ihtiyacına göre kurguluyoruz.",
+        "sentence": "Kartı, gövdenin içinde nereye oturacağını bilerek çiziyoruz.",
         "deliverables": [
           "Şematik tasarım",
           "PCB yerleşimi",
@@ -89,7 +89,7 @@
       },
       "gomulu": {
         "title": "Gömülü yazılım",
-        "sentence": "Cihazın üzerinde çalışan yazılımı geliştiriyoruz: sensör okuma, kontrol algoritmaları ve cihazı güvende tutan kilitler.",
+        "sentence": "Yazdığımız kontrol kodu, bir sensör arızalandığında cihazı güvenli bir duruma getirir.",
         "deliverables": [
           "Kontrol algoritmaları",
           "Donanım sürücüleri",
@@ -100,7 +100,7 @@
       },
       "uygulama": {
         "title": "Uygulama yazılımı",
-        "sentence": "Cihaz ekranından web uygulamasına kadar kullanıcı arayüzlerini, sahada kullanacak kişiyle birlikte tasarlıyoruz.",
+        "sentence": "Ekranları, onları her gün kullanacak kişiyle birlikte tasarlıyoruz.",
         "deliverables": [
           "Cihaz arayüzü",
           "Web uygulaması",
@@ -111,7 +111,7 @@
       },
       "saha": {
         "title": "Saha desteği",
-        "sentence": "Kurulum, kullanıcı eğitimi, periyodik bakım ve yazılım güncellemeleriyle cihazın kullanım ömrü boyunca yanında oluyoruz.",
+        "sentence": "Cihazı yerinde kuruyor ve kullanacak kişilere tanıtıyoruz. Sonraki yıllarda bakımını ve yazılım güncellemelerini de biz yapıyoruz.",
         "deliverables": [
           "Kurulum",
           "Eğitim",
@@ -119,7 +119,7 @@
           "Güncelleme"
         ],
         "caption": "Sahadaki cihazlar: uzaktan izleme, bakım ve güncelleme (temsili)",
-        "alt": "Bir sağlık kuruluşunda farklı tıbbi cihazlar; servis merkezine bağlı izleme hatları, kalibrasyon ve yazılım güncellemesi."
+        "alt": "Bir sağlık kuruluşundaki farklı tıbbi cihazlar ve onları servis merkezine bağlayan izleme hatları. Cihazlarda sırayla kurulum, eğitim, kalibrasyon ve güncelleme adımları görünüyor."
       }
     },
     "visuals": {
@@ -200,17 +200,17 @@
   },
   "product": {
     "heading": "Ürünler",
-    "intro": "Aynı ekipten iki ürün: laboratuvar tezgâhında çalışan bir cihaz ve tarayıcıda çalışan bir görüntüleme yazılımı.",
+    "intro": "Her ürünün kartında hangi katmanları içerdiğini görebilirsiniz.",
     "statusAvailable": "Piyasada",
     "inDevelopmentBadge": "Geliştirme aşamasında",
-    "layersLabel": "İçerdiği katmanlar",
+    "layersLabel": "Üründeki katmanlar",
     "detailsCta": "Ürünü inceleyin",
     "quoteCta": "Teklif isteyin",
     "demoCta": "Demo talep edin",
     "dragHint": "Sürükleyerek döndürün",
     "featuresHeading": "Özellikler",
     "backToProducts": "Ürünlere dön",
-    "screensHeading": "Arayüzden",
+    "screensHeading": "Ekranlar",
     "modelAlt": "SB-9K doku yüzdürme su banyosunun döndürülebilir çizimi.",
     "viewer": {
       "sampleNote": "Gerçek bir H&E preparatından 6144 × 6144 piksellik kesit.",
@@ -230,11 +230,11 @@
       "toolRuler": "Mesafe ölçümü",
       "deleteSelected": "Seçileni sil",
       "clearAll": "Tümünü temizle",
-      "hintPan": "Sürükleyerek gezinin; seçmek için bir işaretlemeye tıklayın.",
-      "hintPolygon": "Köşe eklemek için tıklayın; bitirmek için ilk noktaya tıklayın ya da Enter'a basın.",
+      "hintPan": "Sürükleyerek gezinin. Seçmek için bir işaretlemeye tıklayın.",
+      "hintPolygon": "Köşe eklemek için tıklayın. Bitirmek için ilk noktaya tıklayın ya da Enter'a basın.",
       "hintRect": "Karşılıklı iki köşeye tıklayın.",
-      "hintRuler": "İki noktaya tıklayın; aradaki mesafe ölçülür.",
-      "measureNote": "Ölçümler slaytın gerçek piksel boyutundan (µm/px) hesaplanır."
+      "hintRuler": "Aradaki mesafeyi ölçmek istediğiniz iki noktaya tıklayın.",
+      "measureNote": "Görüntüleyici ölçümleri slaytın gerçek piksel boyutundan (µm/px) hesaplar."
     },
     "simulator": {
       "powerButton": "Güç düğmesi",
@@ -271,14 +271,14 @@
       "slideTake": "Tepsiden lam alın, kesiti sudan lama alın",
       "slideRefill": "Tepsiye temiz lam koyun",
       "slideFlat": "Kesit lama düz ve gergin alındı.",
-      "slideWrinkled": "Kesit lamda kırışık kaldı: kesitin açılmasını bekleyin; su soğuksa önce ayar sıcaklığına gelsin.",
-      "slideTooHot": "Kesit lamda dağıldı: su bu parafin için fazla sıcak, ayarı düşürün.",
+      "slideWrinkled": "Kesit lamda kırışık kaldı. Kesitin açılmasını bekleyin, su soğuksa önce ayar sıcaklığına gelsin.",
+      "slideTooHot": "Kesit lamda dağıldı. Su bu parafin için fazla sıcak, ayarı düşürün.",
       "chartTitle": "Son 40 dakika",
       "chartTemp": "Su",
       "chartSet": "Ayar",
-      "panelHint": "Ayarı değiştirmek için kontrolcüde SET'e, ardından ▲/▼'ye basın; sürükleyerek döndürün.",
-      "panelHintSlides": "Ayar için SET, ardından ▲/▼. Kesiti almak için öndeki tepsiden bir lama tıklayın; sürükleyerek döndürün.",
-      "disclaimer": "Temsili simülasyon: 2 L su, 200 W ısıtıcı ve basit bir ısı kaybı modeliyle hesaplanır; kesitin su yüzeyindeki ve lamdaki görünümü de temsilidir, ürünün teknik değerlerini yansıtmaz. Zaman 90 kat hızlandırılmıştır."
+      "panelHint": "Ayarı değiştirmek için kontrolcüde SET'e, ardından ▲/▼'ye basın. Cihazı sürükleyerek döndürebilirsiniz.",
+      "panelHintSlides": "Ayar için SET, ardından ▲/▼. Kesiti almak için öndeki tepsiden bir lama tıklayın. Cihazı sürükleyerek döndürebilirsiniz.",
+      "disclaimer": "Bu simülasyon temsilidir ve ürünün teknik değerlerini yansıtmaz. Hesap 2 L su, 200 W ısıtıcı ve basit bir ısı kaybı modeline dayanıyor. Kesitin su yüzeyindeki ve lamdaki görünümü de temsili, zaman 90 kat hızlı akıyor."
     }
   },
   "products": {
@@ -286,8 +286,8 @@
       "name": "SB-9K doku yüzdürme su banyosu",
       "tagline": "Mikrotomdan alınan parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gererek lama alınmaya hazırlar.",
       "metaTitle": "SB-9K patoloji su banyosu · doku yüzdürme banyosu",
-      "metaDescription": "Patoloji ve histoloji laboratuvarları için doku yüzdürme su banyosu. Parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gerer; mat siyah teflon hazne, LED aydınlatma, PID kontrol.",
-      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Haznenin altındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
+      "metaDescription": "Patoloji ve histoloji laboratuvarları için doku yüzdürme su banyosu. Parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gerer. Mat siyah teflon hazne, LED aydınlatma ve PID kontrol.",
+      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Birkaç mikron kalınlığındaki yarı saydam kesiti, mat siyah teflon kaplı alüminyum haznenin koyu zemininde rahatça görürsünüz. LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Haznenin altındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını izleyebilir, kesiti lama alabilirsiniz.",
       "features": [
         "PID sıcaklık kontrolü ve dijital LED ekran",
         "Mat siyah teflon kaplı alüminyum hazne",
@@ -301,8 +301,8 @@
         {
           "heading": "Doku yüzdürme su banyosu nedir?",
           "body": [
-            "Doku yüzdürme su banyosu (flotasyon banyosu), histopatoloji laboratuvarında mikrotom ile lam arasındaki adımda kullanılır. Mikrotomda kesilen 3–5 µm kalınlığındaki parafin kesitler kesim sırasında sıkışır ve kırışır. Kesit, parafinin erime noktasının biraz altındaki suyun yüzeyine bırakılır; parafin yumuşar, kesit gerilip düzleşir ve lama alınmaya hazır hâle gelir.",
-            "Genel laboratuvar su banyosundan farkı amacındadır: genel su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletir, doku yüzdürme banyosu ise suyun yüzeyinde çalışır. Bu yüzden SB-9K'nın haznesi mat siyahtır ve içten aydınlatılır: yarı saydam kesit ve üzerindeki kırışıklıklar koyu zeminde açıkça görünür."
+            "Doku yüzdürme su banyosu (flotasyon banyosu), histopatoloji laboratuvarında mikrotom ile lam arasındaki adımda kullanılır. Mikrotomda kesilen 3–5 µm kalınlığındaki parafin kesitler kesim sırasında sıkışır ve kırışır. Kesit, parafinin erime noktasının biraz altındaki suyun yüzeyine bırakılır. Parafin yumuşar, kesit gerilip düzleşir ve lama alınmaya hazır hâle gelir.",
+            "Genel laboratuvar su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletir. Doku yüzdürme banyosu ise suyun yüzeyinde çalışır. Bu yüzden SB-9K'nın haznesi mat siyahtır ve içten aydınlatılır. Yarı saydam kesit ve üzerindeki kırışıklıklar koyu zeminde açıkça görünür."
           ]
         },
         {
@@ -310,7 +310,7 @@
           "steps": [
             "Hazneyi taze distile suyla, derinliğinin en az üçte ikisine kadar doldurun ve cihazın ayar sıcaklığına ulaşmasını bekleyin.",
             "Kesit almadan önce su yüzeyinde kalan toz ve parafin artıklarını süpürün.",
-            "Mikrotomdan aldığınız kesit şeridini su yüzeyine paralel tutarak yavaşça bırakın; ani hareket şeridi katlayabilir.",
+            "Mikrotomdan aldığınız kesit şeridini su yüzeyine paralel tutarak yavaşça bırakın. Ani hareket şeridi katlayabilir.",
             "Kesit birkaç saniye içinde genişler. LED aydınlatmayla kırışıklıkların kaybolduğunu izleyin.",
             "Lamı suya hafif açılı daldırın, kesitin altından geçirin ve kesitle birlikte sudan yavaşça çıkarın."
           ]
@@ -318,14 +318,14 @@
         {
           "heading": "Su sıcaklığı nasıl seçilir?",
           "body": [
-            "Su, kullandığınız parafinin erime noktasının altında tutulur; doğru değer parafinin türüne göre değişir. Su soğuksa kesit tam açılmaz ve kırışık kalır; fazla sıcaksa parafin erir ve kesit dağılabilir."
+            "Suyu kullandığınız parafinin erime noktasının altında tutun. Doğru değer parafinin türüne göre değişir. Su soğuksa kesit tam açılmaz ve kırışık kalır. Fazla sıcaksa parafin erir ve kesit dağılabilir."
           ],
           "items": [
             "Erime noktası 56–58 °C olan parafin: 44–50 °C",
             "Erime noktası 52–54 °C olan parafin: 38–42 °C",
             "Yağ dokusu içeren hassas örnekler: 40–42 °C"
           ],
-          "note": "Bu değerler genel uygulama önerisidir; laboratuvarınızın kendi protokolü önceliklidir."
+          "note": "Bu değerler genel uygulama önerisidir. Laboratuvarınızın kendi protokolü önceliklidir."
         },
         {
           "heading": "Teknik özellikler",
@@ -356,7 +356,7 @@
             },
             {
               "label": "Şebeke",
-              "value": "Dahili EMI filtresi; topraklı priz gerekir"
+              "value": "Dahili EMI filtresi (topraklı priz gerekir)"
             },
             {
               "label": "Su seviyesi",
@@ -368,18 +368,18 @@
           "heading": "Kurulum",
           "items": [
             "Cihazı mikrotomun yanına, yerinizden kalkmadan ulaşabileceğiniz bir konuma yerleştirin.",
-            "Klima, açık pencere ve çeker ocağın hava akımından uzak tutun: su yüzeyine vuran hava suyu soğutur ve sıcaklık dengesini bozar.",
+            "Klima, açık pencere ve çeker ocağın hava akımından uzak tutun. Su yüzeyine vuran hava suyu soğutur ve sıcaklık dengesini bozar.",
             "Doğrudan güneş ışığı almayan bir tezgâh seçin.",
-            "Topraklı bir priz kullanın; voltajın çok dalgalandığı hatlarda harici regülatör önerilir."
+            "Topraklı bir priz kullanın. Voltajın çok dalgalandığı hatlarda harici bir regülatör kullanmanızı öneririz."
           ]
         },
         {
           "heading": "Temizlik ve bakım",
           "items": [
-            "Her blok ya da vaka grubundan sonra su yüzeyindeki parafin artıklarını süpürün; bir örneğin artığı diğerine karışmasın.",
+            "Her blok ya da vaka grubundan sonra su yüzeyindeki parafin artıklarını süpürün. Böylece bir örneğin artığı diğerine karışmaz.",
             "Gün sonunda suyu boşaltın ve hazneyi yumuşak bir bezle kurulayın. Gece boyunca bekleyen su biyofilm oluşturur.",
             "Hazneyi sabunlu su ya da nötr pH'lı, aşındırıcı olmayan bir deterjanla temizleyin.",
-            "Çamaşır suyu, güçlü asit, çelik yünü ve aşındırıcı toz kullanmayın: teflon kaplamayı çizer, metal parçaları aşındırır.",
+            "Çamaşır suyu, güçlü asit, çelik yünü ve aşındırıcı toz kullanmayın. Bunlar teflon kaplamayı çizer, metal parçaları aşındırır.",
             "Kireç oluşursa hazneye yaklaşık %10 beyaz sirke ya da sitrik asitli kireç çözücü ekleyin, 40 °C'de bir saat bekletin, sonra bol suyla durulayın.",
             "Temizlik öncesinde fişi çekin. Hazneye alkol, aseton ya da ksilen gibi yanıcı sıvılar koymayın."
           ]
@@ -389,7 +389,7 @@
           "faq": [
             {
               "q": "Doku yüzdürme su banyosu ile genel laboratuvar su banyosu aynı cihaz mı?",
-              "a": "Hayır. Genel su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletmek için kullanılır. Doku yüzdürme su banyosu, parafin kesitleri su yüzeyinde germek için tasarlanır: koyu renkli hazne ve aydınlatma kesitin görünmesini sağlar."
+              "a": "Hayır. Genel su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletmek için kullanılır. Doku yüzdürme su banyosu, parafin kesitleri su yüzeyinde germek için tasarlanır. Koyu renkli hazne ve aydınlatma sayesinde kesiti rahatça görürsünüz."
             },
             {
               "q": "Kesit neden kırışık kalıyor ya da dağılıyor?",
@@ -397,7 +397,7 @@
             },
             {
               "q": "Ayar sıcaklığı nasıl değiştirilir?",
-              "a": "SET tuşuna basın, ardından ▲ ve ▼ ile ayarı 0,1 °C adımlarla değiştirin; tuşu basılı tutarsanız değer hızlanır. Birkaç saniye sonra ekran yeniden suyun ölçülen sıcaklığını gösterir."
+              "a": "SET tuşuna basın, ardından ▲ ve ▼ ile ayarı 0,1 °C adımlarla değiştirin. Tuşu basılı tutarsanız değer hızlı değişir. Birkaç saniye sonra ekran yeniden suyun ölçülen sıcaklığını gösterir."
             },
             {
               "q": "Su azalırsa ne olur?",
@@ -409,7 +409,7 @@
             },
             {
               "q": "Cihazda kapak, sirkülasyon pompası ya da zamanlayıcı var mı?",
-              "a": "Hayır. SB-9K su yüzeyinde kesit germek için tasarlanmıştır; ısı haznenin altındaki silikon ısıtıcıyla verilir."
+              "a": "Hayır. SB-9K su yüzeyinde kesit germek için tasarlanmıştır. Isıyı haznenin altındaki silikon ısıtıcı verir."
             }
           ]
         }
@@ -419,8 +419,8 @@
       "name": "AhtaPatolog",
       "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi.",
       "metaTitle": "AhtaPatolog dijital patoloji yazılımı · WSI ve SVS görüntüleyici",
-      "metaDescription": "Dijital patoloji yazılımı: whole-slide (WSI) görüntüleri tarayıcıda açar; patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi. Geliştirme aşamasında.",
-      "description": "Whole-slide görüntüleri tarayıcıda açar; patoloğun dokuyu yüksek büyütmede incelemesini, işaretlemesini ve vakaları düzenlemesini sağlar. Tanı kararı patoloğa aittir; yazılım inceleme sürecini destekler.",
+      "metaDescription": "AhtaPatolog, whole-slide (WSI) görüntüleri tarayıcıda açan bir dijital patoloji yazılımı. Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi sağlar. Geliştirme aşamasında.",
+      "description": "Whole-slide görüntüleri tarayıcıda açar. Patolog dokuyu yüksek büyütmede inceler, işaretler ve vakalarını düzenler. Tanı kararı patoloğa aittir. Yazılım inceleme sürecini destekler.",
       "features": [
         "Whole-slide görüntü desteği: SVS, TIFF, NDPI",
         "Poligon, dikdörtgen ve nokta ile işaretleme",
@@ -444,14 +444,14 @@
         {
           "heading": "Dijital patoloji nedir?",
           "body": [
-            "Dijital patolojide cam lamdaki doku kesiti bir slayt tarayıcıyla yüksek çözünürlükte taranır. Ortaya çıkan görüntüye whole-slide image (WSI) denir. Patolog kesiti mikroskop başında değil ekranda inceler: görüntüde gezinir, büyütür, işaretler; görüntü arşivlenebilir ve başka bir hekimle paylaşılabilir.",
-            "AhtaPatolog bu iş akışının yazılım tarafıdır. Taranmış slaytları açar, düzenler ve patoloğun incelemesi için araçlar sunar. Slaytları taramak için bir slayt tarayıcı gerekir; AhtaPatolog taranmış görüntülerle çalışır."
+            "Dijital patolojide cam lamdaki doku kesiti bir slayt tarayıcıyla yüksek çözünürlükte taranır. Ortaya çıkan görüntüye whole-slide image (WSI) denir. Patolog kesiti mikroskop başında değil ekranda inceler: görüntüde gezinir, büyütür, işaretler. Görüntü arşivlenebilir ve başka bir hekimle paylaşılabilir.",
+            "AhtaPatolog bu iş akışının yazılım tarafıdır. Taranmış slaytları açar, düzenler ve patoloğun incelemesi için araçlar sunar. Slaytları taramak için ayrıca bir slayt tarayıcı gerekir."
           ]
         },
         {
           "heading": "AhtaPatolog ne yapar?",
           "items": [
-            "Whole-slide görüntüleri tarayıcıda açar; 2×'ten 40×'e objektif düğmeleri, mini harita ve ölçek çubuğu.",
+            "Whole-slide görüntüleri tarayıcıda açar. 2× ile 40× arası objektif düğmeleri, mini harita ve ölçek çubuğu sunar.",
             "Poligon ve dikdörtgenle bölge işaretleme.",
             "İki nokta arası mesafe ve işaretlenen bölgenin alanı, slaytın gerçek piksel boyutundan (µm) hesaplanır.",
             "Vaka ve slayt yönetimi: yüklenen slaytlar ve işaretleme sayıları tek galeride.",
@@ -478,11 +478,11 @@
           "faq": [
             {
               "q": "AhtaPatolog tanı koyar mı?",
-              "a": "Hayır. AhtaPatolog görüntüleme, işaretleme ve vaka yönetimi sağlar; tanı kararı patoloğa aittir. Yazılım inceleme sürecini destekler, yorum üretmez."
+              "a": "Hayır. AhtaPatolog görüntüleme, işaretleme ve vaka yönetimi sağlar. Tanı kararı patoloğa aittir. Yazılım inceleme sürecini destekler, yorum üretmez."
             },
             {
               "q": "Ölçümler klinik sonuç mu?",
-              "a": "Hayır. Mesafe ve alan ölçümleri, slaytın piksel boyutundan hesaplanan araçlardır; değerlendirmeyi patolog yapar."
+              "a": "Hayır. Mesafe ve alan ölçümleri, slaytın piksel boyutundan hesaplanan araçlardır. Değerlendirmeyi patolog yapar."
             },
             {
               "q": "AhtaPatolog bugün kullanılabilir mi?",
@@ -494,11 +494,11 @@
             },
             {
               "q": "Slayt tarayıcı gerekir mi?",
-              "a": "Evet. AhtaPatolog bir yazılımdır ve taranmış görüntülerle çalışır; lamları taramak için bir slayt tarayıcı gerekir."
+              "a": "Evet. AhtaPatolog bir yazılımdır ve taranmış görüntülerle çalışır. Lamları taramak için bir slayt tarayıcı gerekir."
             },
             {
               "q": "Bu sayfadaki görüntüleyici gerçek bir slayt mı?",
-              "a": "Evet, gerçek bir whole-slide görüntüdür. Görüntüleyici AhtaPatolog araçlarının bir bölümünü gösterir; yaptığınız işaretlemeler hiçbir yere gönderilmez."
+              "a": "Evet, gerçek bir whole-slide görüntüdür. Görüntüleyici AhtaPatolog araçlarının bir bölümünü gösterir. Yaptığınız işaretlemeler hiçbir yere gönderilmez."
             }
           ]
         }
@@ -507,16 +507,12 @@
   },
   "about": {
     "heading": "Hakkımızda",
-    "lead": "Ahtapot Tıbbi Teknolojiler, bir hekimin kurduğu bir tıbbi cihaz şirketi. Amacımız, bugün yurt dışından tedarik edilen tıbbi cihazları Türkiye'de tasarlamak ve üretmek.",
-    "body": "Bir cihazın mekaniğini, elektroniğini ve yazılımını kendimiz geliştiriyoruz. Tasarım bilgisi bizde olduğu için bir parçayı değiştirmek, yeni bir özellik eklemek ya da bir güncelleme çıkarmak için kimseyi beklemiyoruz.",
+    "lead": "Ahtapot Tıbbi Teknolojiler'i bir hekim kurdu. Şirketin işi, hastanelerin ve laboratuvarların bugün yurt dışından aldığı tıbbi cihazları Türkiye'de tasarlayıp üretmek.",
+    "body": "Cihazlarımızı kendimiz geliştirdiğimiz için çizimleri de kaynak kodu da bizde. Bir parçayı değiştirmek ya da güncelleme çıkarmak için başka bir firmayı beklemiyoruz.",
     "facts": [
       {
         "label": "Merkez",
         "value": "İstanbul"
-      },
-      {
-        "label": "Odak",
-        "value": "Tıbbi cihazların yerlileştirilmesi"
       },
       {
         "label": "Disiplinler",
@@ -524,35 +520,35 @@
       },
       {
         "label": "Teknopol İstanbul",
-        "value": "Kuluçka firması; teknokent onaylı Ar‑Ge projesi"
+        "value": "Teknokent onaylı Ar‑Ge projesi olan kuluçka firması"
       }
     ],
     "pillars": [
       {
-        "title": "Yerli tasarım ve üretim",
-        "text": "Cihazın her katmanı Türkiye'de tasarlanır ve üretime hazırlanır. Yedek parça, bakım ve güncellemede yurt dışına bağımlılık azalır."
+        "title": "Yedek parçada kısa yol",
+        "text": "Tasarımı ve üretimi burada olduğu için bozulan bir parçayı çoğu zaman yurt dışından beklemeniz gerekmez."
       },
       {
-        "title": "Hekimin bakış açısı",
-        "text": "Gereksinimleri kliniği içeriden bilen bir hekim tanımlar. Her cihaz, kullanılacağı ortam ve onu kullanacak kişi düşünülerek tasarlanır."
+        "title": "Kullanılacağı yere göre",
+        "text": "Çizime başlamadan önce cihazın nerede ve kimin elinde çalışacağını belirliyoruz. SB-9K'nın haznesi, yarı saydam kesit tezgâhta görünsün diye mat siyah."
       },
       {
-        "title": "Uçtan uca sorumluluk",
-        "text": "İlk çizimden sahadaki bakıma kadar her aşamayı kendimiz yürütürüz. Her konunun tek bir muhatabı vardır."
+        "title": "Tasarlayan, bakımını da yapar",
+        "text": "Cihazı çizen ekip bakımını da yapıyor. Arıza ya da güncelleme için aradığınızda cihazı tanıyan biriyle konuşursunuz."
       }
     ],
     "founder": {
       "label": "Kurucu",
       "name": "Dr. Mustafa Can Yılmaz",
       "role": "Kurucu · Tıp Doktoru",
-      "bio": "Hekimliğin yanı sıra yazılım, elektronik ve mekanik tasarımda da çalışıyor. Cihazların klinik gereksinimlerini tanımlıyor; devre, yazılım ve gövde tasarımında mühendislerle birlikte bizzat yer alıyor."
+      "bio": "Her cihazın klinik gereksinimlerini Dr. Yılmaz yazıyor. Ardından devresi, kodu ve gövdesi üzerinde mühendislerle birlikte bizzat çalışıyor."
     }
   },
   "contact": {
     "heading": "İletişim",
     "promptLine1": "Ürün bilgisi, demo, distribütörlük veya iş birliği.",
-    "promptLine2": "Talebinizi iletin; iki iş günü içinde dönüş yapıyoruz.",
-    "next": "Mesajınız doğrudan ekibimize e-posta olarak iletilir ve bir veritabanında saklanmaz.",
+    "promptLine2": "Talebinize iki iş günü içinde yanıt veriyoruz.",
+    "next": "Mesajınızı e-posta olarak doğrudan ekibimize iletiyoruz ve bir veritabanında saklamıyoruz.",
     "detailsHeading": "İletişim bilgileri",
     "addressLabel": "Adres",
     "emailLabel": "E-posta",
@@ -585,7 +581,7 @@
     "submitting": "Gönderiliyor…",
     "success": {
       "title": "Talebiniz alındı.",
-      "body": "En geç iki iş günü içinde size dönüş yapacağız."
+      "body": "En geç iki iş günü içinde yanıtlayacağız."
     },
     "errors": {
       "nameRequired": "Lütfen adınızı ve soyadınızı girin.",
@@ -595,7 +591,7 @@
       "messageTooShort": "Mesajınız en az 10 karakter olmalı.",
       "consentRequired": "Devam etmek için lütfen onay kutusunu işaretleyin.",
       "rateLimited": "Kısa sürede çok sayıda talep alındı. Lütfen birkaç dakika sonra tekrar deneyin.",
-      "sendFailed": "Talebiniz şu anda gönderilemedi. Lütfen biraz sonra tekrar deneyin veya adresimize yazın.",
+      "sendFailed": "Talebiniz şu anda gönderilemedi. Lütfen biraz sonra tekrar deneyin ya da e-posta adresimize yazın.",
       "generic": "Gönderim tamamlanamadı. Lütfen tekrar deneyin."
     }
   },
@@ -619,7 +615,7 @@
   },
   "credits": {
     "title": "Görsel kaynakları",
-    "intro": "Ürün ve arayüz görselleri Ahtapot'a aittir. Aşağıdaki fotoğraflar açık lisanslıdır ve sitede renkleri düzenlenerek kullanılmıştır."
+    "intro": "Ürün ve ekran görselleri Ahtapot'a aittir. Aşağıdaki fotoğraflar açık lisanslı. Sitede renklerini düzenleyerek kullandık."
   },
   "kvkk": {
     "title": "KVKK Aydınlatma Metni",
