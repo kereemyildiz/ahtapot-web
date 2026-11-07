@@ -48,6 +48,8 @@ function ScreenStack({ images, alt, active }: { images: MediaImage[]; alt: strin
     if (!running) return;
     const cards = ref.current ? Array.from(ref.current.querySelectorAll<HTMLElement>(".screen-card")) : [];
     const anims = cards.flatMap((card) => card.getAnimations());
+    // Hareket azaltılmışsa animasyon yok (liste boş): döngüye hiç girilmez.
+    if (!anims.length) return;
     let alive = true;
     const play = () => {
       anims.forEach((a) => {
