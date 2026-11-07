@@ -46,7 +46,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   useGSAP(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const lenis = new Lenis({ lerp: 0.11 });
+    // lerp 0.2: tek tekerlek tıkı ~360 ms'de yerleşir (0.11'de ~660 ms
+    // "yüzüyordu"). Dokunmatik Lenis'te varsayılan olarak native kalır.
+    const lenis = new Lenis({ lerp: 0.2 });
     lenisRef.current = lenis;
     const onTick = (time: number) => lenis.raf(time * 1000);
 
@@ -71,7 +73,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     if (target === null) return;
 
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(target, { offset: id === "top" ? 0 : -header, duration: 1.2, onComplete: onArrive });
+      lenisRef.current.scrollTo(target, { offset: id === "top" ? 0 : -header, duration: 0.8, onComplete: onArrive });
       return;
     }
     if (target === 0) window.scrollTo({ top: 0 });

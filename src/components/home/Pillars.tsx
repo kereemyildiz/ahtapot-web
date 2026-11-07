@@ -7,8 +7,10 @@ type Pillar = { title: string; text: string };
 
 /**
  * Hakkımızda'daki üç ilke tek bir çizgiyle bağlı: kaydırdıkça uzar (scrub),
- * her ilkeye ulaşınca düğümü yanar ve metni belirir. Yetkinliklerdeki
- * ilerleme çizgisiyle aynı dil. Masaüstünde yatay, mobilde dikey.
+ * her ilkeye ulaşınca düğümü yanar. Kaydırma yalnız çizgiyi ve düğümleri
+ * sürer; ilkenin metni düğümü ilk yandığında bir kez belirir ve kalır
+ * (yukarı kaydırınca kaybolmaz). Yetkinliklerdeki ilerleme çizgisiyle aynı
+ * dil. Masaüstünde yatay, mobilde dikey.
  * Reduced motion'da çizgi tam, düğümler yanık, metin görünür.
  */
 export function Pillars({ pillars }: { pillars: Pillar[] }) {
@@ -17,26 +19,43 @@ export function Pillars({ pillars }: { pillars: Pillar[] }) {
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      const build = (axis: "x" | "y") => {
+      const build = (axis: "x" | "y", ctx: gsap.Context) => {
+        const box = root.current;
+        if (!box) return;
         const items = gsap.utils.toArray<HTMLElement>("[data-pillar]");
-        const step = 1 / items.length;
+        const texts = items.map((item) => item.querySelectorAll("[data-pillar-text]"));
+        // Düğüm, çizginin ucu ona ulaşınca yanar: konumu ilkenin gerçek
+        // yerinden (mobilde son ilke de ekranın alt dörtte birinde yanar).
+        const at = items.map((item) =>
+          axis === "x" ? item.offsetLeft / box.offsetWidth : item.offsetTop / box.offsetHeight
+        );
+        // "Bir kez belirdi" bayrakları efektin içinde (StrictMode ikinci
+        // kurulumda başlangıç durumunu yeniden uygular).
+        const shown = items.map(() => false);
+        gsap.set(texts, { autoAlpha: 0, y: 12 });
+
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top 80%", end: axis === "x" ? "top 40%" : "bottom 70%", scrub: 0.6 },
+          scrollTrigger: { trigger: box, start: "top 80%", end: axis === "x" ? "top 40%" : "bottom 70%", scrub: 0.6 },
+          // Scrub'ın yetiştiği an (görünen düğümle aynı kare) metni bir kez açar.
+          onUpdate(this: gsap.core.Timeline) {
+            const p = this.progress();
+            at.forEach((a, i) => {
+              if (shown[i] || p < Math.max(a, 0.001)) return;
+              shown[i] = true;
+              ctx.add(() =>
+                gsap.to(texts[i], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.08, overwrite: true })
+              );
+            });
+          },
         });
         tl.from("[data-pillar-line]", axis === "x" ? { scaleX: 0, duration: 1 } : { scaleY: 0, duration: 1 }, 0);
         items.forEach((item, i) => {
-          const at = i * step;
-          tl.fromTo(
-            item.querySelector("[data-pillar-node]"),
-            { "--on": 0 },
-            { "--on": 1, duration: 0.04 },
-            at
-          ).from(item.querySelectorAll("[data-pillar-text]"), { autoAlpha: 0, y: 16, duration: step * 0.8, stagger: step * 0.15 }, at);
+          tl.fromTo(item.querySelector("[data-pillar-node]"), { "--on": 0 }, { "--on": 1, duration: 0.04 }, Math.min(at[i], 0.96));
         });
       };
-      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => build("x"));
-      mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => build("y"));
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", (ctx) => build("x", ctx));
+      mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", (ctx) => build("y", ctx));
       return () => mm.revert();
     },
     { scope: root }

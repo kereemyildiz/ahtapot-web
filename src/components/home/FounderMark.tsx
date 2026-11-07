@@ -3,8 +3,7 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsapSetup";
 import { replayOnView } from "@/lib/replayOnView";
-import { pulseDash } from "@/lib/svgPath";
-import { useOffscreenPause } from "@/lib/useOffscreenPause";
+import { polylineLength, pulseDash } from "@/lib/svgPath";
 
 // Stetoskop: kulaklıklar, Y birleşimi ve göğüs başlığına inen hortum
 // (yumuşak eğriler: hekimlik). Göğüs başlığından çıkan iz dik açılarla
@@ -15,16 +14,17 @@ const TUBE = "M200 176 C200 236 120 220 104 270";
 const TRACE = "M128 300 H176 V250 H232 V318 H286";
 const CHIP_PINS = "M296 300 H286 M296 318 H286 M296 336 H286 M356 300 H366 M356 318 H366 M356 336 H366 M308 288 V278 M326 288 V278 M344 288 V278 M308 348 V358 M326 348 V358 M344 348 V358";
 const PULSE = pulseDash(TRACE, 0.14);
+const TRACE_LEN = polylineLength(TRACE);
+const PULSE_DASH = TRACE_LEN * 0.14;
 
 /**
  * Kurucu bloğunun görseli: stetoskobun hortumu göğüs başlığından sonra
- * bir devre izine dönüşüp çipe bağlanır. Görünüme her girişte kendini
- * yeniden çizer, sonra izden periyodik bir sinyal geçer.
+ * bir devre izine dönüşüp çipe bağlanır. Görünüme ilk girişte kendini bir
+ * kez çizer, izden bir sinyal geçip çipte söner; sonra durağan kalır.
  * TODO(mock-data): gerçek portre gelince yerine konabilir.
  */
 export function FounderMark({ label }: { label: string }) {
   const root = useRef<HTMLDivElement>(null);
-  useOffscreenPause(root);
 
   useGSAP(
     () => {
@@ -36,10 +36,16 @@ export function FounderMark({ label }: { label: string }) {
           .from("[data-founder-head]", { scale: 0.6, autoAlpha: 0, transformOrigin: "50% 50%", duration: 0.5, ease: "expo.out" }, "-=0.3")
           .from("[data-founder-trace]", { drawSVG: "0%", duration: 0.9, ease: "power2.inOut" }, "-=0.1")
           .from("[data-founder-chip]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.45, ease: "expo.out" }, "-=0.2")
-          .from("[data-founder-pulse]", { autoAlpha: 0, duration: 0.3 });
+          // Tek sinyal: izin başından çipe akar, orada söner (sonsuz döngü yok).
+          .fromTo(
+            "[data-founder-pulse]",
+            { autoAlpha: 1, strokeDashoffset: TRACE_LEN },
+            { strokeDashoffset: PULSE_DASH, duration: 1.4, ease: "power1.inOut", immediateRender: false }
+          )
+          .to("[data-founder-pulse]", { autoAlpha: 0, duration: 0.3 });
 
-        // Hero gibi: yalnız ilk açılışta değil, bölüme her girişte yeniden çizilir.
-        return root.current ? replayOnView(root.current, tl) : undefined;
+        // Sayfa başına bir kez: bölümden çıkıp girince yeniden çizilmez.
+        return root.current ? replayOnView(root.current, tl, { once: true }) : undefined;
       });
       return () => mm.revert();
     },
@@ -75,8 +81,8 @@ export function FounderMark({ label }: { label: string }) {
             strokeDasharray={PULSE.strokeDasharray}
             stroke="var(--color-ink)"
             strokeWidth="8"
-            className="pulse"
-            style={{ ...PULSE.style, animationDuration: "2.2s" }}
+            // Yalnız çizimin sonunda bir kez görünür (reduced motion'da hiç).
+            style={{ visibility: "hidden" }}
           />
         </g>
       </svg>

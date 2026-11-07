@@ -31,7 +31,9 @@ export function ScrubText({
             "--lit": 1,
             ease: "none",
             stagger: 0.1,
-            scrollTrigger: { trigger: ref.current, start: "top 80%", end: "bottom 45%", scrub: true },
+            // Dar aralık: paragrafın ortası ekranın %55'ine gelince tam
+            // mürekkepte; okumak için metni yukarı itmek gerekmez.
+            scrollTrigger: { trigger: ref.current, start: "top 80%", end: "center 55%", scrub: 0.3 },
           }
         );
       });
