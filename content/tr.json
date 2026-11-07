@@ -285,22 +285,140 @@
     "su-banyosu": {
       "name": "SB-9K doku yüzdürme su banyosu",
       "tagline": "Mikrotomdan alınan parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gererek lama alınmaya hazırlar.",
-      "metaDescription": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gerer; teflon kaplı hazne, LED aydınlatma, PID kontrol.",
-      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Hazne tabanındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
+      "metaTitle": "SB-9K patoloji su banyosu · doku yüzdürme banyosu",
+      "metaDescription": "Patoloji ve histoloji laboratuvarları için doku yüzdürme su banyosu. Parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gerer; mat siyah teflon hazne, LED aydınlatma, PID kontrol.",
+      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Haznenin altındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
       "features": [
         "PID sıcaklık kontrolü ve dijital LED ekran",
         "Mat siyah teflon kaplı alüminyum hazne",
-        "Hazne tabanına yerleşik silikon ısıtıcı",
+        "Hazne altında, ısı transfer plakasına bağlı silikon ısıtıcı",
         "LED aydınlatma",
         "Rezistansı koruyan ikincil güvenlik termostatı",
         "Ortam sıcaklığından 65 °C'ye çalışma aralığı"
       ],
-      "screens": []
+      "screens": [],
+      "sections": [
+        {
+          "heading": "Doku yüzdürme su banyosu nedir?",
+          "body": [
+            "Doku yüzdürme su banyosu (flotasyon banyosu), histopatoloji laboratuvarında mikrotom ile lam arasındaki adımda kullanılır. Mikrotomda kesilen 3–5 µm kalınlığındaki parafin kesitler kesim sırasında sıkışır ve kırışır. Kesit, parafinin erime noktasının biraz altındaki suyun yüzeyine bırakılır; parafin yumuşar, kesit gerilip düzleşir ve lama alınmaya hazır hâle gelir.",
+            "Genel laboratuvar su banyosundan farkı amacındadır: genel su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletir, doku yüzdürme banyosu ise suyun yüzeyinde çalışır. Bu yüzden SB-9K'nın haznesi mat siyahtır ve içten aydınlatılır: yarı saydam kesit ve üzerindeki kırışıklıklar koyu zeminde açıkça görünür."
+          ]
+        },
+        {
+          "heading": "Nasıl kullanılır?",
+          "steps": [
+            "Hazneyi taze distile suyla, derinliğinin en az üçte ikisine kadar doldurun ve cihazın ayar sıcaklığına ulaşmasını bekleyin.",
+            "Kesit almadan önce su yüzeyinde kalan toz ve parafin artıklarını süpürün.",
+            "Mikrotomdan aldığınız kesit şeridini su yüzeyine paralel tutarak yavaşça bırakın; ani hareket şeridi katlayabilir.",
+            "Kesit birkaç saniye içinde genişler. LED aydınlatmayla kırışıklıkların kaybolduğunu izleyin.",
+            "Lamı suya hafif açılı daldırın, kesitin altından geçirin ve kesitle birlikte sudan yavaşça çıkarın."
+          ]
+        },
+        {
+          "heading": "Su sıcaklığı nasıl seçilir?",
+          "body": [
+            "Su, kullandığınız parafinin erime noktasının altında tutulur; doğru değer parafinin türüne göre değişir. Su soğuksa kesit tam açılmaz ve kırışık kalır; fazla sıcaksa parafin erir ve kesit dağılabilir."
+          ],
+          "items": [
+            "Erime noktası 56–58 °C olan parafin: 44–50 °C",
+            "Erime noktası 52–54 °C olan parafin: 38–42 °C",
+            "Yağ dokusu içeren hassas örnekler: 40–42 °C"
+          ],
+          "note": "Bu değerler genel uygulama önerisidir; laboratuvarınızın kendi protokolü önceliklidir."
+        },
+        {
+          "heading": "Teknik özellikler",
+          "specs": [
+            {
+              "label": "Hazne",
+              "value": "Mat siyah teflon (PTFE) kaplı alüminyum"
+            },
+            {
+              "label": "Isıtıcı",
+              "value": "Hazne altında, ısı transfer plakasına bağlı silikon ısıtıcı"
+            },
+            {
+              "label": "Sıcaklık kontrolü",
+              "value": "PID kontrolcü, dijital LED ekran"
+            },
+            {
+              "label": "Çalışma aralığı",
+              "value": "Ortam sıcaklığı – 65 °C"
+            },
+            {
+              "label": "Aydınlatma",
+              "value": "Haznenin iç duvarına yerleştirilmiş LED"
+            },
+            {
+              "label": "Isıtıcı koruması",
+              "value": "Isıtıcının sıcaklığını izleyen ikincil mekanik termostat (yaklaşık 150 °C)"
+            },
+            {
+              "label": "Şebeke",
+              "value": "Dahili EMI filtresi; topraklı priz gerekir"
+            },
+            {
+              "label": "Su seviyesi",
+              "value": "En az hazne derinliğinin üçte ikisi"
+            }
+          ]
+        },
+        {
+          "heading": "Kurulum",
+          "items": [
+            "Cihazı mikrotomun yanına, yerinizden kalkmadan ulaşabileceğiniz bir konuma yerleştirin.",
+            "Klima, açık pencere ve çeker ocağın hava akımından uzak tutun: su yüzeyine vuran hava suyu soğutur ve sıcaklık dengesini bozar.",
+            "Doğrudan güneş ışığı almayan bir tezgâh seçin.",
+            "Topraklı bir priz kullanın; voltajın çok dalgalandığı hatlarda harici regülatör önerilir."
+          ]
+        },
+        {
+          "heading": "Temizlik ve bakım",
+          "items": [
+            "Her blok ya da vaka grubundan sonra su yüzeyindeki parafin artıklarını süpürün; bir örneğin artığı diğerine karışmasın.",
+            "Gün sonunda suyu boşaltın ve hazneyi yumuşak bir bezle kurulayın. Gece boyunca bekleyen su biyofilm oluşturur.",
+            "Hazneyi sabunlu su ya da nötr pH'lı, aşındırıcı olmayan bir deterjanla temizleyin.",
+            "Çamaşır suyu, güçlü asit, çelik yünü ve aşındırıcı toz kullanmayın: teflon kaplamayı çizer, metal parçaları aşındırır.",
+            "Kireç oluşursa hazneye yaklaşık %10 beyaz sirke ya da sitrik asitli kireç çözücü ekleyin, 40 °C'de bir saat bekletin, sonra bol suyla durulayın.",
+            "Temizlik öncesinde fişi çekin. Hazneye alkol, aseton ya da ksilen gibi yanıcı sıvılar koymayın."
+          ]
+        },
+        {
+          "heading": "Sık sorulan sorular",
+          "faq": [
+            {
+              "q": "Doku yüzdürme su banyosu ile genel laboratuvar su banyosu aynı cihaz mı?",
+              "a": "Hayır. Genel su banyosu tüpleri ve numuneleri sabit sıcaklıkta bekletmek için kullanılır. Doku yüzdürme su banyosu, parafin kesitleri su yüzeyinde germek için tasarlanır: koyu renkli hazne ve aydınlatma kesitin görünmesini sağlar."
+            },
+            {
+              "q": "Kesit neden kırışık kalıyor ya da dağılıyor?",
+              "a": "Kırışık kalıyorsa su, parafini yumuşatacak kadar sıcak değildir. Kesit dağılıyorsa su fazla sıcaktır. Sıcaklığı kullandığınız parafinin erime noktasına göre ayarlayın: erime noktası 56–58 °C olan parafin için 44–50 °C, 52–54 °C olan parafin için 38–42 °C önerilir."
+            },
+            {
+              "q": "Ayar sıcaklığı nasıl değiştirilir?",
+              "a": "SET tuşuna basın, ardından ▲ ve ▼ ile ayarı 0,1 °C adımlarla değiştirin; tuşu basılı tutarsanız değer hızlanır. Birkaç saniye sonra ekran yeniden suyun ölçülen sıcaklığını gösterir."
+            },
+            {
+              "q": "Su azalırsa ne olur?",
+              "a": "Isıtıcıyı izleyen ikincil termostat, ısıtıcının sıcaklığı yaklaşık 150 °C'ye ulaşınca elektriği keser ve ısıtıcı soğuyana kadar cihaz ısıtmaz. Bu sırada kontrolcü ısıtma ışığını yakmaya devam edebilir. Hazneyi her zaman en az üçte iki dolu tutun."
+            },
+            {
+              "q": "Hazneye hangi su konmalı?",
+              "a": "Taze distile su. Sert şebeke suyu ısıtıcının üzerinde kireç bırakır ve ısınmayı yavaşlatır. Suyu her gün sonunda boşaltın."
+            },
+            {
+              "q": "Cihazda kapak, sirkülasyon pompası ya da zamanlayıcı var mı?",
+              "a": "Hayır. SB-9K su yüzeyinde kesit germek için tasarlanmıştır; ısı haznenin altındaki silikon ısıtıcıyla verilir."
+            }
+          ]
+        }
+      ]
     },
     "dijital-patoloji": {
       "name": "AhtaPatolog",
       "tagline": "Patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi.",
-      "metaTitle": "AhtaPatolog dijital patoloji yazılımı",
+      "metaTitle": "AhtaPatolog dijital patoloji yazılımı · WSI ve SVS görüntüleyici",
       "metaDescription": "Dijital patoloji yazılımı: whole-slide (WSI) görüntüleri tarayıcıda açar; patoloğun incelemesi için görüntüleme, işaretleme ve vaka yönetimi. Geliştirme aşamasında.",
       "description": "Whole-slide görüntüleri tarayıcıda açar; patoloğun dokuyu yüksek büyütmede incelemesini, işaretlemesini ve vakaları düzenlemesini sağlar. Tanı kararı patoloğa aittir; yazılım inceleme sürecini destekler.",
       "features": [
@@ -321,7 +439,70 @@
         "microscopeAlt": "Aynı doku kesitinin mikroskop okülerinden görüldüğü gibi temsili, dairesel görünümü.",
         "digitalAlt": "Aynı doku kesitinin AhtaPatolog'daki dijital görünümü: bir işaretleme ve ölçek çubuğu.",
         "handle": "Karşılaştırma ayracı"
-      }
+      },
+      "sections": [
+        {
+          "heading": "Dijital patoloji nedir?",
+          "body": [
+            "Dijital patolojide cam lamdaki doku kesiti bir slayt tarayıcıyla yüksek çözünürlükte taranır. Ortaya çıkan görüntüye whole-slide image (WSI) denir. Patolog kesiti mikroskop başında değil ekranda inceler: görüntüde gezinir, büyütür, işaretler; görüntü arşivlenebilir ve başka bir hekimle paylaşılabilir.",
+            "AhtaPatolog bu iş akışının yazılım tarafıdır. Taranmış slaytları açar, düzenler ve patoloğun incelemesi için araçlar sunar. Slaytları taramak için bir slayt tarayıcı gerekir; AhtaPatolog taranmış görüntülerle çalışır."
+          ]
+        },
+        {
+          "heading": "AhtaPatolog ne yapar?",
+          "items": [
+            "Whole-slide görüntüleri tarayıcıda açar; 2×'ten 40×'e objektif düğmeleri, mini harita ve ölçek çubuğu.",
+            "Poligon ve dikdörtgenle bölge işaretleme.",
+            "İki nokta arası mesafe ve işaretlenen bölgenin alanı, slaytın gerçek piksel boyutundan (µm) hesaplanır.",
+            "Vaka ve slayt yönetimi: yüklenen slaytlar ve işaretleme sayıları tek galeride.",
+            "İki slaytın eşzamanlı gezinmeyle yan yana karşılaştırılması."
+          ]
+        },
+        {
+          "heading": "Desteklenen dosya formatları",
+          "body": [
+            "SVS (Aperio), NDPI (Hamamatsu) ve TIFF tabanlı whole-slide görüntüler."
+          ]
+        },
+        {
+          "heading": "İş akışı",
+          "steps": [
+            "Lamlar slayt tarayıcıda taranır.",
+            "Görüntüler AhtaPatolog'a yüklenir ve galeride listelenir.",
+            "Patolog slaytta gezinir, büyütür, gerekli bölgeleri işaretler ve ölçer.",
+            "Gerekirse iki slayt yan yana, aynı noktada eşzamanlı incelenir."
+          ]
+        },
+        {
+          "heading": "Sık sorulan sorular",
+          "faq": [
+            {
+              "q": "AhtaPatolog tanı koyar mı?",
+              "a": "Hayır. AhtaPatolog görüntüleme, işaretleme ve vaka yönetimi sağlar; tanı kararı patoloğa aittir. Yazılım inceleme sürecini destekler, yorum üretmez."
+            },
+            {
+              "q": "Ölçümler klinik sonuç mu?",
+              "a": "Hayır. Mesafe ve alan ölçümleri, slaytın piksel boyutundan hesaplanan araçlardır; değerlendirmeyi patolog yapar."
+            },
+            {
+              "q": "AhtaPatolog bugün kullanılabilir mi?",
+              "a": "AhtaPatolog geliştirme aşamasında. Demo için iletişim formundan talep iletebilirsiniz."
+            },
+            {
+              "q": "Hangi slayt tarayıcılarla çalışır?",
+              "a": "SVS, NDPI ve TIFF formatında whole-slide görüntü üreten tarayıcılarla. Farklı bir formatınız varsa bize yazın."
+            },
+            {
+              "q": "Slayt tarayıcı gerekir mi?",
+              "a": "Evet. AhtaPatolog bir yazılımdır ve taranmış görüntülerle çalışır; lamları taramak için bir slayt tarayıcı gerekir."
+            },
+            {
+              "q": "Bu sayfadaki görüntüleyici gerçek bir slayt mı?",
+              "a": "Evet, gerçek bir whole-slide görüntüdür. Görüntüleyici AhtaPatolog araçlarının bir bölümünü gösterir; yaptığınız işaretlemeler hiçbir yere gönderilmez."
+            }
+          ]
+        }
+      ]
     }
   },
   "about": {

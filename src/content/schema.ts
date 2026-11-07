@@ -71,6 +71,22 @@ const requestTypeRecord = z
   })
   .strict();
 
+const productSectionSchema = z
+  .object({
+    heading: z.string(),
+    body: z.array(z.string()).optional(),
+    items: z.array(z.string()).optional(),
+    // Sırası anlamlı adımlar (kullanım akışı gibi); <ol> olarak çizilir.
+    steps: z.array(z.string()).optional(),
+    specs: z.array(z.object({ label: z.string(), value: z.string() }).strict()).optional(),
+    // Soru-cevap; sayfada <details>, yapılandırılmış veride FAQPage.
+    faq: z.array(z.object({ q: z.string(), a: z.string() }).strict()).optional(),
+    // Bölümün altında küçük not (kaynak, sınırlama).
+    note: z.string().optional(),
+  })
+  .strict();
+export type ProductSection = z.infer<typeof productSectionSchema>;
+
 const productCopySchema = z
   .object({
     name: z.string(),
@@ -96,6 +112,9 @@ const productCopySchema = z
       })
       .strict()
       .optional(),
+    // Ürün sayfasında sergiden sonra gelen düz metin bölümleri (arama motoru ve okuyucu için).
+    // Her bölüm bir h2; içinde paragraf, madde, sıralı adım, özellik tablosu ya da SSS olabilir.
+    sections: z.array(productSectionSchema).optional(),
   })
   .strict();
 

@@ -109,6 +109,16 @@ function fullFor(locale: AppLocale) {
     );
     // Mevzuat: simülasyon değerleri spesifikasyon değildir; özet de bunu söyler.
     if (p.interaction === "simulator") out.push(c.product.simulator.disclaimer, "");
+    // Ürün sayfasındaki metin bölümleri (sayfada ne varsa o).
+    for (const s of pc.sections ?? []) {
+      out.push(`#### ${s.heading}`, "");
+      if (s.body) out.push(...s.body.flatMap((b) => [b, ""]));
+      if (s.items) out.push(...s.items.map((i) => `- ${i}`), "");
+      if (s.steps) out.push(...s.steps.map((i, n) => `${n + 1}. ${i}`), "");
+      if (s.specs) out.push(...s.specs.map((r) => `- ${r.label}: ${r.value}`), "");
+      if (s.faq) out.push(...s.faq.flatMap((f) => [`**${f.q}**`, "", f.a, ""]));
+      if (s.note) out.push(s.note, "");
+    }
   }
   out.push(`## ${c.about.heading}`, "", c.about.lead, "", c.about.body, "", ...facts(locale), "");
   for (const pillar of c.about.pillars) out.push(`### ${pillar.title}`, "", pillar.text, "");

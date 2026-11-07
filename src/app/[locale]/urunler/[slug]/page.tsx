@@ -9,7 +9,9 @@ import { PageMotion } from "@/components/motion/PageMotion";
 import { ProductExhibit } from "@/components/products/ProductExhibit";
 import { getExhibitCopy, getExhibitUi } from "@/components/products/productLabels";
 import { Icon } from "@/components/brand/Icon";
-import { breadcrumbJsonLd, jsonLdHtml, pageAlternates, shareMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd, faqJsonLd, jsonLdHtml, pageAlternates, shareMetadata } from "@/lib/seo";
+import { ProductSections } from "@/components/products/ProductSections";
+import type { ProductSection } from "@/content/schema";
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => getProducts().map((p) => ({ locale, slug: p.slug })));
@@ -42,6 +44,8 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/urunl
   const { screens, ...copy } = await getExhibitCopy(product);
   const others = getProducts().filter((p) => p.slug !== slug);
   const tProducts = await getTranslations("products");
+  const sections = tProducts.has(`${slug}.sections`) ? (tProducts.raw(`${slug}.sections`) as ProductSection[]) : [];
+  const faq = faqJsonLd(sections.flatMap((s) => s.faq ?? []));
 
   return (
     <main className="frame pb-[clamp(5rem,10vw,9rem)] pt-[calc(var(--header-h)+clamp(2rem,5vw,4rem))]">
@@ -49,6 +53,7 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/urunl
         type="application/ld+json"
         dangerouslySetInnerHTML={jsonLdHtml(breadcrumbJsonLd(locale as AppLocale, `/urunler/${slug}`, copy.name))}
       />
+      {faq && <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(faq)} />}
       <PageMotion>
         <Link href={localeHref(locale as AppLocale, "/#urunler")} className="inline-flex items-center gap-1.5 text-small text-muted transition-colors hover:text-ink">
           <Icon name="arrowLeft" className="size-4" strokeWidth={2} />
@@ -83,6 +88,8 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/urunl
             </div>
           </section>
         )}
+
+        <ProductSections sections={sections} />
 
         {others.length > 0 && (
           <nav aria-label={t("heading")} className="mt-[clamp(5rem,10vw,9rem)] flex flex-wrap gap-3">

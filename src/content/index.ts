@@ -56,6 +56,21 @@ const localeContent: Record<AppLocale, LocaleContent> = {
   en: localeContentSchema.parse(enRaw),
 };
 
+// Ürün sayfası bölümleri dizi olduğu için yukarıdaki denetim içine girmez: iki dilde
+// bölüm sayısı ve her bölümün yapısı (paragraf, SSS, tablo…) aynı olmalı.
+for (const [slug, tr] of Object.entries(localeContent.tr.products)) {
+  const a = tr.sections ?? [];
+  const b = localeContent.en.products[slug]?.sections ?? [];
+  const shape = (s: (typeof a)[number]) =>
+    Object.entries(s)
+      .map(([k, v]) => (Array.isArray(v) ? `${k}:${v.length}` : k))
+      .sort()
+      .join(",");
+  if (a.length !== b.length || a.some((s, i) => shape(s) !== shape(b[i]))) {
+    throw new Error(`products.${slug}.sections tr.json ile en.json'da aynı yapıda değil.`);
+  }
+}
+
 export function getLocaleContent(locale: AppLocale): LocaleContent {
   return localeContent[locale];
 }
