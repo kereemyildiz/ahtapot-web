@@ -7,6 +7,7 @@
 //     Claude Code'un WorktreeRemove hook'u. stdin: {"worktree_path": "..."}. Claude Code bu yola
 //     yalnız kullanıcı silmeyi seçince ya da ExitWorktree discard_changes ile gelir; o yüzden
 //     hook modunda klasör silinir, dal yalnız develop'a girmişse silinir.
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -81,6 +82,17 @@ if (!force && (dirty || unmerged)) {
 // "Filename too long" ile yarıda kalıyordu. Ağır, gitignore'lu klasörleri önce Node siler
 // (uzun yolları destekler; junction/symlink'leri izlemez, yalnız bağlantıyı kaldırır; pnpm
 // dosyaları store'a hardlink olduğu için store'daki kopya yerinde kalır).
+// Önce worktree'de açık kalmış dev sunucusunu kapat: klasörü kilitler ve bellek tutar
+// (kesilen agent'lardan kalıyor).
+if (process.platform === "win32") {
+  try {
+    const servers = path.join(path.dirname(fileURLToPath(import.meta.url)), "servers.mjs");
+    const out = execFileSync(process.execPath, [servers, "--stop", path.basename(wt.path)], { encoding: "utf8" });
+    if (out.includes("Kapatıldı")) log(out.trim());
+  } catch {
+    // sunucu denetimi silmeyi engellemesin
+  }
+}
 for (const heavy of ["node_modules", ".next", ".open-next", ".wrangler"]) {
   fs.rmSync(path.join(wt.path, heavy), { recursive: true, force: true, maxRetries: 3 });
 }

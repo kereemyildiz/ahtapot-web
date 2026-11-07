@@ -58,6 +58,14 @@ yaz, sonra kaydet). Bağlam sıkışsa da oturum kapansa da tanım `status.mjs`'
 - Arka plan oturumu: `node tools/agents/wt-new.mjs <ad>`, sonra o klasörde
   `claude --bg --name <ad> --agent worker "<görev tanımı>"`. İzleme: `claude agents --json`.
 - Beklerken yoklama yapma; bitiş bildirimi gelir. Kullanıcı sorarsa "sürüyor" de.
+- **Kesinti:** kullanıcı orkestratörün turunu kesince (Esc/Ctrl+C) arka plandaki subagent'lar da
+  durur ve SendMessage ile uyandırılamaz. Commit'ler dalda kalır, açtıkları dev sunucuları sahipsiz
+  kalır. Kurtarma: `node tools/agents/servers.mjs` → sahipsizleri `--stop`; worktree'de
+  `git rebase develop` + `verify.mjs`; kapsamın bitip bitmediğine `reviewer` karar verir, eksik
+  varsa yalnız o eksik için yeni worker. Saatler sürecek ya da kesintiye dayanması gereken iş için
+  `claude --bg` tercih et.
+- Bellek: her `next dev` ~300-1400 MB. Aynı anda açık dev sunucusu sayısını düşük tut; iş bitince
+  worker/reviewer sunucusunu kapatmalı, kapatmadıysa `servers.mjs --stop`.
 
 ## 5. İnceleme (her worker sonucu)
 1. `status.mjs`: doğrulama "tam ✓" mı, dal develop'un üstünde mi? Değilse worker'a geri gönder.

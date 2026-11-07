@@ -17,6 +17,7 @@ deterministik adımlarıdır: model *ne* yapılacağına karar verir, *nasıl* y
 | `conflicts.mjs [--files a,b] [--verbose]` | herhangi bir yerde | conflict radarı: açık dalların develop'la ve birbirleriyle çakışıp çakışmayacağını `git merge-tree` ile önceden hesaplar; `--files` ile henüz başlamamış bir işin dosyalarını açık işlerle karşılaştırır |
 | `brief.mjs <ad> [--file f \| --show]` | herhangi bir yerde | görev tanımını ortak git klasörüne (`.git/agents/<ad>/brief.md`) yazar/okur; `status.mjs` "Görev:" satırını gösterir |
 | `review-package.mjs <ad>` | herhangi bir yerde | dalın commit'leri, değişen dosyaları ve diff'ini tek dosyaya yazar; reviewer okur, diff orkestratörün bağlamına girmez |
+| `servers.mjs [--stop <port\|worktree> \| --stop-all]` | herhangi bir yerde | bu repo'nun worktree'lerinden başlatılmış dev sunucularını listeler/kapatır (yalnız komut satırı bu repo'da olan ve port dinleyen süreçler; ana checkout'takini `--stop-all` kapatmaz). `wt-remove.mjs` silmeden önce o worktree'nin sunucusunu kendisi kapatır. Neden: auto mode ham `taskkill /PID`'i haklı olarak engelliyor (yanlış PID ilgisiz programı kapatır); bu script aynı işi dar kapsamda yapar ve `node tools/agents/*` izin kuralıyla önceden onaylıdır |
 
 ## Roller
 
