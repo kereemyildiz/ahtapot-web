@@ -20,6 +20,7 @@ import {
   parseArgs,
   readStdinJson,
   run,
+  sweepEmptyDirs,
   worktreesDir,
 } from "./lib.mjs";
 
@@ -32,6 +33,7 @@ if (hook) name = (await readStdinJson()).name;
 if (!name) fail("Kullanım: node tools/agents/wt-new.mjs <ad> [--base develop] [--no-install]");
 
 const root = mainRoot();
+sweepEmptyDirs(root);
 const { slug, branch } = branchForName(name);
 const dir = path.join(worktreesDir(root), slug);
 const base = flags.base || BASE_BRANCH;
