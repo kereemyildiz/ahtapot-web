@@ -461,17 +461,16 @@
         {
           "heading": "Supported file formats",
           "body": [
-            "SVS (Aperio), NDPI (Hamamatsu) and TIFF-based whole-slide images. Images are read as tiled pyramids: only the region on screen is loaded, so slides several gigabytes in size still open smoothly."
+            "SVS (Aperio), NDPI (Hamamatsu) and TIFF-based whole-slide images."
           ]
         },
         {
           "heading": "Workflow",
           "steps": [
             "Slides are scanned on a slide scanner.",
-            "The images are uploaded to AhtaPatolog and attached to cases.",
+            "The images are uploaded to AhtaPatolog and listed in the gallery.",
             "The pathologist pans, zooms, and annotates and measures the regions that matter.",
-            "Where needed, two slides are examined side by side at the same position.",
-            "Annotations are saved with the case and reopen at the next review."
+            "Where needed, two slides are examined side by side at the same position."
           ]
         },
         {

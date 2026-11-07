@@ -461,17 +461,16 @@
         {
           "heading": "Desteklenen dosya formatları",
           "body": [
-            "SVS (Aperio), NDPI (Hamamatsu) ve TIFF tabanlı whole-slide görüntüler. Görüntüler piramit yapıda okunur: ekranda yalnız o an görünen bölge yüklenir, bu yüzden gigabaytlarca büyüklükteki slaytlar da akıcı biçimde açılır."
+            "SVS (Aperio), NDPI (Hamamatsu) ve TIFF tabanlı whole-slide görüntüler."
           ]
         },
         {
           "heading": "İş akışı",
           "steps": [
             "Lamlar slayt tarayıcıda taranır.",
-            "Görüntüler AhtaPatolog'a yüklenir ve vakalara bağlanır.",
+            "Görüntüler AhtaPatolog'a yüklenir ve galeride listelenir.",
             "Patolog slaytta gezinir, büyütür, gerekli bölgeleri işaretler ve ölçer.",
-            "Gerekirse iki slayt yan yana, aynı noktada eşzamanlı incelenir.",
-            "İşaretlemeler vakayla birlikte saklanır ve sonraki incelemede yeniden açılır."
+            "Gerekirse iki slayt yan yana, aynı noktada eşzamanlı incelenir."
           ]
         },
         {
