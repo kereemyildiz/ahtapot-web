@@ -3,7 +3,6 @@ import type { AppLocale } from "@/i18n/routing";
 import { getProducts } from "@/content/products";
 import { ProductExhibit } from "@/components/products/ProductExhibit";
 import { getExhibitCopy, getExhibitUi } from "@/components/products/productLabels";
-import { ScrubText } from "@/components/motion/ScrubText";
 import { SectionRule } from "@/components/motion/SectionRule";
 import { Words } from "@/components/motion/Words";
 
@@ -26,7 +25,9 @@ export async function Products() {
           <Words text={t("heading")} />
         </h2>
         <div className="lg:col-span-5 lg:col-start-8 lg:self-end">
-          <ScrubText className="max-w-[36ch] text-lead leading-snug text-ink" text={t("intro")} />
+          <p data-reveal="" className="max-w-[36ch] text-lead leading-snug text-ink">
+            {t("intro")}
+          </p>
         </div>
       </div>
 

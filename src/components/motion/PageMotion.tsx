@@ -21,15 +21,13 @@ export function PageMotion({ children }: { children: ReactNode }) {
         gsap.utils.toArray<HTMLElement>("[data-split]").forEach((el) => {
           const words = el.querySelectorAll("[data-word]");
           // Sunucuda kelimelere bölünmüş başlık (Words): her kelime kendi
-          // maskesinden, hafif dönerek sırayla yükselir.
+          // maskesinden sırayla, kısa ve dönmeden yükselir.
           if (words.length) {
             gsap.from(words, {
-              yPercent: 115,
-              rotate: 4,
-              transformOrigin: "0% 100%",
-              duration: 1,
+              yPercent: 100,
+              duration: 0.65,
               ease: "expo.out",
-              stagger: 0.06,
+              stagger: 0.04,
               scrollTrigger: { trigger: el, start: "top 85%", once: true },
             });
             return;

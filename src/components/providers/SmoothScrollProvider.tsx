@@ -43,10 +43,33 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     return () => cancelAnimationFrame(id);
   }, [pathname]);
 
+  // Sayfa yüksekliği yüklemeden sonra da değişir (ör. ürün etkileşimleri
+  // next/dynamic ile ~1 sn sonra gelince Ürünler ~700 px uzuyordu); ölçüm
+  // tazelenmezse altındaki tüm tetikleyiciler erken çalışır (mobilde ilkeler
+  // ve okudukça yanan paragraf ekrana girmeden bitmiş oluyordu).
+  useEffect(() => {
+    let id = 0;
+    let last = document.body.offsetHeight;
+    const ro = new ResizeObserver(() => {
+      const h = document.body.offsetHeight;
+      if (h === last) return;
+      last = h;
+      window.clearTimeout(id);
+      id = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+    ro.observe(document.body);
+    return () => {
+      ro.disconnect();
+      window.clearTimeout(id);
+    };
+  }, []);
+
   useGSAP(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const lenis = new Lenis({ lerp: 0.11 });
+    // lerp 0.2: tek tekerlek tıkı ~360 ms'de yerleşir (0.11'de ~660 ms
+    // "yüzüyordu"). Dokunmatik Lenis'te varsayılan olarak native kalır.
+    const lenis = new Lenis({ lerp: 0.2 });
     lenisRef.current = lenis;
     const onTick = (time: number) => lenis.raf(time * 1000);
 
@@ -71,7 +94,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     if (target === null) return;
 
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(target, { offset: id === "top" ? 0 : -header, duration: 1.2, onComplete: onArrive });
+      lenisRef.current.scrollTo(target, { offset: id === "top" ? 0 : -header, duration: 0.8, onComplete: onArrive });
       return;
     }
     if (target === 0) window.scrollTo({ top: 0 });

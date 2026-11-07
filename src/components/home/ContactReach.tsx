@@ -15,8 +15,9 @@ export type ReachRow = { icon: IconName; label: string; lines: string[]; href?: 
  * Sayfanın kapanışı: hero'da kollar disiplinlere uzanıyordu, burada aynı
  * ahtapotun kolları iletişim satırlarına uzanır. Kollar satırların gerçek
  * konumundan hesaplanır (metin kayınca, ekran değişince kopmaz). Görünüme
- * her girişte logo ve kollar yeniden çizilir; kollarda sinyal akar, bir
- * satırın üstüne gelince (ya da bağlantısı odaklanınca) o kol yanar.
+ * ilk girişte logo ve kollar bir kez çizilir, sonra durağan kalır. Bir
+ * satırın üstüne gelince (ya da bağlantısı odaklanınca) o kol yanar ve
+ * yalnız o kolda sinyal akar; boşta hiçbir şey akmaz.
  */
 export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name: string; sub: string } }) {
   const root = useRef<HTMLDivElement>(null);
@@ -64,10 +65,9 @@ export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name:
           .from("[data-logo-path]", { drawSVG: "0%", duration: 0.8, stagger: 0.1, ease: "power2.inOut" })
           .from("[data-reach-brand]", { autoAlpha: 0, x: -12, duration: 0.6, ease: "expo.out" }, "-=0.4")
           .from("[data-reach-arm]", { drawSVG: "0%", duration: 0.6, stagger: 0.12, ease: "power2.inOut" }, "-=0.25")
-          .from("[data-reach-dot]", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%", duration: 0.35, stagger: 0.12, ease: "expo.out" }, "-=0.45")
-          .from("[data-reach-pulse]", { autoAlpha: 0, duration: 0.3 });
-        // Kurucu görseli gibi: bölüme her girişte yeniden çizilir.
-        return root.current ? replayOnView(root.current, tl) : undefined;
+          .from("[data-reach-dot]", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%", duration: 0.35, stagger: 0.12, ease: "expo.out" }, "-=0.45");
+        // Kurucu görseli gibi: sayfa başına bir kez çizilir.
+        return root.current ? replayOnView(root.current, tl, { once: true }) : undefined;
       });
       return () => mm.revert();
     },
@@ -84,15 +84,17 @@ export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name:
             return (
               <g key={i}>
                 <path data-reach-arm="" d={d} strokeWidth="4" style={{ stroke: on ? LOGO_BLUES.light : "var(--color-wire)", transition: "stroke 250ms ease" }} />
-                <path
-                  data-reach-pulse=""
-                  d={d}
-                  className="pulse"
-                  stroke={on ? "var(--color-accent)" : LOGO_BLUES.light}
-                  strokeWidth="4"
-                  strokeDasharray={p.strokeDasharray}
-                  style={{ ...p.style, animationDuration: on ? "1.1s" : "2.6s", animationDelay: `${i * -0.7}s`, opacity: on ? 1 : 0.6 }}
-                />
+                {/* Sinyal yalnız etkin satırın kolunda, logodan satıra akar. */}
+                {on && (
+                  <path
+                    d={d}
+                    className="pulse motion-reduce:hidden"
+                    stroke="var(--color-accent)"
+                    strokeWidth="4"
+                    strokeDasharray={p.strokeDasharray}
+                    style={{ ...p.style, animationDuration: "1.1s" }}
+                  />
+                )}
               </g>
             );
           })}
