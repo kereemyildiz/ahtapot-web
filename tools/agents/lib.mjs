@@ -129,6 +129,9 @@ export function run(cmd, args, { cwd = process.cwd(), echo = false, stream = pro
   });
 }
 
+/** Değer alan bayraklar (`--base develop` gibi boşlukla da yazılabilir); diğerleri açık/kapalı. */
+const VALUE_FLAGS = ["base", "files"];
+
 export function parseArgs(argv) {
   const flags = {};
   const pos = [];
@@ -137,7 +140,7 @@ export function parseArgs(argv) {
     if (a.startsWith("--")) {
       const [k, v] = a.slice(2).split("=");
       if (v !== undefined) flags[k] = v;
-      else if (argv[i + 1] && !argv[i + 1].startsWith("--") && ["base"].includes(k)) flags[k] = argv[++i];
+      else if (argv[i + 1] && !argv[i + 1].startsWith("--") && VALUE_FLAGS.includes(k)) flags[k] = argv[++i];
       else flags[k] = true;
     } else pos.push(a);
   }
