@@ -29,6 +29,24 @@ export function worktreesDir(root = mainRoot()) {
   return path.join(path.dirname(root), `${path.basename(root)}.worktrees`);
 }
 
+/** Worktree klasöründe git'e kayıtlı olmayan BOŞ klasörleri siler. Claude Code'un ExitWorktree'si
+ *  silme hook'unu çalıştırırken kendi süreci klasörde durduğu için Windows'ta boş kök kalıyordu.
+ *  Yalnız boş klasöre dokunur (rmdirSync boş olmayanı zaten silmez). */
+export function sweepEmptyDirs(root = mainRoot()) {
+  const dir = worktreesDir(root);
+  if (!fs.existsSync(dir)) return;
+  const registered = new Set(listWorktrees(root).map((w) => w.path.toLowerCase()));
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (!entry.isDirectory() || registered.has(full.toLowerCase())) continue;
+    try {
+      fs.rmdirSync(full);
+    } catch {
+      // boş değil ya da hâlâ meşgul: dokunma
+    }
+  }
+}
+
 /** `git worktree list --porcelain` → [{ path, head, branch, main }] */
 export function listWorktrees(cwd = process.cwd()) {
   const out = git(["worktree", "list", "--porcelain"], { cwd });

@@ -9,6 +9,7 @@
 //     hook modunda klasör silinir, dal yalnız develop'a girmişse silinir.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   BASE_BRANCH,
   branchForName,
@@ -19,6 +20,7 @@ import {
   mainRoot,
   parseArgs,
   readStdinJson,
+  sweepEmptyDirs,
   worktreesDir,
 } from "./lib.mjs";
 
@@ -29,7 +31,9 @@ const log = (s) => process.stderr.write(`${s}\n`);
 const ref = hook ? (await readStdinJson()).worktree_path : pos[0];
 if (!ref) fail("Kullanım: node tools/agents/wt-remove.mjs <ad|dal|yol> [--force]");
 
-const root = mainRoot(fs.existsSync(ref) ? ref : process.cwd());
+// Kökü script'in kendi konumundan bul: verilen yol yarım kalmış (git'siz) bir klasör olabilir.
+const root = mainRoot(path.dirname(fileURLToPath(import.meta.url)));
+sweepEmptyDirs(root);
 const wt = findWorktree(ref, root);
 if (!wt) {
   // Hook: klasör zaten yoksa iş bitmiş sayılır.
@@ -83,10 +87,22 @@ for (const heavy of ["node_modules", ".next", ".open-next", ".wrangler"]) {
 const removed = git(["worktree", "remove", ...(force ? ["--force"] : []), wt.path], { cwd: root, allowFail: true });
 if (removed === null) {
   // Denetimler yukarıda geçti (ya da --force): kalan dosyaları Node silsin, kaydı git temizlesin.
-  fs.rmSync(wt.path, { recursive: true, force: true, maxRetries: 3 });
+  try {
+    fs.rmSync(wt.path, { recursive: true, force: true, maxRetries: 3 });
+  } catch {
+    // Kök klasör meşgul olabilir (aşağıda bakılıyor); içi yine de silinmiş olur.
+  }
   git(["worktree", "prune"], { cwd: root });
 }
-if (fs.existsSync(wt.path)) fail(`Klasör silinemedi: ${wt.path} (açık bir dev sunucusu ya da editör tutuyor olabilir)`);
+if (fs.existsSync(wt.path)) {
+  // Claude Code'un ExitWorktree'si hook'u çalıştırırken kendi süreci hâlâ bu klasörde duruyor;
+  // Windows o yüzden BOŞ kök klasörü silemiyor. İçerik ve git kaydı gittiyse iş bitmiştir:
+  // boş klasör sonraki wt-new/wt-remove çalışmasında süpürülür (sweepEmptyDirs).
+  if (fs.readdirSync(wt.path).length) {
+    fail(`Klasör silinemedi: ${wt.path} (açık bir dev sunucusu ya da editör tutuyor olabilir)`);
+  }
+  log(`• Boş klasör kaldı (bir süreç tutuyor), sonraki çalıştırmada süpürülecek: ${wt.path}`);
+}
 log(`✓ Worktree silindi: ${wt.path}`);
 
 if (wt.branch) {
