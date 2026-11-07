@@ -170,6 +170,8 @@ export function ProductExhibit({
             {showDetailsLink && (
               <Link href={localeHref(locale, `/urunler/${product.slug}`)} className="btn btn-quiet">
                 {ui.detailsCta}
+                {/* Bağlantı metni ürünün adını da taşısın: ekran okuyucu ve arama motoru "Ürünü inceleyin" değil, hangi ürün olduğunu okur. */}
+                <span className="sr-only">: {copy.name}</span>
                 <Icon name="arrowUpRight" className="size-4" strokeWidth={2} />
               </Link>
             )}

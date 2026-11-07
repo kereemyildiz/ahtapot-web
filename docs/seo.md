@@ -177,6 +177,41 @@ Bunlar hesap açma, kimlik doğrulama veya şirket adına beyan gerektiriyor; Cl
    üniversite iş birlikleri, distribütör sayfaları, haberler. "Medikal cihaz üretimi" gibi genel
    aramalarda sıralamayı en çok bunlar belirler.
 
+## Strateji güncellemesi (8 Kasım 2026): yeni sayfa yok, önce ürün sayfaları
+
+Kullanıcı sordu: "Tek sayfalık site SEO sorunu mu, yeni sayfalara gerek var mı?" Cevap: Google
+sayfa sıralar; tek sayfa yalnız marka aramasında çıkar. Ama bu site zaten tek sayfa değil: iki ürün
+sayfası var ve dizinde (`site:ahtapot.ink` → 10 sayfa). Eksik olan bu sayfaların metniydi. Aşağıdaki
+plandaki "Yeni sayfalar" maddesi **ertelendi**: ürün sayfaları genişletildikten 6–8 hafta sonra
+sıralar ölçülüp karar verilecek.
+
+Bir arama niyeti, bir sayfa:
+
+| Sayfa | Hedef aramalar |
+|---|---|
+| `/tr` | ahtapot tıbbi, ahtapot medikal, tıbbi cihaz tasarımı ve üretimi |
+| `/tr/urunler/su-banyosu` | patoloji su banyosu, doku yüzdürme su banyosu, doku banyosu, parafin / flotasyon / histoloji su banyosu |
+| `/tr/urunler/dijital-patoloji` | dijital patoloji yazılımı, dijital patoloji sistemi, WSI / SVS görüntüleyici, dijital patoloji nedir |
+
+"su banyosu" tek başına (7 Kasım): Google bunu genel laboratuvar su banyosu (tüp ve numune bekletme,
+çalkalamalı, sirkülasyonlu) sanıyor. İlk sırada "su banyosu nedir" yazıları (beyanlab, labakademi),
+satıcı kategori sayfaları (labor, labevreni, interlab), Nüve ve Elektro-mag var. SB-9K başka bir
+cihaz; bu arama uzun vadeli ve garanti edilemez. Ürün sayfasındaki "genel su banyosuyla farkı" SSS'si
+bu aramaya cevap veriyor. Patoloji aramaları (7 Kasım): "patoloji su banyosu" → 1. nflsaglik
+(bölümlü, SSS'li ürün sayfası), 2. Türk Patoloji Derneği'nin laboratuvar rehberi; "doku banyosu" →
+Lauda, Toron, Kayralab, Sağlık Bakanlığı şartnamesi; "doku yüzdürme su banyosu" → biz 7.
+
+Yapılan (kod): ürün metinlerine `sections` alanı (`content/schema.ts`; paragraf, madde, adım,
+özellik tablosu, SSS, not), sunucuda çizilen `components/products/ProductSections.tsx`, SSS'den
+`FAQPage` JSON-LD (`lib/seo.ts` → `faqJsonLd`), `/llms-full.txt`'de bölümler, ana sayfadaki
+"Ürünü inceleyin" bağlantısına ekran okuyucu metni olarak ürün adı. İki dilde bölüm yapısı aynı
+olmalı (`content/index.ts` denetler). SB-9K metni kılavuzdan; kılavuzdaki doğrulanmamış değerler
+(CE, ±0,1 / ±1 °C, Δt < 0,5 °C, 50–450 W, 1,5–2,5 L, 10 yıl yedek parça, PV/SV iki ekran,
+"Ahtapot Elektronik" adı) bilinçli olarak yazılmadı.
+
+Site dışı, su banyosu için: SB-9K'yı satan tedarikçilerin ürün sayfalarından bağlantı, Türk Patoloji
+Derneği / patoloji teknikerleri, gerçek ürün fotoğrafı ve kısa kullanım videosu (YouTube).
+
 ## Sıralama planı (23 Ekim 2026)
 
 Hedef (kullanıcı): "ahtapot teknoloji", "dijital patoloji yazılımı", "yerli tıbbi cihaz",

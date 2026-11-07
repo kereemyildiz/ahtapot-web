@@ -109,6 +109,20 @@ export function breadcrumbJsonLd(locale: AppLocale, path: string, name: string) 
   };
 }
 
+/**
+ * Sayfadaki sık sorulan soruların yapılandırılmış verisi (schema.org FAQPage).
+ * Google bu siteler için SSS kutusu göstermiyor; yapay zekâ asistanları ise okuyor.
+ * Yalnız sayfada görünen sorular yazılır. Soru yoksa null.
+ */
+export function faqJsonLd(faq: { q: string; a: string }[]) {
+  if (faq.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  };
+}
+
 /** JSON-LD'yi <script> içine güvenle yazar (Next.js JSON-LD rehberi). */
 export function jsonLdHtml(data: unknown) {
   return { __html: JSON.stringify(data).replace(/</g, "\\u003c") };
