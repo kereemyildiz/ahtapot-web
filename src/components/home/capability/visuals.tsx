@@ -42,14 +42,27 @@ function ScreenStack({ images, alt, active }: { images: MediaImage[]; alt: strin
   const { running } = useMotionBudget(ref, active);
 
   // CSS animasyonu duraklatılmış başlar; tur Web Animations ile baştan oynatılır.
+  // running sürdükçe (hover) bir tur bitince yenisi başlar; running bitince
+  // son karede kalır.
   useEffect(() => {
     if (!running) return;
-    ref.current?.querySelectorAll<HTMLElement>(".screen-card").forEach((card) =>
-      card.getAnimations().forEach((a) => {
+    const cards = ref.current ? Array.from(ref.current.querySelectorAll<HTMLElement>(".screen-card")) : [];
+    const anims = cards.flatMap((card) => card.getAnimations());
+    let alive = true;
+    const play = () => {
+      anims.forEach((a) => {
         a.currentTime = 0;
         a.play();
-      })
-    );
+      });
+      Promise.all(anims.map((a) => a.finished))
+        .then(() => alive && play())
+        .catch(() => {});
+    };
+    play();
+    return () => {
+      alive = false;
+      anims.forEach((a) => a.pause());
+    };
   }, [running]);
 
   const n = images.length;

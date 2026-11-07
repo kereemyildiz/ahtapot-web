@@ -73,6 +73,7 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
   // çalışan satır başa sıçramaz.
   const step = useRef(0);
   const tick = useRef(0);
+  const filled = useRef(false);
   // Açılış: 0 derleniyor, 1 yükleniyor, 2 çalışıyor.
   const [stage, setStage] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -122,15 +123,13 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
       setPlot(warm);
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let ticks = 0;
-    const id = window.setInterval(() => {
+    const advanceStep = () => {
       step.current = (step.current + 1) % PATH.length;
       setLine(PATH[step.current]);
       if (step.current !== 0) return;
       const s = sim.current!;
       // Her 14 döngüde bir ayar değişir.
       tick.current++;
-      ticks++;
       s.setC = SETPOINTS[Math.floor(tick.current / 14) % SETPOINTS.length];
       advance(s, params.current, 40);
       simTime.current += 40;
@@ -141,9 +140,17 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
         ...l.slice(-3),
         `[${next.time.toFixed(0).padStart(5)} s] T=${next.T.toFixed(2)} set=${next.set.toFixed(1)} duty=${next.duty.toFixed(2)}`,
       ]);
-      // Hareket azaltılmışsa tek bir dolu durum yeterli.
-      if (reduce && ticks > 30) window.clearInterval(id);
-    }, reduce ? 0 : STEP_MS);
+    };
+    if (reduce) {
+      // Hareket azaltılmışsa tek bir dolu durum yeterli: bir kez, aralıksız
+      // üretilir; sahne yeniden etkinleşince hiçbir şey değişmez.
+      if (!filled.current) {
+        filled.current = true;
+        for (let i = 0; i < PATH.length * 30; i++) advanceStep();
+      }
+      return;
+    }
+    const id = window.setInterval(advanceStep, STEP_MS);
     return () => window.clearInterval(id);
   }, [running, stage]);
 
