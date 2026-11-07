@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { pulseDash } from "@/lib/svgPath";
+import { useMotionBudget } from "@/lib/useMotionBudget";
 
 export type FieldLabels = {
   center: string;
@@ -19,10 +20,11 @@ export type FieldLabels = {
 
 /**
  * Saha katmanının sahnesi: izometrik bir sağlık kuruluşunda üç farklı
- * tıbbi cihaz servis merkezine bağlı; hatlarda telemetri akar. 12 sn'lik
- * döngüde sırayla kurulum, eğitim, kalibrasyon ve yazılım güncellemesi
- * oynar; her cihazın durum kartı ve alttaki zaman çizelgesi buna göre
- * değişir. Temsili: kurulu bir cihaz parkını göstermez.
+ * tıbbi cihaz servis merkezine bağlı; hatlarda telemetri akar. Sırayla
+ * kurulum, eğitim, kalibrasyon ve yazılım güncellemesi (her biri 3 sn);
+ * sahne her etkinleşişinde bir adım oynar ve tamamlandı karesinde durur
+ * (hover sürdükçe devam eder). Her cihazın durum kartı ve alttaki zaman
+ * çizelgesi buna göre değişir. Temsili: kurulu bir cihaz parkını göstermez.
  */
 
 type P = [number, number];
@@ -63,32 +65,46 @@ const CARDS: P[] = [
 ];
 
 const PERIOD = 12;
+const STEP = 3;
+// Bir aşamanın sonu: "tamamlandı" durumunun içinde, sonraki aşamaya geçmeden.
+// Tam aşama sonunda duruyorsa (önceki oturum orada bitti) sonraki aşamanın sonu.
+const phaseEnd = (u: number) => (Math.floor((u + 0.1) / STEP) + 1) * STEP - 0.05;
 
 export function FieldService({ labels, steps, active }: { labels: FieldLabels; steps: string[]; active: boolean }) {
   const host = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  const [t, setT] = useState(0);
+  // Birikmiş süre (sn); döngüdeki konum t = u mod PERIOD.
+  const [u, setU] = useState(0);
+  const uRef = useRef(0);
+  const [held, setHeld] = useState(false);
 
-  useEffect(() => {
-    const el = host.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const running = active && inView;
+  // Oyna, sonra dinlen: her oturumda tek bir servis adımı (kurulum, eğitim,
+  // kalibrasyon, güncelleme) oynar ve "tamamlandı" karesinde durur; hover
+  // sürdükçe sonraki adımlara geçer.
+  const { running, hover } = useMotionBudget(host, active);
+  const moving = running && !held;
 
   useEffect(() => {
     if (!running || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const start = performance.now() - t * 1000;
-    const id = window.setInterval(() => setT(((performance.now() - start) / 1000) % PERIOD), 100);
+    const begin = performance.now();
+    const u0 = uRef.current;
+    let stop = phaseEnd(u0);
+    const id = window.setInterval(() => {
+      let next = u0 + (performance.now() - begin) / 1000;
+      if (hover) stop = Math.max(stop, phaseEnd(next));
+      const done = next >= stop;
+      if (done) {
+        next = stop;
+        window.clearInterval(id);
+      }
+      uRef.current = next;
+      setU(next);
+      setHeld(done);
+    }, 100);
     return () => window.clearInterval(id);
-    // t yalnız kaldığı yerden sürsün diye başlangıçta okunur.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running]);
+  }, [running, hover]);
 
-  const phase = Math.floor(t / 3);
+  const t = u % PERIOD;
+  const phase = Math.floor(t / STEP);
   const p = (t % 3) / 3;
   // Her aşamada çalışan cihaz ve durum metinleri.
   const working = [0, 2, 1, 0][phase];
@@ -129,7 +145,8 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
           {LINKS.map((d, i) => (
             <path key={d} data-draw="" d={d} stroke={i === working ? "var(--color-accent)" : "color-mix(in oklab, var(--color-periwinkle) 45%, transparent)"} strokeWidth="1.8" />
           ))}
-          {LINKS.map((d, i) => (
+          {/* Telemetri yalnız hareket sürerken akar (durunca yarıda donmuş darbe kalmasın). */}
+          {moving && LINKS.map((d, i) => (
             <path
               key={`p${d}`}
               d={d}
@@ -179,13 +196,13 @@ export function FieldService({ labels, steps, active }: { labels: FieldLabels; s
           fill="none"
           stroke="var(--color-accent)"
           strokeWidth="1.5"
-          className="pulse"
+          className={moving ? "pulse" : undefined}
           style={{ animationDuration: "1.4s" }}
         />
 
         {/* Durum ışıkları */}
         {ANCHORS.map((a, i) => (
-          <rect key={i} x={a[0] - 4} y={a[1] - 4} width="8" height="8" fill={i === working ? "var(--color-ink)" : "var(--color-accent)"} className={i === working ? "field-blink" : ""} />
+          <rect key={i} x={a[0] - 4} y={a[1] - 4} width="8" height="8" fill={i === working ? "var(--color-ink)" : "var(--color-accent)"} className={moving && i === working ? "field-blink" : undefined} />
         ))}
 
         {/* Durum kartları */}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { advance, createState, readParams, type WaterBathState } from "@/components/products/simulator/waterBathPhysics";
+import { useMotionBudget } from "@/lib/useMotionBudget";
 
 export type IdeLabels = {
   files: string[];
@@ -20,6 +21,7 @@ export type IdeLabels = {
  * çalışan satır ilerler, izleme panelindeki değişkenler, sıcaklık grafiği
  * ve seri terminal aynı PI modelinden (su banyosu simülatörü) canlı
  * beslenir. Ayar sıcaklığı ara ara değişir; kontrolcünün tepkisi görünür.
+ * Hareket etkinleşince ~5 sn sürer, sonra durur (lib/useMotionBudget).
  * Temsili kod: ürünün gerçek kaynağı değil.
  */
 
@@ -56,6 +58,8 @@ const TONE: Record<Tok[1], string> = {
 };
 
 const PLOT_N = 90;
+// Hata ayıklayıcının adım aralığı: okunabilir, telaşsız.
+const STEP_MS = 320;
 const SETPOINTS = [37, 45, 37, 56];
 
 type Snap = { T: number; set: number; e: number; duty: number; integ: number; time: number };
@@ -65,7 +69,10 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
   const sim = useRef<WaterBathState | null>(null);
   const params = useRef(readParams({ startC: 22, initialSetC: 37, timeScale: 1 }));
   const simTime = useRef(0);
-  const [inView, setInView] = useState(false);
+  // Adım ve döngü sayacı oturumlar arasında korunur: durup yeniden başlayınca
+  // çalışan satır başa sıçramaz.
+  const step = useRef(0);
+  const tick = useRef(0);
   // Açılış: 0 derleniyor, 1 yükleniyor, 2 çalışıyor.
   const [stage, setStage] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -74,15 +81,9 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
   const [plot, setPlot] = useState<{ T: number; set: number }[]>([]);
   const [log, setLog] = useState<string[]>([]);
 
-  useEffect(() => {
-    const el = host.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const running = active && inView;
+  // Oyna, sonra dinlen: etkinleşince ~5 sn derler/yükler ve adım adım
+  // çalışır, sonra o satırda durur. Hover sürdükçe devam eder.
+  const { running } = useMotionBudget(host, active);
 
   // Derleme ve yükleme çubuğu (hareket azaltılmışsa doğrudan çalışır).
   useEffect(() => {
@@ -121,16 +122,16 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
       setPlot(warm);
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let step = 0;
-    let tick = 0;
+    let ticks = 0;
     const id = window.setInterval(() => {
-      step = (step + 1) % PATH.length;
-      setLine(PATH[step]);
-      if (step !== 0) return;
+      step.current = (step.current + 1) % PATH.length;
+      setLine(PATH[step.current]);
+      if (step.current !== 0) return;
       const s = sim.current!;
       // Her 14 döngüde bir ayar değişir.
-      tick++;
-      s.setC = SETPOINTS[Math.floor(tick / 14) % SETPOINTS.length];
+      tick.current++;
+      ticks++;
+      s.setC = SETPOINTS[Math.floor(tick.current / 14) % SETPOINTS.length];
       advance(s, params.current, 40);
       simTime.current += 40;
       const next: Snap = { T: s.Ts, set: s.setC, e: s.setC - s.Ts, duty: s.duty, integ: s.integral, time: simTime.current };
@@ -141,8 +142,8 @@ export function FirmwareIde({ labels, active }: { labels: IdeLabels; active: boo
         `[${next.time.toFixed(0).padStart(5)} s] T=${next.T.toFixed(2)} set=${next.set.toFixed(1)} duty=${next.duty.toFixed(2)}`,
       ]);
       // Hareket azaltılmışsa tek bir dolu durum yeterli.
-      if (reduce && tick > 30) window.clearInterval(id);
-    }, reduce ? 0 : 160);
+      if (reduce && ticks > 30) window.clearInterval(id);
+    }, reduce ? 0 : STEP_MS);
     return () => window.clearInterval(id);
   }, [running, stage]);
 

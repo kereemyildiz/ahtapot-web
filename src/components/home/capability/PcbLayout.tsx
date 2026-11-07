@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { pulseDash } from "@/lib/svgPath";
+import { useMotionBudget } from "@/lib/useMotionBudget";
 
 export type PcbLabels = {
   layers: string;
@@ -17,7 +18,8 @@ export type PcbLabels = {
  * Elektronik katmanın sahnesi: bir kart tasarım aracı. İki bakır katman,
  * bileşen ayak izleri, 45° kırılan izler, vialar, alt katmanda toprak
  * dolgusu ve uzunluğu eşlenmiş bir diferansiyel çift. Netler sırayla
- * vurgulanır, üzerlerinden sinyal geçer; kural denetimi kartı tarar.
+ * vurgulanır, üzerlerinden sinyal geçer; kural denetimi kartı bir kez tarar.
+ * Hareket etkinleşince ~5 sn sürer, sonra durur (lib/useMotionBudget).
  * İzler sahne etkin olunca kendini çizer (yönlendirme). Temsili bir kart.
  */
 
@@ -160,22 +162,20 @@ const PULSES = NETS.map((n) => n.paths.map((d) => ({ d, ...pulseDash(d, 0.12) })
 
 export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boolean }) {
   const host = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
   const [net, setNet] = useState(0);
-  // Kural denetimi her turun başında yeniden çalışır, sonra temiz biter.
-  const drcDone = net !== 0;
+  // Oyna, sonra dinlen: etkinleşince ~5 sn netler vurgulanır, kural denetimi
+  // kartı bir kez tarar; sonra son karede durur. Hover sürdükçe devam eder.
+  const { running } = useMotionBudget(host, active);
+  // Kural denetimi her oturumun başında bir kez çalışır, sonra temiz biter.
+  // Oturum sayacı taramayı yeniden başlatır (key).
+  const [scan, setScan] = useState({ n: 0, done: false });
+  const [wasRunning, setWasRunning] = useState(running);
+  if (running !== wasRunning) {
+    setWasRunning(running);
+    if (running) setScan((s) => ({ n: s.n + 1, done: false }));
+  }
 
-  useEffect(() => {
-    const el = host.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const running = active && inView;
-
-  // Netleri sırayla vurgula; her tam turda kural denetimi tamamlanır.
+  // Netleri sırayla vurgula.
   useEffect(() => {
     if (!running || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = window.setInterval(() => setNet((n) => (n + 1) % NETS.length), 2400);
@@ -276,12 +276,15 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
                 ))}
               </g>
             ))}
-            {/* Etkin netten geçen sinyal */}
-            <g fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round">
-              {PULSES[net].map((p) => (
-                <path key={p.d} d={p.d} strokeDasharray={p.strokeDasharray} className="pulse" style={{ ...p.style, animationDuration: "1.2s" }} />
-              ))}
-            </g>
+            {/* Etkin netten geçen sinyal: yalnız hareket sürerken (durunca yarıda
+                donmuş bir darbe kalmasın). */}
+            {running && (
+              <g fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round">
+                {PULSES[net].map((p) => (
+                  <path key={p.d} d={p.d} strokeDasharray={p.strokeDasharray} className="pulse" style={{ ...p.style, animationDuration: "1.2s" }} />
+                ))}
+              </g>
+            )}
 
             {/* Vialar */}
             {VIAS.map(([x, y]) => (
@@ -291,8 +294,19 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
               </g>
             ))}
 
-            {/* Kural denetimi taraması */}
-            <rect className="pcb-drc" x="40" y="40" width="3" height="350" fill="var(--color-accent)" opacity="0.6" />
+            {/* Kural denetimi taraması: oturum başına tek geçiş. */}
+            {scan.n > 0 && !scan.done && (
+              <rect
+                key={scan.n}
+                className="pcb-drc"
+                x="40"
+                y="40"
+                width="3"
+                height="350"
+                fill="var(--color-accent)"
+                onAnimationEnd={() => setScan((s) => ({ ...s, done: true }))}
+              />
+            )}
           </svg>
         </div>
       </div>
@@ -302,7 +316,7 @@ export function PcbLayout({ labels, active }: { labels: PcbLabels; active: boole
           {labels.net}: <span className="text-accent">{labels.nets[net]}</span>
         </span>
         <span className="hidden truncate sm:inline">{labels.board}</span>
-        <span className={drcDone ? "text-ink" : ""}>{drcDone ? labels.drc : labels.drcRunning}</span>
+        <span className={scan.done ? "text-ink" : ""}>{scan.done ? labels.drc : labels.drcRunning}</span>
       </div>
     </div>
   );

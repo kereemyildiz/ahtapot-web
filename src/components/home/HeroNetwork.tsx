@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsapSetup";
+import { useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { gsap, useGSAP } from "@/lib/gsapSetup";
 import { LOGO_BLUES, LOGO_PATHS } from "@/components/brand/LogoMark";
 import type { ProductLayer } from "@/content/constants";
 import { drawDash, pulseDash } from "@/lib/svgPath";
@@ -11,8 +11,9 @@ import { useLenisContext } from "@/components/providers/LenisContext";
 /**
  * Hero görseli: logodaki ahtapot işareti ve dört kolu. Kollar logonun kendi
  * meander çizgisinin devamı; her biri bir disipline (mekanik, elektronik,
- * gömülü yazılım, uygulama) uzanır. Kollarda sinyal akar, modüller sırayla
- * yanar: tek beyin, dört kol, tek ekip.
+ * gömülü yazılım, uygulama) uzanır. Giriş çizimi bir kez oynar, sonra sahne
+ * sessizdir; bir modülün üstüne gelince (ya da odaklanınca) o kolda sinyal
+ * akar ve modülün mini çizimi çalışır: hareket tepki olarak gelir.
  */
 
 type Node = {
@@ -133,10 +134,8 @@ function ModuleArt({ layer }: { layer: ProductLayer }) {
 
 export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) {
   const root = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-  const [hovered, setHovered] = useState<number | null>(null);
-  const [cycling, setCycling] = useState(false);
-  const current = hovered ?? active;
+  // Boşta hiçbir modül etkin değil: hareket yalnız hover/odakta (tepki olarak) gelir.
+  const [current, setHovered] = useState<number | null>(null);
   useOffscreenPause(root);
 
   const replay = useRef<(() => void) | null>(null);
@@ -175,18 +174,18 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const tl = gsap.timeline({ delay: 0.2, onComplete: () => setCycling(true) });
+        const tl = gsap.timeline({ delay: 0.2 });
         tl.from("[data-logo-path]", { drawSVG: "0%", duration: 0.9, stagger: 0.14, ease: "power2.inOut" })
           .from("[data-arm]", { drawSVG: "0%", duration: 0.8, stagger: 0.1, ease: "power2.inOut" }, "-=0.3")
           .from("[data-module]", { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.08, ease: "expo.out" }, "-=0.4")
           .from("[data-node-label]", { autoAlpha: 0, y: 8, duration: 0.4, stagger: 0.06 }, "-=0.3");
 
-        // Giriş yalnız ilk açılışta değil: hero'ya geri dönülünce ve logonun
-        // başına gelinince yeniden çizilir (oynarken baştan başlatılmaz).
+        // Giriş sayfa açılınca bir kez çizilir; hero'ya geri dönünce kendiliğinden
+        // oynamaz (oyna, sonra dinlen). Yalnız logonun başına gelinince, yani
+        // ziyaretçinin eylemiyle yeniden çizilir (oynarken baştan başlatılmaz).
         replay.current = () => {
           if (!tl.isActive()) tl.restart(true);
         };
-        ScrollTrigger.create({ trigger: root.current, start: "top bottom", end: "bottom top", onEnterBack: () => replay.current?.() });
         return () => {
           replay.current = null;
         };
@@ -195,13 +194,6 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
     },
     { scope: root }
   );
-
-  // Modüller sırayla yanar; imleç bir modülün üstündeyken döngü durur.
-  useEffect(() => {
-    if (!cycling || hovered !== null) return;
-    const id = window.setInterval(() => setActive((i) => (i + 1) % nodes.length), 2400);
-    return () => window.clearInterval(id);
-  }, [cycling, hovered, nodes.length]);
 
   // İmleç ışığı: React'i yeniden çizdirmeden CSS değişkeni olarak taşınır.
   // Değişkenler yalnız ışık katmanına yazılır; köke yazılsa her harekette
@@ -237,7 +229,7 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
           </linearGradient>
         </defs>
 
-        {/* Kollar: sabit iz + üstünde akan sinyal. */}
+        {/* Kollar: durağan iz; sinyal yalnız hover/odaktaki kolda akar. */}
         {nodes.map((n, i) => {
           const m = MODULES[n.layer];
           const on = i === current;
@@ -245,15 +237,17 @@ export function HeroNetwork({ label, nodes }: { label: string; nodes: Node[] }) 
           return (
             <g key={`arm-${n.layer}`}>
               <path data-arm="" d={m.arm} fill="none" strokeWidth="6" strokeLinecap="square" style={{ stroke: on ? LOGO_BLUES.light : "var(--color-wire)", transition: "stroke 400ms ease" }} />
-              <path
-                d={m.arm}
-                fill="none"
-                stroke={on ? "var(--color-accent)" : LOGO_BLUES.light}
-                strokeWidth={on ? 6 : 4}
-                strokeDasharray={armPulse.strokeDasharray}
-                className="pulse"
-                style={{ ...armPulse.style, animationDuration: on ? "1.4s" : "2.8s", animationDelay: `${i * -0.6}s`, opacity: on ? 1 : 0.55 }}
-              />
+              {on && (
+                <path
+                  d={m.arm}
+                  fill="none"
+                  stroke="var(--color-accent)"
+                  strokeWidth="6"
+                  strokeDasharray={armPulse.strokeDasharray}
+                  className="pulse"
+                  style={{ ...armPulse.style, animationDuration: "2.2s" }}
+                />
+              )}
               {/* Tıklanınca logodan modüle akan sinyal (goTo). */}
               <path data-arm-burst={i} d={m.arm} fill="none" stroke="var(--color-accent)" strokeWidth="9" strokeLinecap="square" visibility="hidden" />
             </g>
