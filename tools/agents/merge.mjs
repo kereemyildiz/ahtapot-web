@@ -13,7 +13,7 @@
 //      doğrulanan ağacın ta kendisi olur; "ayrı ayrı geçti, birlikte bozuldu" olmaz.
 //      Değilse worktree'de: git rebase develop → verify.mjs → tekrar.
 import path from "node:path";
-import { BASE_BRANCH, fail, findWorktree, git, isDirty, mainRoot, parseArgs, readVerify, run } from "./lib.mjs";
+import { BASE_BRANCH, fail, findWorktree, git, isDirty, listWorktrees, mainRoot, parseArgs, readVerify, run } from "./lib.mjs";
 
 const { flags, pos } = parseArgs(process.argv.slice(2));
 const log = (s) => process.stdout.write(`${s}\n`);
@@ -89,4 +89,20 @@ if (!flags.keep) {
   const res = await run("node", [path.join(root, "tools/agents/wt-remove.mjs"), wt.path], { cwd: root });
   process.stdout.write(res.out);
   if (res.code !== 0) log("• Worktree silinemedi; elle: node tools/agents/wt-remove.mjs " + branch);
+}
+
+// Geride kalan açık işler: develop ilerledi, onlar rebase etmeli. Erken rebase = küçük çakışma.
+// Orkestratör bu listeyi ilgili worker'lara iletir.
+const behind = listWorktrees(root)
+  .filter((w) => !w.main && w.branch && w.branch !== branch)
+  .map((w) => {
+    const n = Number(git(["rev-list", "--count", `${w.branch}..${BASE_BRANCH}`], { cwd: root }));
+    const clean = git(["merge-tree", "--write-tree", "--no-messages", BASE_BRANCH, w.branch], { cwd: root, allowFail: true }) !== null;
+    return { branch: w.branch, n, clean };
+  })
+  .filter((r) => r.n > 0);
+if (behind.length) {
+  log("");
+  log(`Geride kalan açık işler (worktree'lerinde git rebase ${BASE_BRANCH} + verify):`);
+  for (const r of behind) log(`  ${r.clean ? "•" : "✗"} ${r.branch}: ${r.n} commit geride${r.clean ? "" : " — ÇAKIŞMA var, worker çözmeli"}`);
 }

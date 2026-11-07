@@ -12,8 +12,20 @@ deterministik adımlarıdır: model *ne* yapılacağına karar verir, *nasıl* y
 | `wt-new.mjs <ad>` | herhangi bir yerde | `ahtapot-web.worktrees/<ad>` worktree'sini `develop`'tan açar, dal `feature/<ad>` (`fix-…` ile başlarsa `fix/<ad>`), `.worktreeinclude` dosyalarını kopyalar, `pnpm install` |
 | `verify.mjs [--quick]` | worktree içinde | lint → typecheck → test → build; sonucu commit SHA'sıyla kaydeder |
 | `status.mjs [--json]` | herhangi bir yerde | açık worktree'ler: develop'a göre önde/geride, kirli mi, son commit, doğrulama, merge'e hazır mı |
-| `merge.mjs <ad> [--yes] [--push] [--keep]` | ana checkout | kapıları denetler, planı gösterir; `--yes` ile `--no-ff` birleştirir, worktree'yi ve dalı siler |
+| `merge.mjs <ad> [--yes] [--push] [--keep]` | ana checkout | kapıları denetler, planı gösterir; `--yes` ile `--no-ff` birleştirir, worktree'yi ve dalı siler, geride kalan açık işleri (ve çakışacak olanları) listeler |
 | `wt-remove.mjs <ad> [--force]` | ana checkout | worktree'yi siler; dal yalnız `develop`'a girmişse silinir |
+| `conflicts.mjs [--files a,b] [--verbose]` | herhangi bir yerde | conflict radarı: açık dalların develop'la ve birbirleriyle çakışıp çakışmayacağını `git merge-tree` ile önceden hesaplar; `--files` ile henüz başlamamış bir işin dosyalarını açık işlerle karşılaştırır |
+
+## Roller
+
+| Rol | Ne | Tanım |
+|---|---|---|
+| Orkestratör | Kullanıcının konuştuğu oturum; dağıtır, izler, doğrular, onayla birleştirir | `.claude/skills/orchestrate/SKILL.md` |
+| `worker` | Dosya değiştiren iş; kendi worktree'sinde, sabit rapor biçimiyle | `.claude/agents/worker.md` |
+| `auditor` | Salt okunur denetim/araştırma; dosya değiştiremez, bulgu + uygulama planı yazar | `.claude/agents/auditor.md` |
+
+Kural ve süreç metni CLAUDE.md'de değil skill ve agent dosyalarında: yalnız gerektiğinde yüklenir,
+her oturum her açılışta token olarak ödemez.
 
 `wt-new.mjs --hook` ve `wt-remove.mjs --hook`, Claude Code'un `WorktreeCreate` / `WorktreeRemove`
 hook'larıdır (aşağıda). Böylece subagent izolasyonu (`isolation: worktree`), `claude --worktree`,
