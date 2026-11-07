@@ -78,7 +78,7 @@
       },
       "elektronik": {
         "title": "Electronics design",
-        "sentence": "Our boards are drawn for the exact space they occupy inside the enclosure.",
+        "sentence": "Our boards are drawn for the space they occupy inside the enclosure.",
         "deliverables": [
           "Schematic design",
           "PCB layout",
@@ -89,7 +89,7 @@
       },
       "gomulu": {
         "title": "Firmware",
-        "sentence": "If a sensor fails, our control code puts the device into a safe state.",
+        "sentence": "We write the code that runs on the device's processor, including what it does when a sensor reports something unexpected.",
         "deliverables": [
           "Control algorithms",
           "Hardware drivers",
@@ -100,7 +100,7 @@
       },
       "uygulama": {
         "title": "Application software",
-        "sentence": "The people who will use a screen every day help us design it.",
+        "sentence": "We design each screen together with the people who will use it.",
         "deliverables": [
           "Device interface",
           "Web application",
@@ -111,7 +111,7 @@
       },
       "saha": {
         "title": "Field support",
-        "sentence": "We install the device on site and show the people who will use it how it works. In the years that follow, we handle its maintenance and software updates.",
+        "sentence": "We install the device on site and show the people who will use it how it works. Maintenance and software updates come from us as well.",
         "deliverables": [
           "Installation",
           "Training",
@@ -525,12 +525,12 @@
     ],
     "pillars": [
       {
-        "title": "A shorter wait for parts",
-        "text": "With design and production here, a broken part seldom has to come from abroad."
+        "title": "Designed and built in Türkiye",
+        "text": "Because the device is designed and built here, spare parts and repairs depend less on suppliers abroad."
       },
       {
         "title": "Designed for where it is used",
-        "text": "Before we draw anything, we work out where the device will stand and whose hands it will be in. The SB-9K reservoir is matte black so that a translucent section shows up on the bench."
+        "text": "Before we draw anything, we work out where the device will stand and whose hands it will be in. The SB-9K reservoir is matte black so that a translucent section shows up on the water."
       },
       {
         "title": "The designers maintain it",
@@ -547,7 +547,7 @@
   "contact": {
     "heading": "Contact",
     "promptLine1": "Product information, demos, distribution or partnerships.",
-    "promptLine2": "We reply to every request within two working days.",
+    "promptLine2": "We reply within two working days.",
     "next": "Your message comes straight to our team by email. We do not keep it in a database.",
     "detailsHeading": "Contact details",
     "addressLabel": "Address",

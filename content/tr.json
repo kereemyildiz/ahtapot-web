@@ -89,7 +89,7 @@
       },
       "gomulu": {
         "title": "Gömülü yazılım",
-        "sentence": "Yazdığımız kontrol kodu, bir sensör arızalandığında cihazı güvenli bir duruma getirir.",
+        "sentence": "Cihazın işlemcisinde çalışan kodu biz yazıyoruz. Bir sensör beklenmedik bir değer verdiğinde ne olacağına da bu kodda karar veriyoruz.",
         "deliverables": [
           "Kontrol algoritmaları",
           "Donanım sürücüleri",
@@ -100,7 +100,7 @@
       },
       "uygulama": {
         "title": "Uygulama yazılımı",
-        "sentence": "Ekranları, onları her gün kullanacak kişiyle birlikte tasarlıyoruz.",
+        "sentence": "Ekranları, onları kullanacak kişiyle birlikte tasarlıyoruz.",
         "deliverables": [
           "Cihaz arayüzü",
           "Web uygulaması",
@@ -111,7 +111,7 @@
       },
       "saha": {
         "title": "Saha desteği",
-        "sentence": "Cihazı yerinde kuruyor ve kullanacak kişilere tanıtıyoruz. Sonraki yıllarda bakımını ve yazılım güncellemelerini de biz yapıyoruz.",
+        "sentence": "Cihazı yerinde kuruyor ve kullanacak kişilere tanıtıyoruz. Bakımını ve yazılım güncellemelerini de biz yapıyoruz.",
         "deliverables": [
           "Kurulum",
           "Eğitim",
@@ -507,7 +507,7 @@
   },
   "about": {
     "heading": "Hakkımızda",
-    "lead": "Ahtapot Tıbbi Teknolojiler'i bir hekim kurdu. Şirketin işi, hastanelerin ve laboratuvarların bugün yurt dışından aldığı tıbbi cihazları Türkiye'de tasarlayıp üretmek.",
+    "lead": "Ahtapot Tıbbi Teknolojiler'i bir hekim kurdu. Amacı, hastanelerin ve laboratuvarların bugün yurt dışından aldığı tıbbi cihazları Türkiye'de tasarlayıp üretmek.",
     "body": "Cihazlarımızı kendimiz geliştirdiğimiz için çizimleri de kaynak kodu da bizde. Bir parçayı değiştirmek ya da güncelleme çıkarmak için başka bir firmayı beklemiyoruz.",
     "facts": [
       {
@@ -525,12 +525,12 @@
     ],
     "pillars": [
       {
-        "title": "Yedek parçada kısa yol",
-        "text": "Cihazın tasarımı ve üretimi burada olduğu için bozulan bir parçayı çoğu zaman yurt dışından beklemeniz gerekmez."
+        "title": "Yerli tasarım ve üretim",
+        "text": "Cihaz burada tasarlanıp üretildiği için yedek parça ve bakımda yurt dışına daha az bağımlı kalırsınız."
       },
       {
         "title": "Kullanılacağı yere göre",
-        "text": "Çizime başlamadan önce cihazın nerede ve kimin elinde çalışacağını belirliyoruz. SB-9K'nın haznesi, yarı saydam kesit tezgâhta görünsün diye mat siyah."
+        "text": "Çizime başlamadan önce cihazın nerede ve kimin elinde çalışacağını belirliyoruz. SB-9K'nın haznesi, yarı saydam kesit suyun üstünde görünsün diye mat siyah."
       },
       {
         "title": "Tasarlayan, bakımını da yapar",
