@@ -3,7 +3,7 @@
 // Orkestratörün "kim ne durumda" bilgisi buradan gelir, hafızadan değil.
 //
 //   node tools/agents/status.mjs [--json]
-import { BASE_BRANCH, git, isDirty, listWorktrees, mainRoot, parseArgs, readVerify } from "./lib.mjs";
+import { BASE_BRANCH, git, isDirty, listWorktrees, mainRoot, parseArgs, readBriefTitle, readVerify } from "./lib.mjs";
 
 const { flags } = parseArgs(process.argv.slice(2));
 const root = mainRoot();
@@ -32,6 +32,7 @@ const rows = all
       dirty: isDirty(w.path),
       last: git(["log", "-1", "--format=%h %s (%cr)", w.branch], { cwd: root }),
       verify,
+      title: readBriefTitle(w.branch, root),
       mergeReady: ahead > 0 && behind === 0 && v?.ok && v.full && v.sha === w.head,
     };
   });
@@ -48,6 +49,7 @@ if (!rows.length) out.push("Açık worktree yok.");
 for (const r of rows) {
   out.push("");
   out.push(`${r.mergeReady ? "●" : "○"} ${r.branch ?? "(dalsız)"}${r.mergeReady ? "  — merge'e hazır" : ""}`);
+  if (r.title) out.push(`    görev: ${r.title}`);
   out.push(`    ${r.path}`);
   if (r.note) {
     out.push(`    ${r.note}`);

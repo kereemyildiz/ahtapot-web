@@ -15,14 +15,25 @@ deterministik adımlarıdır: model *ne* yapılacağına karar verir, *nasıl* y
 | `merge.mjs <ad> [--yes] [--push] [--keep]` | ana checkout | kapıları denetler, planı gösterir; `--yes` ile `--no-ff` birleştirir, worktree'yi ve dalı siler, geride kalan açık işleri (ve çakışacak olanları) listeler |
 | `wt-remove.mjs <ad> [--force]` | ana checkout | worktree'yi siler; dal yalnız `develop`'a girmişse silinir |
 | `conflicts.mjs [--files a,b] [--verbose]` | herhangi bir yerde | conflict radarı: açık dalların develop'la ve birbirleriyle çakışıp çakışmayacağını `git merge-tree` ile önceden hesaplar; `--files` ile henüz başlamamış bir işin dosyalarını açık işlerle karşılaştırır |
+| `brief.mjs <ad> [--file f \| --show]` | herhangi bir yerde | görev tanımını ortak git klasörüne (`.git/agents/<ad>/brief.md`) yazar/okur; `status.mjs` "Görev:" satırını gösterir |
+| `review-package.mjs <ad>` | herhangi bir yerde | dalın commit'leri, değişen dosyaları ve diff'ini tek dosyaya yazar; reviewer okur, diff orkestratörün bağlamına girmez |
 
 ## Roller
 
 | Rol | Ne | Tanım |
 |---|---|---|
-| Orkestratör | Kullanıcının konuştuğu oturum; dağıtır, izler, doğrular, onayla birleştirir | `.claude/skills/orchestrate/SKILL.md` |
+| Orkestratör | Kullanıcının konuştuğu oturum; dağıtır, izler, inceletir, onayla birleştirir | `.claude/skills/orchestrate/SKILL.md` |
 | `worker` | Dosya değiştiren iş; kendi worktree'sinde, sabit rapor biçimiyle | `.claude/agents/worker.md` |
 | `auditor` | Salt okunur denetim/araştırma; dosya değiştiremez, bulgu + uygulama planı yazar | `.claude/agents/auditor.md` |
+| `reviewer` | Worker sonucunun bağımsız incelemesi; raporu iddia sayar, şartname + CLAUDE.md denetler, ✅/⚠️/❌ | `.claude/agents/reviewer.md` |
+
+**Dışarıdan alınanlar** (araştırma: 2026-11-08): bağımsız inceleme ajanı ve "raporu doğrulanmamış iddia
+say" ilkesi superpowers'ın subagent-driven-development'ından; görev tanımını diske yazmak Beads'in ve
+firstmate'in "durum diskte" ilkesinden (veritabanı olmadan); scout/ship ayrımı (auditor/worker)
+firstmate ve Simon Willison'dan; doğrulanmış ağacın birleşmesi Gas Town Refinery'nin merge kuyruğu
+ilkesinden. Bilinçli olarak alınmayanlar: Gas Town/Beads (tmux/WSL, 20-30 ajan ölçeği, ikinci durum
+deposu), agent teams (worktree izolasyonu yok), tmux/macOS isteyen TUI/masaüstü araçlar, konteyner
+izolasyonu.
 
 Kural ve süreç metni CLAUDE.md'de değil skill ve agent dosyalarında: yalnız gerektiğinde yüklenir,
 her oturum her açılışta token olarak ödemez.

@@ -107,6 +107,27 @@ export function readVerify(worktreePath) {
   }
 }
 
+/** Bir işin kalıcı dosyaları (görev tanımı, inceleme paketi): ana repo'nun ortak git klasöründe
+ *  `agents/<anahtar>/`. Repo'ya girmez, worktree silinse de kalır; orkestratör sıkıştırılsa ya
+ *  da kapansa da görev tanımı kaybolmaz. Anahtar dal adının son parçası (feature/x → x). */
+export function taskKey(branchOrName) {
+  return branchOrName.replace(/\\/g, "/").split("/").pop();
+}
+export function taskDir(branchOrName, { root = mainRoot(), create = true } = {}) {
+  const common = path.resolve(root, git(["rev-parse", "--git-common-dir"], { cwd: root }));
+  const dir = path.join(common, "agents", taskKey(branchOrName));
+  if (create) fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+export function readBriefTitle(branchOrName, root = mainRoot()) {
+  try {
+    const text = fs.readFileSync(path.join(taskDir(branchOrName, { root, create: false }), "brief.md"), "utf8");
+    return text.match(/^Görev:\s*(.+)$/m)?.[1]?.trim() ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function isDirty(cwd) {
   return git(["status", "--porcelain"], { cwd }) !== "";
 }
@@ -130,7 +151,7 @@ export function run(cmd, args, { cwd = process.cwd(), echo = false, stream = pro
 }
 
 /** Değer alan bayraklar (`--base develop` gibi boşlukla da yazılabilir); diğerleri açık/kapalı. */
-const VALUE_FLAGS = ["base", "files"];
+const VALUE_FLAGS = ["base", "files", "file"];
 
 export function parseArgs(argv) {
   const flags = {};
