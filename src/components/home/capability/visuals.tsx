@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef } from "react";
+import { useMotionBudget } from "@/lib/useMotionBudget";
 import type { LayerId } from "@/content/constants";
 import type { MediaImage } from "@/content/schema";
 import dynamic from "next/dynamic";
@@ -23,18 +27,58 @@ const FieldService = dynamic(() => import("./FieldService").then((m) => m.FieldS
  * değil (açıklama satırında yazar).
  */
 
+// Pencerelerin tek turu (sn); globals.css → .screen-card ile aynı.
+const TOUR_S = 5;
+
 /**
  * Birden çok ekran görüntüsü: üst üste duran pencereler sırayla öne gelir
  * (globals.css → .screen-card). Görüntüler kırpılmaz, kendi oranlarında.
+ * Oyna, sonra dinlen: sahne her etkinleşişinde tek tur döner ve ilk dizilişte
+ * durur. Her pencere turun kendi evresinden başlar (negatif gecikme) ve
+ * 1 + i/n tur çalışır; böylece hepsi aynı anda, başladıkları yerde biter.
  */
-function ScreenStack({ images, alt }: { images: MediaImage[]; alt: string }) {
+function ScreenStack({ images, alt, active }: { images: MediaImage[]; alt: string; active: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { running } = useMotionBudget(ref, active);
+
+  // CSS animasyonu duraklatılmış başlar; tur Web Animations ile baştan oynatılır.
+  // running sürdükçe (hover) bir tur bitince yenisi başlar; running bitince
+  // son karede kalır.
+  useEffect(() => {
+    if (!running) return;
+    const cards = ref.current ? Array.from(ref.current.querySelectorAll<HTMLElement>(".screen-card")) : [];
+    const anims = cards.flatMap((card) => card.getAnimations());
+    // Hareket azaltılmışsa animasyon yok (liste boş): döngüye hiç girilmez.
+    if (!anims.length) return;
+    let alive = true;
+    const play = () => {
+      anims.forEach((a) => {
+        a.currentTime = 0;
+        a.play();
+      });
+      Promise.all(anims.map((a) => a.finished))
+        .then(() => alive && play())
+        .catch(() => {});
+    };
+    play();
+    return () => {
+      // Süren tur biter ve son karede kalır; yeni tur başlamaz.
+      alive = false;
+    };
+  }, [running]);
+
+  const n = images.length;
   return (
-    <div className="absolute inset-0" role="img" aria-label={alt}>
+    <div ref={ref} className="absolute inset-0" role="img" aria-label={alt}>
       {images.map((img, i) => (
         <div
           key={img.src}
           className="screen-card absolute left-1/2 top-[46%] w-[84%] -translate-x-1/2 -translate-y-1/2 shadow-[0_24px_60px_var(--window-shadow)] ring-1 ring-periwinkle/25"
-          style={{ aspectRatio: `${img.width} / ${img.height}`, animationDelay: `${-i * 3}s` }}
+          style={{
+            aspectRatio: `${img.width} / ${img.height}`,
+            animationDelay: `${(-i * TOUR_S) / n}s`,
+            animationIterationCount: 1 + i / n,
+          }}
         >
           <Image src={img.src} alt="" fill sizes="(min-width: 1024px) 46vw, 84vw" className="object-cover" />
         </div>
@@ -94,7 +138,7 @@ export function LayerVisual({
       {item.images.length > 1 ? (
         <>
           <div aria-hidden="true" className="hero-glow absolute inset-0" />
-          <ScreenStack images={item.images} alt={item.alt} />
+          <ScreenStack images={item.images} alt={item.alt} active={active} />
         </>
       ) : first ? (
         <div className="photo-duo absolute inset-0 [--duo-bright:0.36]">

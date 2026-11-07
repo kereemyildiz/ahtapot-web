@@ -343,7 +343,8 @@ html.lenis body {
   background: radial-gradient(42% 36% at 50% 30%, rgb(62 82 224 / 0.22), transparent 100%);
 }
 
-/* Hero modülleri: yalnız etkin modülün mini çizimi çalışır. */
+/* Hero modülleri: yalnız hover/odaktaki modülün (.mod-on) mini çizimi
+   çalışır; boşta hiçbir modül etkin değil (HeroNetwork). */
 .mod-explode-top,
 .mod-explode-bottom {
   transition: transform 400ms var(--ease-out-expo);
@@ -412,26 +413,28 @@ html.lenis body {
 }
 
 /* Uygulama: üst üste ekran görüntüleri sırayla öne gelir (cqw: sahnenin
-   genişliği, LayerVisual @container). Arkadaki silik, öndeki tam. */
+   genişliği, LayerVisual @container). Arkadaki silik, öndeki tam. Tek tur
+   (5 sn, visuals.tsx → TOUR_S); duraklatılmış başlar, sahne etkinleşince
+   ScreenStack Web Animations ile oynatır. Gecikme ve tur sayısı satır içinde. */
 .screen-card {
-  animation: screen-cycle 9s var(--ease-out-expo) infinite;
+  animation: screen-cycle 5s var(--ease-out-expo) both paused;
 }
 @keyframes screen-cycle {
   0%,
-  28%,
+  25%,
   100% {
     transform: translate(5cqw, 17cqw) scale(1);
     opacity: 1;
     z-index: 3;
   }
   33%,
-  61% {
+  58% {
     transform: translate(-6cqw, -17cqw) scale(0.86);
     opacity: 0.45;
     z-index: 1;
   }
   66%,
-  94% {
+  91% {
     transform: translate(-1cqw, 0) scale(0.93);
     opacity: 0.75;
     z-index: 2;
@@ -456,26 +459,32 @@ html.lenis body {
   }
 }
 
-/* Saha: çalışan cihazın ışığı yanıp söner. */
+/* Saha: çalışan cihazın ışığı yumuşakça nefes alır (sert yanıp sönme yok);
+   yalnız hareket sürerken (FieldService → moving). */
 .field-blink {
-  animation: blink-led 0.9s steps(1) infinite;
+  animation: blink-led 2.4s ease-in-out infinite;
 }
 @keyframes blink-led {
   50% {
-    opacity: 0.2;
+    opacity: 0.6;
   }
 }
 
-/* PCB: kural denetimi kartı soldan sağa tarar. */
+/* PCB: kural denetimi kartı soldan sağa bir kez tarar, sonda söner. */
 .pcb-drc {
-  animation: pcb-drc 6s linear infinite;
+  opacity: 0.6;
+  animation: pcb-drc 3s linear 1 both;
 }
 @keyframes pcb-drc {
   from {
     transform: translateX(0);
   }
+  90% {
+    opacity: 0.6;
+  }
   to {
     transform: translateX(497px);
+    opacity: 0;
   }
 }
 

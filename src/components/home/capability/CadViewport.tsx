@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useMotionBudget } from "@/lib/useMotionBudget";
 
 export type CadLabels = { tree: string; parts: string[]; commands: string[]; units: string; view: string };
 
@@ -12,7 +13,7 @@ export type CadLabels = { tree: string; parts: string[]; commands: string[]; uni
  * ağacında ilgili parça yanar. Temsili bir gövde: belirli bir ürün değil.
  *
  * Kareler React'i yeniden çizdirmeden SVG yollarına yazılır; döngü yalnız
- * sahne etkin ve görünürken çalışır.
+ * sahne etkin ve görünürken, en çok ~5 sn çalışır (lib/useMotionBudget).
  */
 
 type V3 = [number, number, number];
@@ -130,6 +131,10 @@ const VB_H = 430;
 const PITCH = 0.48;
 const DIST = 900;
 const SCALE = 1.42;
+// Dönüş hızı (rad/sn) ve kesit taraması (gecikme, süre; sn).
+const SPIN = 0.08;
+const SWEEP_DELAY = 0.3;
+const SWEEP = 3.6;
 
 function makeProjector(yaw: number) {
   const cy = Math.cos(yaw);
@@ -181,18 +186,15 @@ export function CadViewport({ labels, active }: { labels: CadLabels; active: boo
   const section = useRef<SVGPathElement>(null);
   const sectionFrame = useRef<SVGPathElement>(null);
   const coords = useRef<HTMLSpanElement>(null);
-  const [inView, setInView] = useState(false);
   const [cmd, setCmd] = useState({ i: 0, chars: 0 });
-
-  useEffect(() => {
-    const el = host.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const running = active && inView;
+  // Oyna, sonra dinlen: etkinleşince ~5 sn döner, kesit bir kez tarar, bir
+  // komut yazılır; sonra son karede durur. Hover sürdükçe devam eder.
+  const { running, hover } = useMotionBudget(host, active);
+  // Dönüş açısı oturumlar arasında birikir: durup yeniden başlayınca model
+  // ilk açısına sıçramaz.
+  const elapsed = useRef(0);
+  // Bu oturumda henüz komut yazılmadı mı (oturum başına bir komut).
+  const fresh = useRef(false);
 
   // Çizim döngüsü (~30 fps).
   useEffect(() => {
@@ -200,10 +202,11 @@ export function CadViewport({ labels, active }: { labels: CadLabels; active: boo
     let raf = 0;
     let last = 0;
     const start = performance.now();
-    const draw = (now: number) => {
-      const t = (now - start) / 1000;
+    const base = elapsed.current;
+    /** t: toplam dönüş süresi; sweep: oturum başından beri geçen süre (null: kesit gizli). */
+    const draw = (t: number, sweep: number | null) => {
       // Ön panel kameraya dönük başlar, sonra yavaşça döner.
-      const yaw = Math.PI - 0.62 + (reduce ? 0 : t * 0.2);
+      const yaw = Math.PI - 0.62 + (reduce ? 0 : t * SPIN);
       const { project, facing } = makeProjector(yaw);
       let vis = "";
       let hid = "";
@@ -234,15 +237,15 @@ export function CadViewport({ labels, active }: { labels: CadLabels; active: boo
       details.current?.setAttribute("d", det);
       dims.current?.setAttribute("d", dimPath);
 
-      // Kesit düzlemi: 10 sn'lik döngünün ilk 6 sn'sinde gövdeyi tarar.
-      const phase = (t % 10) / 6;
-      if (!reduce && phase <= 1) {
+      // Kesit düzlemi: oturum başında gövdeyi bir kez tarar, sonra gizlenir.
+      const phase = sweep === null ? 2 : (sweep - SWEEP_DELAY) / SWEEP;
+      if (!reduce && sweep !== null && phase >= 0 && phase <= 1) {
         const s = -HALF_W + phase * HALF_W * 2;
         section.current?.setAttribute("d", loop(project, PROFILE.map(([y, z]) => [s, y, z] as V3)));
         sectionFrame.current?.setAttribute("d", loop(project, SECTION_FRAME.map(([y, z]) => [s, y, z] as V3)));
         section.current?.setAttribute("opacity", "1");
         sectionFrame.current?.setAttribute("opacity", "1");
-        if (coords.current) coords.current.textContent = `X ${s.toFixed(2)}   Y ${(60 * Math.sin(t)).toFixed(2)}   Z ${(47 + 30 * Math.cos(t * 0.7)).toFixed(2)}`;
+        if (coords.current) coords.current.textContent = `X ${s.toFixed(2)}   Y ${(60 * Math.sin(sweep)).toFixed(2)}   Z ${(47 + 30 * Math.cos(sweep * 0.7)).toFixed(2)}`;
       } else {
         section.current?.setAttribute("opacity", "0");
         sectionFrame.current?.setAttribute("opacity", "0");
@@ -251,28 +254,45 @@ export function CadViewport({ labels, active }: { labels: CadLabels; active: boo
     const loopFn = (now: number) => {
       if (now - last > 33) {
         last = now;
-        draw(now);
+        const sweep = (now - start) / 1000;
+        elapsed.current = base + sweep;
+        draw(elapsed.current, sweep);
       }
       raf = requestAnimationFrame(loopFn);
     };
-    // İlk kare her zaman çizilir (durağan görünüm için de).
-    draw(performance.now());
+    // Durağan görünüm de çizilir: kaldığı açıda, kesitsiz.
+    draw(base, null);
     if (running && !reduce) raf = requestAnimationFrame(loopFn);
     return () => cancelAnimationFrame(raf);
   }, [running]);
 
-  // Komut satırı: komutu harf harf yazar, bitince bekleyip sonrakine geçer.
+  // Yeni oturum: bir komut yazma hakkı.
+  useEffect(() => {
+    if (running) fresh.current = true;
+  }, [running]);
+
+  // Komut satırı: komutu harf harf yazar. Oturum başına bir komut; hover
+  // sürdükçe bekleyip sonrakine geçer.
   useEffect(() => {
     if (!running) return;
     const current = labels.commands[cmd.i] ?? "";
-    const id = window.setTimeout(
-      () => {
-        setCmd((c) => (c.chars < current.length ? { ...c, chars: c.chars + 1 } : { i: (c.i + 1) % labels.commands.length, chars: 0 }));
-      },
-      cmd.chars < current.length ? 55 : 1600
-    );
+    let id = 0;
+    if (cmd.chars < current.length) {
+      id = window.setTimeout(() => {
+        fresh.current = false;
+        setCmd((c) => ({ ...c, chars: c.chars + 1 }));
+      }, 55);
+    } else if (fresh.current || hover) {
+      id = window.setTimeout(
+        () => {
+          fresh.current = false;
+          setCmd((c) => ({ i: (c.i + 1) % labels.commands.length, chars: 0 }));
+        },
+        fresh.current ? 400 : 1600
+      );
+    }
     return () => window.clearTimeout(id);
-  }, [running, cmd, labels.commands]);
+  }, [running, hover, cmd, labels.commands]);
 
   const previous = labels.commands[(cmd.i - 1 + labels.commands.length) % labels.commands.length];
   const typed = (labels.commands[cmd.i] ?? "").slice(0, cmd.chars);
