@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // Cloudflare (OpenNext/Wrangler) build çıktısı:
     ".open-next/**",
     ".wrangler/**",
+    // Claude Code'un iç içe açabileceği worktree'ler (ayrı checkout'lar, burada lint'lenmez):
+    ".claude/**",
   ]),
 ]);
 

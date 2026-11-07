@@ -309,3 +309,12 @@ Bir metin bu sınırda mı diye tereddüt edersen yaz ama işaretle, kullanıcı
 - `develop` = entegrasyon dalı. Push'ları canlıya dokunmaz, Cloudflare önizleme sürümü üretir.
 - Yeni iş: `develop`'tan `feature/<kısa-ad>` (hata düzeltmesi `fix/<kısa-ad>`) aç → bitince `develop`'a merge → önizlemede kontrol → kullanıcı onaylayınca `develop`'u `main`'e merge.
 - `main`'e merge ve push yalnız kullanıcı açıkça istediğinde.
+
+### Paralel çalışma: orkestratör + worktree (kullanıcı isteği)
+Birden çok oturum aynı checkout'ta çalışınca birbirinin dosyasını eziyordu. Kurallar:
+- **Ana checkout (`C:\work\aky-personal\ahtapot-web`) yalnız `develop`'u tutar; orada dosya düzenlenmez, commit atılmaz, dal değiştirilmez.** Tek istisna orkestratörün `merge.mjs` ile yaptığı birleştirme.
+- Her iş kendi worktree'sinde: `node tools/agents/wt-new.mjs <ad>` (repo'nun yanında `ahtapot-web.worktrees/<ad>`, `develop`'tan, `pnpm install` dahil). Claude Code'un kendi açtığı worktree'ler de `WorktreeCreate` hook'uyla aynı script'ten geçer.
+- İş bitince worktree içinde commit → `node tools/agents/verify.mjs` → orkestratöre rapor. Worker `develop`'a kendisi merge etmez.
+- Kullanıcıyla konuşan tek oturum orkestratördür: işi böler, worker'a verir, `status.mjs` ile izler, sonucu doğrular, kullanıcı onaylayınca `merge.mjs --yes` ile birleştirir.
+- `pnpm run …` bu makinede çalışmıyor (pnpm yalnız corepack'te; bağımlılık denetimi PATH'teki `pnpm`'i arıyor). Doğrulama için `verify.mjs`, tek komut için `node_modules/.bin/<araç>`.
+- Ayrıntı, gerekçeler ve ölçümler: `tools/agents/README.md`.

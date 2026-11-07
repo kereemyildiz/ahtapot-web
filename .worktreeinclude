@@ -1,0 +1,4 @@
+# Yeni worktree'ye ana checkout'tan kopyalanan gitignore'lu yerel dosyalar (tools/agents/wt-new.mjs).
+# Satır başına bir göreli yol; glob yok. Dosya yoksa atlanır.
+.env.local
+.dev.vars
