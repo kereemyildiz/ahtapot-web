@@ -39,8 +39,9 @@ HERO            "Tıbbi cihaz, uçtan uca." + logodaki ahtapot, kolları 4 disip
                 → saha (izometrik kurum: üç farklı tıbbi cihaz, servis hatları, kurulum/eğitim/kalibrasyon/güncelleme)
 ÜRÜNLER         eşit ağırlıkta, veri odaklı, genişleyebilir (aşağıya bak)
 HAKKIMIZDA      "Hakkımızda" başlığı, yerlileştirme odağı (okudukça yanan paragraf), tek çizgiyle bağlı
-                üç ilke (Pillars: kaydırdıkça uzar, düğümleri yakar), kurucu (stetoskobun hortumu devre
-                izine dönüşüp çipe bağlanır; bölüme her girişte yeniden çizilir)
+                üç ilke (Pillars: çizgi kaydırdıkça uzar ve düğümleri yakar; metin düğümle bir kez belirir,
+                geri kaydırınca kaybolmaz), kurucu (stetoskobun hortumu devre izine dönüşüp çipe bağlanır;
+                sayfa başına bir kez çizilir)
 REFERANSLAR     yalnızca gerçek referans varsa; yoksa bölüm hiç render edilmez
 İLETİŞİM        talep formu; konuya göre değişen buton metni; logo kendini çizer ve kolları adres/telefon/
                 e-posta satırlarına uzanır (ContactReach; kollar satırların gerçek konumundan hesaplanır)
@@ -48,7 +49,17 @@ REFERANSLAR     yalnızca gerçek referans varsa; yoksa bölüm hiç render edil
 
 Ekip bölümü kullanıcı isteğiyle kaldırıldı; yalnız kurucu anlatılır (Hakkımızda içinde). Kişi listesi geri eklenmez.
 
-İlk hero dışındaki her bölüm aynı açılışla başlar: `SectionRule` (logodaki baş ve kanca kendini çizer, çizgi bölüm boyunca uzanır), başlık `Words` ile kelime kelime maskeden yükselir. Hero'nun giriş çizimi hero'ya geri dönünce ve logonun başına gelince yeniden oynar.
+İlk hero dışındaki her bölüm aynı açılışla başlar: `SectionRule` (logodaki baş ve kanca kendini çizer, çizgi bölüm boyunca uzanır), başlık `Words` ile kelime kelime maskeden yükselir. Hero'nun giriş çizimi sayfa yüklenince bir kez oynar; yalnız logonun başına gelince (kullanıcı eylemi) yeniden oynar.
+
+### Hareket ilkeleri (kullanıcı kararı, 2026-11-08: "site yorucu" geri bildirimi)
+Kimlik (tek çizgi, gerçekçi araç ekranları) korunur ama sürekliliği alınır:
+- **Boşta ekran sessizdir.** Kendiliğinden sonsuz hareket yok; darbe ve mini döngüler yalnız hover/focus'ta. Hero modülleri otomatik dolaşmaz.
+- **Oyna, sonra dinlen.** Yetkinlik araç ekranları etkinleşince imza hareketini ≤~5 sn oynar, anlamlı son karede durur; masaüstünde hover sürdükçe devam eder (`lib/useMotionBudget`). WCAG 2.2.2 bunu da gerektirir.
+- **Çizgi bir kez çizilir.** Kendini çizen görseller (hero, kurucu, iletişim) sayfa başına bir kez; bölüme geri dönünce yeniden oynamaz.
+- **Kaydırma çizgiyi sürer, metni değil.** Metin bir kez belirir ve kalır; okudukça yanan paragraf yalnız Hakkımızda'da ve kısa aralıkla (`center 55%`, scrub 0.3).
+- **Kaydırma kullanıcınındır.** Lenis `lerp: 0.2` (tık başına ~390 ms kuyruk), otomatik kaydırma 0,8 sn.
+- **Sert yanıp sönme yok.**
+- Her hareket değişikliği `prefers-reduced-motion` emülasyonunda da ölçülür (bir düzeltme reduced-motion'da sonsuz döngüyle sekmeyi donduruyordu).
 
 Bölüm başlığı bölümün adıdır, tek kelimedir ve menüdeki adla aynıdır: Çözümler, Ürünler, Hakkımızda, İletişim (EN: Solutions, Products, About, Contact). Slogan başlık konmaz. "Çözümler" adını kullanıcı 14 seçenek arasından seçti.
 
@@ -212,7 +223,7 @@ gsap.ticker.lagSmoothing(0)
 - **Scroll-jack yok:** kullanıcı scroll kontrolünü asla kaybetmez. Tekerlek olayını yakalayan etkileşimler (deepzoom) yalnız kullanıcı tıklayınca ya da Ctrl/⌘ ile yakalar ve o sırada `data-lenis-prevent` taşır; imleç çıkınca bırakır. Turntable/simülatör tekerleğe hiç dokunmaz, yalnız sürükleme.
 - GSAP ile CSS değişkeni tween'lerken başlangıcı `fromTo` ile açık ver; `var(...)` string'i renk tween'inde interpolasyon yapılamaz. Tema rengini GSAP'la tween'leme (tema değişince eski renk satır içinde kalır): 0..1 bir değişken tween'le, rengi CSS'te `color-mix` ile token'lardan karıştır (`.scrub-word` → `--lit`, `.pillar-node` → `--on`).
 - Yolda akan darbe/işaret için `pathLength` + CSS `stroke-dashoffset` kullanma: Chrome CSS'teki dashoffset'i pathLength'e göre ölçeklemiyor. `lib/svgPath.ts` → `pulseDash` (akan darbe) ve `drawDash` (kendini çizen yol) gerçek uzunluğu (`--len`) verir.
-- "Bölüme her girişte yeniden çiz" için `lib/replayOnView` (IntersectionObserver): ScrollTrigger'ın onLeave/onLeaveBack ile başa sarma, refresh sırasında tetiklenip çizimi başa sarılı bırakıyordu (mobilde hiç görünmüyordu).
+- Görünür olunca çizim için `lib/replayOnView` (IntersectionObserver; `once` seçeneği sayfa başına bir kez oynatır, kurucu ve iletişim bunu kullanır): ScrollTrigger'ın onLeave/onLeaveBack ile başa sarma, refresh sırasında tetiklenip çizimi başa sarılı bırakıyordu (mobilde hiç görünmüyordu).
 - `useGSAP` içindeki "bir kez oldu" bayraklarını `useRef`'te değil, efektin içinde tut: StrictMode ikinci kurulumda başlangıç durumunu yeniden uygular, ref'teki bayrak ise animasyonu atlatır.
 - Hover mikro-etkileşimleri 150–250ms. Bölüm reveal'ları 400–600ms.
 - Yerleşim tetikleyen özellik (`left`, `width`, `font-size`) animasyonla sürülmez; `transform` kullanılır. Karşılaştırma ayracı tam genişlikte bir taşıyıcıyla `translateX`, su banyosu modelinin yakınlaşması `scale` ile (eski `font-size` yöntemi 1 sn'de ~140 ms yerleşim harcıyordu).
@@ -229,7 +240,7 @@ Pazarlık konusu değil. Chrome DevTools MCP ile ölç, tahmin etme.
 - LCP < 2.5s, CLS < 0.1, INP < 200ms — 4G throttle, mid-tier mobil (son ölçüm: LCP 1,28 s, CLS 0)
 - Scroll orta seviye telefonda 60fps korumalı
 - OpenSeadragon, turntable ve simülatör `dynamic(..., { ssr: false })`; simülasyon döngüsü yalnız görünürken çalışır
-- Sonsuz CSS animasyonu içeren bölümler `lib/useOffscreenPause` ile ekran dışındayken durur; yetkinlik araç ekranlarının JS döngüleri (CAD karesi, IDE adımı, PCB net vurgusu, saha döngüsü) yalnız sahne etkin ve görünürken çalışır
+- Sonsuz CSS animasyonu içeren bölümler `lib/useOffscreenPause` ile ekran dışındayken durur; yetkinlik araç ekranlarının JS döngüleri (CAD karesi, IDE adımı, PCB net vurgusu, saha döngüsü) yalnız sahne etkin ve görünürken ve hareket bütçesi (`useMotionBudget`, ~5 sn + hover) sürerken çalışır
 - Mobilde: deepzoom yerine statik poster + "Görüntüleyiciyi açın" butonu
 - Görseller `next/image`, açık `sizes`
 - Toplam JS < 200KB gzip (OpenSeadragon ve simülatörün three.js'i hariç; ikisi de yalnız ilgili bölüme gelince yüklenir). Son ölçüm ~204 KB (modern tarayıcı; `noModule` polyfill hariç); ~130 KB'ı React + Next tabanı — yeni bağımlılık eklemeden önce ölç. İlk ekranın altındaki ağır istemci bileşenleri (yetkinlik araç ekranları, karşılaştırma, simülatör, görüntüleyici) `next/dynamic` ile ilk yüklemenin dışında tutulur.
@@ -253,7 +264,8 @@ Pazarlık konusu değil. Chrome DevTools MCP ile ölç, tahmin etme.
 - ❌ "…hekim liderliğindeki tek bir mühendislik ekibiyle geliştiriyoruz." (kullanıcı: saçma; "tek ekip" vurgusu yapılmaz)
 - ❌ "…gövdesinden devresine, kodundan ekranına." (kullanıcı beğenmedi)
 - ❌ "Tıbbi cihazları yerlileştiriyoruz: …" (kullanıcı önceki cümleyi daha iyi buldu)
-- ✅ "Klinikte tarif edilen bir ihtiyacı, sahada çalışan bir cihaza uçtan uca dönüştürüyoruz."
+- ✅ "Klinikte tarif edilen bir ihtiyacı sahada çalışan bir cihaza dönüştürüyoruz." ("uçtan uca" yalnız hero başlığı ve footer'da; kullanıcı kararı 2026-11-08)
+- Yapay zekâ yazımı izleri (aralık kalıbı, üçlü sıralama, noktalı virgülle yapıştırma, listeyi tekrar eden cümle, her şirkete uyan ifade, kaynaksız yeni iddia): `.claude/rules/metin.md` (yalnız `content/**/*.json` düzenlenirken yüklenir). Metin yeniden yazılırken hiçbir cümle, önceki onaylı metinden güçlü bir iddia taşımaz.
 
 Şirketin adı **Ahtapot Tıbbi Teknolojiler** (“Teknolojileri” değil); footer'da logonun yanında yazar.
 

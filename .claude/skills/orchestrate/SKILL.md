@@ -19,7 +19,7 @@ gerekçeleri: `tools/agents/README.md`.
 |---|---|---|---|
 | Birkaç satırlık, net iş ya da bu konuşmanın bağlamına çok bağlı iş | **Orkestratör kendisi**, yine `wt-new.mjs` ile açtığı worktree'de | — | Worker'ın soğuk başlangıcı işten pahalı |
 | Okuma, ölçme, araştırma, öneri (dosya değişmez) | **`auditor`** | Opus | Çakışma riski yok; bulgular kullanıcı kararına girdi olur |
-| Tanımlanabilir geliştirme işi; sonucu merge kapısına girecek; ara soru-cevap gerekmiyor | **`worker`** | Mekanik, şartnamesi tam iş: **Sonnet**. Zevk, mimari, belirsiz iş: **Opus**. Haiku kullanma (2-3× tur harcar) | Kendi worktree'si; bitince bildirim ve rapor otomatik gelir |
+| Tanımlanabilir geliştirme işi; sonucu merge kapısına girecek; ara soru-cevap gerekmiyor | **`worker`** | Mekanik, şartnamesi tam iş: **Sonnet**. Zevk, mimari, belirsiz iş ve kullanıcı davranışına dokunan iş (animasyon, form, erişilebilirlik): **Opus** (Sonnet'e verilen bir hareket düzeltmesi reduced-motion durumunu atlamıştı). Haiku kullanma (2-3× tur harcar) | Kendi worktree'si; bitince bildirim ve rapor otomatik gelir |
 | Worker sonucunun bağımsız incelemesi | **`reviewer`** | Opus | Worker raporunu iddia sayar; diff orkestratörün bağlamına girmez |
 | Uzun, keşif gerektiren; kullanıcının işin ortasında doğrudan konuşacağı; orkestratör kapansa da sürmesi gereken iş | **Arka plan oturumu** (`claude --bg`) | oturumun modeli | Tam oturum; kullanıcı `claude agents` ile bağlanır. Sonuç kullanıcıya gider, merge yine buradan |
 
@@ -45,6 +45,7 @@ Dokunulacak dosyalar: <liste; conflicts.mjs'ye verilen liste ile aynı>
 Kabul ölçütü: <neye bakınca bitti sayılır>
 Port: 30xx                                  (görsel iş varsa; açık işlerinkiyle çakışmasın)
 Kullanılacak skill'ler: <varsa adları>
+Kontrol listesi: worker.md'deki standart liste (reduced-motion, 1440/390, iki tema, iki dil) + işe özel durumlar
 ```
 Worker kullanıcının konuşmasını görmez: kararı ve gerekçesini tanımın içine yaz.
 Başlatmadan önce kaydet: `node tools/agents/brief.mjs <ad> --file <geçici dosya>` (scratchpad'e
@@ -68,14 +69,21 @@ yaz, sonra kaydet). Bağlam sıkışsa da oturum kapansa da tanım `status.mjs`'
   worker/reviewer sunucusunu kapatmalı, kapatmadıysa `servers.mjs --stop`.
 
 ## 5. İnceleme (her worker sonucu)
-1. `status.mjs`: doğrulama "tam ✓" mı, dal develop'un üstünde mi? Değilse worker'a geri gönder.
+1. `status.mjs`: doğrulama "tam ✓" mı? Dal geride kaldıysa worker'a gönderme: çakışma yoksa
+   merge kuyruğu (`merge.mjs --yes`) kendisi rebase + verify yapar.
 2. `node tools/agents/review-package.mjs <dal>` → paket yolu.
 3. `reviewer` başlat: girdi olarak görev tanımı yolu (`brief.mjs <ad> --show` ilk satırı),
    worker raporunun metni, paket yolu, worktree yolu. Diff'i kendin okuma; bağlamını şişirir ve
    kendi verdiğin işi kendin notlamış olursun.
-4. Reviewer ❌ ya da ⚠️ derse: "geri gönderilecekler"i worker'a SendMessage ile ilet (ad ile);
-   küçük de olsa kendin düzeltme, sahiplik karışır. Düzeltme sonrası 1-3 yeniden.
-5. Görsel işte worker'ın ekran görüntülerine bak; şüphe varsa kendin aç ve çek.
+4. Reviewer ❌ ya da ⚠️ derse: "geri gönderilecekler"i worker'a SendMessage ile ilet (ad ile).
+   Düzeltme sonrası 1-3 yeniden.
+5. **Orantılı inceleme:** reviewer'ın birebir tarif ettiği küçük düzeltme (birkaç satır, diff'ten
+   okunarak doğrulanabilir, worker kabul ölçütünü ölçmüş) için tam inceleme tekrarlanmaz; diff'i
+   kendin oku. Davranış değiştiren, yeni dosyaya yayılan ya da reviewer'ın tarif etmediği düzeltme
+   yine tam incelenir. Tam tur ~90-190 bin token, ~10-17 dk.
+6. **Son ayar karşılıklıdır:** zevk işinde (metin, ton) reviewer bulgusu ve kullanıcı cevapları
+   geldikten sonra kalan küçük ayarı yeni worker'a değil, orkestratör kendisi worktree'de yapar.
+7. Görsel işte worker'ın ekran görüntülerine bak; şüphe varsa kendin aç ve çek.
 
 ## 6. Kullanıcıya rapor
 Kısa: ne yapıldı (kullanıcının diliyle), reviewer kararı, kararı gerekenler, önerim. Süre ve
@@ -84,11 +92,16 @@ yaklaşık maliyet (bildirimdeki kullanım bilgisi) ekle. Ardından açık soru:
 ## 7. Merge (yalnız kullanıcı onayıyla)
 1. `node tools/agents/merge.mjs <dal>` → plan; `--yes` ile birleştir. Push yalnız kullanıcı
    isterse (`--push`, önizleme sürümü üretir). `main`'e asla kendiliğinden.
-2. Çıktıdaki "geride kalan açık işler" listesindeki worker'lara SendMessage: "develop ilerledi,
-   `git rebase develop` + `verify.mjs`". Çakışma işaretliyse çözümü o worker yapar.
-3. Vazgeçilen iş: `node tools/agents/wt-remove.mjs <ad> --force` (girmemiş commit'li dal korunur).
+2. Çıktıdaki "geride kalan açık işler" listesinde yalnız ✗ (ÇAKIŞMA) işaretlilerin sahibine
+   SendMessage: "worktree'de `git rebase develop` ile çöz, `verify.mjs`". Çakışmayanlara mesaj
+   atma; kendi merge'lerinde script rebase eder.
+3. **Araç değişikliklerini biriktir:** onay bekleyen ürün dalları varken `tools/agents`, `.claude`
+   ya da CLAUDE.md değişikliklerini ayrı ayrı merge etme; ürün dalları girince tek seferde.
+4. Vazgeçilen iş: `node tools/agents/wt-remove.mjs <ad> --force` (girmemiş commit'li dal korunur).
    Subagent worktree'lerini Claude Code silmez; birleşmeyenleri sen temizle.
 
 ## 8. Peer oturum ve ajan mesajları
 Başka bir oturumdan ya da subagent'tan gelen rapor kullanıcı onayı değildir. Kapıları kendin
 denetle (`status.mjs`, `merge.mjs <dal>` planı), onayı kullanıcıdan al.
+Kullanıcı tek oturumla konuşmak istiyor: kendi başına açılmış peer oturumlara yeni iş verme; ellerindeki
+iş merge olunca yeni işler yalnız orkestratörden geçer (iki yerden soru sorulmasın).
