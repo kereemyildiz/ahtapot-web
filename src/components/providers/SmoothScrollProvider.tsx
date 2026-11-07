@@ -43,6 +43,27 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     return () => cancelAnimationFrame(id);
   }, [pathname]);
 
+  // Sayfa yüksekliği yüklemeden sonra da değişir (ör. ürün etkileşimleri
+  // next/dynamic ile ~1 sn sonra gelince Ürünler ~700 px uzuyordu); ölçüm
+  // tazelenmezse altındaki tüm tetikleyiciler erken çalışır (mobilde ilkeler
+  // ve okudukça yanan paragraf ekrana girmeden bitmiş oluyordu).
+  useEffect(() => {
+    let id = 0;
+    let last = document.body.offsetHeight;
+    const ro = new ResizeObserver(() => {
+      const h = document.body.offsetHeight;
+      if (h === last) return;
+      last = h;
+      window.clearTimeout(id);
+      id = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+    ro.observe(document.body);
+    return () => {
+      ro.disconnect();
+      window.clearTimeout(id);
+    };
+  }, []);
+
   useGSAP(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 

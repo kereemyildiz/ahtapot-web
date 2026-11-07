@@ -64,15 +64,7 @@ export function ContactReach({ rows, brand }: { rows: ReachRow[]; brand: { name:
           .timeline({ paused: true })
           .from("[data-logo-path]", { drawSVG: "0%", duration: 0.8, stagger: 0.1, ease: "power2.inOut" })
           .from("[data-reach-brand]", { autoAlpha: 0, x: -12, duration: 0.6, ease: "expo.out" }, "-=0.4")
-          // Çizim bitince çizgi deseni temizlenir: ekran değişip kol uzarsa
-          // eski uzunlukta kesik kalmaz.
-          .from("[data-reach-arm]", {
-            drawSVG: "0%",
-            duration: 0.6,
-            stagger: 0.12,
-            ease: "power2.inOut",
-            clearProps: "strokeDasharray,strokeDashoffset",
-          }, "-=0.25")
+          .from("[data-reach-arm]", { drawSVG: "0%", duration: 0.6, stagger: 0.12, ease: "power2.inOut" }, "-=0.25")
           .from("[data-reach-dot]", { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%", duration: 0.35, stagger: 0.12, ease: "expo.out" }, "-=0.45");
         // Kurucu görseli gibi: sayfa başına bir kez çizilir.
         return root.current ? replayOnView(root.current, tl, { once: true }) : undefined;
