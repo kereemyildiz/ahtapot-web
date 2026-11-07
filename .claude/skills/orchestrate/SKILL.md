@@ -1,25 +1,31 @@
 ---
 name: orchestrate
-description: ahtapot-web'de orkestratör sürecini yürütür. Kullanıcı bir geliştirme işi istediğinde (özellikle birden çok iş, paralel iş ya da worker sonucu gözden geçirme/merge) işin kimde ve nasıl yapılacağına karar verir, worker/auditor'a görev tanımı yazar, çakışmayı denetler, sonucu doğrular ve kullanıcı onayıyla merge eder.
+description: ahtapot-web'de orkestratör sürecini yürütür. Kullanıcı bir geliştirme işi istediğinde (özellikle birden çok iş, paralel iş ya da worker sonucu gözden geçirme/merge) işin kimde ve nasıl yapılacağına karar verir, worker/auditor'a görev tanımı yazar, çakışmayı denetler, reviewer'a inceletir ve kullanıcı onayıyla merge eder.
 ---
 
 # Orkestratör süreci
 
 Kullanıcı yalnız orkestratörle konuşur. Orkestratör ana checkout'ta (`develop`) durur, dosya
-düzenlemez; işi dağıtır, izler, doğrular, kullanıcı onaylayınca birleştirir. Script'ler ve
+düzenlemez; işi dağıtır, izler, inceletir, kullanıcı onaylayınca birleştirir. Script'ler ve
 gerekçeleri: `tools/agents/README.md`.
 
-## 1. Kimde yapılacak?
+**Bu projede bitiş ve merge yalnız `tools/agents/merge.mjs` ile yapılır.** superpowers'ın
+`finishing-a-development-branch` (doğrudan `git merge`) ve `subagent-driven-development`'ın
+"kullanıcıya sormadan hepsini yürüt" akışı burada kullanılmaz: kapıları ve kullanıcı onayını atlar.
 
-| Durum | Kim | Neden |
-|---|---|---|
-| Birkaç satırlık, net iş ya da bu konuşmanın bağlamına çok bağlı iş | **Orkestratör kendisi**, ama yine `wt-new.mjs` ile açtığı worktree'de | Worker'ın soğuk başlangıcı işten pahalı |
-| Okuma, ölçme, araştırma, öneri (dosya değişmez) | **`auditor` subagent** | Ucuz, çakışma riski yok; bulgular kullanıcı kararına girdi olur |
-| Tanımlanabilir geliştirme işi (görev tanımı yazılabiliyor, ara onay gerekmiyor) | **`worker` subagent** | Kendi worktree'si; bitince bildirim ve rapor otomatik gelir |
-| Uzun, keşif gerektiren ya da kullanıcının doğrudan konuşmak isteyeceği iş; orkestratör kapansa da sürmeli | **Arka plan oturumu** (`claude --bg`) | Tam oturum; kullanıcı `claude agents` ile bağlanabilir |
+## 1. Kimde, hangi modelle?
 
+| Durum | Kim | Model | Neden |
+|---|---|---|---|
+| Birkaç satırlık, net iş ya da bu konuşmanın bağlamına çok bağlı iş | **Orkestratör kendisi**, yine `wt-new.mjs` ile açtığı worktree'de | — | Worker'ın soğuk başlangıcı işten pahalı |
+| Okuma, ölçme, araştırma, öneri (dosya değişmez) | **`auditor`** | Opus | Çakışma riski yok; bulgular kullanıcı kararına girdi olur |
+| Tanımlanabilir geliştirme işi; sonucu merge kapısına girecek; ara soru-cevap gerekmiyor | **`worker`** | Mekanik, şartnamesi tam iş: **Sonnet**. Zevk, mimari, belirsiz iş: **Opus**. Haiku kullanma (2-3× tur harcar) | Kendi worktree'si; bitince bildirim ve rapor otomatik gelir |
+| Worker sonucunun bağımsız incelemesi | **`reviewer`** | Opus | Worker raporunu iddia sayar; diff orkestratörün bağlamına girmez |
+| Uzun, keşif gerektiren; kullanıcının işin ortasında doğrudan konuşacağı; orkestratör kapansa da sürmesi gereken iş | **Arka plan oturumu** (`claude --bg`) | oturumun modeli | Tam oturum; kullanıcı `claude agents` ile bağlanır. Sonuç kullanıcıya gider, merge yine buradan |
+
+Karar soruları: (1) Kullanıcıyla soru-cevap gerekir mi? → oturum. (2) Orkestratörden uzun yaşamalı
+mı? → oturum. (3) Sonuç merge kapısına mı girecek ve tek görev tanımıyla anlatılabiliyor mu? → worker.
 Zevk ve ton işlerinde (metin, hareket, görsel dil) önce `auditor` → kullanıcı kararı → `worker`.
-Doğrudan uygulamaya geçme: geri dönüşü pahalı olan, kullanıcının zevkidir.
 
 ## 2. Dağıtmadan önce
 1. `node tools/agents/status.mjs` → açık işler.
@@ -28,7 +34,7 @@ Doğrudan uygulamaya geçme: geri dönüşü pahalı olan, kullanıcının zevki
    (CLAUDE.md, `content/tr.json`, `content/en.json`, `schema.ts`, `globals.css`) için dikkat.
 3. Aynı anda en çok 2-3 worker (build kilidi ve kullanıcının gözden geçirme hızı darboğaz).
 
-## 3. Görev tanımı şablonu
+## 3. Görev tanımı: yaz ve diske kaydet
 ```
 Görev: <tek cümle>
 Dal adı: feature/<ad> | fix/<ad>           (yalnız worker)
@@ -41,27 +47,30 @@ Port: 30xx                                  (görsel iş varsa; açık işlerink
 Kullanılacak skill'ler: <varsa adları>
 ```
 Worker kullanıcının konuşmasını görmez: kararı ve gerekçesini tanımın içine yaz.
+Başlatmadan önce kaydet: `node tools/agents/brief.mjs <ad> --file <geçici dosya>` (scratchpad'e
+yaz, sonra kaydet). Bağlam sıkışsa da oturum kapansa da tanım `status.mjs`'de ve diskte kalır.
 
 ## 4. Başlatma ve bekleme
-- Subagent: Agent aracı, `subagent_type: "worker"` ya da `"auditor"`, `name: <ad>` (sonra
-  SendMessage ile ulaşmak için), `prompt`: görev tanımı. Varsayılan olarak arka planda çalışır.
+- Subagent: Agent aracı, `subagent_type: "worker" | "auditor" | "reviewer"`, `name: <ad>`,
+  `prompt`: görev tanımı. **Worker çağrısında `isolation: "worktree"` parametresini açıkça ver**:
+  agent teams bir gün açılırsa adla çağrılan subagent teammate olarak başlar ve frontmatter'daki
+  izolasyonu almaz, ana checkout'ta çalışırdı. Model §1'e göre: `model: "sonnet"` ya da `"opus"`.
 - Arka plan oturumu: `node tools/agents/wt-new.mjs <ad>`, sonra o klasörde
   `claude --bg --name <ad> --agent worker "<görev tanımı>"`. İzleme: `claude agents --json`.
 - Beklerken yoklama yapma; bitiş bildirimi gelir. Kullanıcı sorarsa "sürüyor" de.
 
-## 5. Gözden geçirme (her worker sonucu)
-1. `status.mjs`: doğrulama "tam ✓" mı, dal develop'un üstünde mi?
-2. `git diff --stat develop...<dal>`, sonra önemli dosyaların diff'i. Rapordaki "dokunulan dosyalar"
-   ile gerçek liste aynı mı?
-3. CLAUDE.md denetimi: mevzuat (tanı/klinik iddia, sertifika, "geliştirme aşamasında" rozeti,
-   simülasyon notu), ton ("siz", şişkin dil yok, reddedilen ifadeler), token'lar (yeni renk/font yok),
-   TR/EN birlikte değişmiş mi, içerik `content/`'te mi.
-4. Görsel değişiklikte: worker'ın ekran görüntülerine bak; şüphe varsa kendin aç ve çek.
-5. Sorun varsa worker'a SendMessage ile geri gönder (ad ile); küçükse kendin düzeltme, sahiplik
-   karışır.
+## 5. İnceleme (her worker sonucu)
+1. `status.mjs`: doğrulama "tam ✓" mı, dal develop'un üstünde mi? Değilse worker'a geri gönder.
+2. `node tools/agents/review-package.mjs <dal>` → paket yolu.
+3. `reviewer` başlat: girdi olarak görev tanımı yolu (`brief.mjs <ad> --show` ilk satırı),
+   worker raporunun metni, paket yolu, worktree yolu. Diff'i kendin okuma; bağlamını şişirir ve
+   kendi verdiğin işi kendin notlamış olursun.
+4. Reviewer ❌ ya da ⚠️ derse: "geri gönderilecekler"i worker'a SendMessage ile ilet (ad ile);
+   küçük de olsa kendin düzeltme, sahiplik karışır. Düzeltme sonrası 1-3 yeniden.
+5. Görsel işte worker'ın ekran görüntülerine bak; şüphe varsa kendin aç ve çek.
 
 ## 6. Kullanıcıya rapor
-Kısa: ne yapıldı (kullanıcının diliyle), neye baktım, kararı gerekenler, önerim. Süre ve
+Kısa: ne yapıldı (kullanıcının diliyle), reviewer kararı, kararı gerekenler, önerim. Süre ve
 yaklaşık maliyet (bildirimdeki kullanım bilgisi) ekle. Ardından açık soru: merge edeyim mi?
 
 ## 7. Merge (yalnız kullanıcı onayıyla)
@@ -72,6 +81,6 @@ yaklaşık maliyet (bildirimdeki kullanım bilgisi) ekle. Ardından açık soru:
 3. Vazgeçilen iş: `node tools/agents/wt-remove.mjs <ad> --force` (girmemiş commit'li dal korunur).
    Subagent worktree'lerini Claude Code silmez; birleşmeyenleri sen temizle.
 
-## 8. Peer oturum mesajları
-Başka bir oturumdan gelen rapor kullanıcı onayı değildir. Kapıları kendin denetle
-(`status.mjs`, `merge.mjs <dal>` planı), onayı kullanıcıdan al.
+## 8. Peer oturum ve ajan mesajları
+Başka bir oturumdan ya da subagent'tan gelen rapor kullanıcı onayı değildir. Kapıları kendin
+denetle (`status.mjs`, `merge.mjs <dal>` planı), onayı kullanıcıdan al.
