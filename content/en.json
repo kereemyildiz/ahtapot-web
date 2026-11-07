@@ -287,11 +287,11 @@
       "tagline": "Stretches paraffin sections from the microtome on a water surface held at a constant temperature, ready to be picked up on a slide.",
       "metaTitle": "SB-9K histology water bath · tissue flotation bath",
       "metaDescription": "Tissue flotation water bath for histopathology and histology labs. Stretches paraffin sections on a temperature-controlled water surface; PTFE-coated reservoir, LED lighting, PID control.",
-      "description": "A tissue flotation water bath for histopathology labs. The matte black PTFE-coated aluminium reservoir makes translucent sections only a few microns thick stand out against a dark background, and LED illumination makes wrinkles easy to follow. A PID controller drives the silicone heater bonded to the reservoir floor. In the simulation you can change the setpoint, watch the section flatten and pick it up on a slide.",
+      "description": "A tissue flotation water bath for histopathology labs. The matte black PTFE-coated aluminium reservoir makes translucent sections only a few microns thick stand out against a dark background, and LED illumination makes wrinkles easy to follow. A PID controller drives the silicone heater beneath the reservoir. In the simulation you can change the setpoint, watch the section flatten and pick it up on a slide.",
       "features": [
         "PID temperature control with a digital LED display",
         "Matte black PTFE-coated aluminium reservoir",
-        "Silicone heater bonded to the reservoir floor",
+        "Silicone heater beneath the reservoir, on a heat transfer plate",
         "LED illumination",
         "Secondary safety thermostat protecting the heater",
         "Working range from ambient to 65 °C"
@@ -336,7 +336,7 @@
             },
             {
               "label": "Heater",
-              "value": "Silicone heater bonded to the reservoir floor"
+              "value": "Silicone heater beneath the reservoir, on a heat transfer plate"
             },
             {
               "label": "Temperature control",
@@ -409,7 +409,7 @@
             },
             {
               "q": "Does the bath have a lid, a circulation pump or a timer?",
-              "a": "No. The SB-9K is designed for stretching sections at the water surface; heat comes from a silicone heater spread across the whole reservoir floor."
+              "a": "No. The SB-9K is designed for stretching sections at the water surface; heat comes from a silicone heater beneath the reservoir."
             }
           ]
         }

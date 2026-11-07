@@ -9,9 +9,9 @@ export function ProductSections({ sections }: { sections: ProductSection[] }) {
   if (sections.length === 0) return null;
   return (
     <div className="mt-[clamp(5rem,10vw,9rem)]">
-      {sections.map((s) => (
+      {sections.map((s, i) => (
         <section
-          key={s.heading}
+          key={i}
           data-reveal=""
           className="grid gap-6 border-t border-periwinkle/15 py-[clamp(2.5rem,5vw,4rem)] lg:grid-cols-12 lg:gap-12"
         >
@@ -20,8 +20,8 @@ export function ProductSections({ sections }: { sections: ProductSection[] }) {
           <div className="max-w-[68ch] lg:col-span-7 lg:col-start-6">
             {s.body && (
               <div className="space-y-4">
-                {s.body.map((p) => (
-                  <p key={p} className="text-body leading-relaxed text-ink/90">
+                {s.body.map((p, i) => (
+                  <p key={i} className="text-body leading-relaxed text-ink/90">
                     {p}
                   </p>
                 ))}
@@ -30,8 +30,8 @@ export function ProductSections({ sections }: { sections: ProductSection[] }) {
 
             {s.items && (
               <ul className={`grid gap-2 ${s.body ? "mt-6" : ""}`}>
-                {s.items.map((it) => (
-                  <li key={it} className="flex gap-3 text-body leading-relaxed">
+                {s.items.map((it, i) => (
+                  <li key={i} className="flex gap-3 text-body leading-relaxed">
                     <span className="mt-[0.65em] size-1.5 shrink-0 bg-accent" aria-hidden="true" />
                     {it}
                   </li>
@@ -42,7 +42,7 @@ export function ProductSections({ sections }: { sections: ProductSection[] }) {
             {s.steps && (
               <ol className={`grid gap-4 ${s.body ? "mt-6" : ""}`}>
                 {s.steps.map((it, i) => (
-                  <li key={it} className="grid grid-cols-[2.25rem_1fr] gap-3 text-body leading-relaxed">
+                  <li key={i} className="grid grid-cols-[2.25rem_1fr] gap-3 text-body leading-relaxed">
                     <span className="font-display font-medium tabular-nums text-accent" aria-hidden="true">
                       {i + 1}
                     </span>
@@ -54,8 +54,8 @@ export function ProductSections({ sections }: { sections: ProductSection[] }) {
 
             {s.specs && (
               <dl className={`grid ${s.body ? "mt-6" : ""}`}>
-                {s.specs.map((row) => (
-                  <div key={row.label} className="grid gap-1 border-b border-periwinkle/15 py-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-6">
+                {s.specs.map((row, i) => (
+                  <div key={i} className="grid gap-1 border-b border-periwinkle/15 py-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-6">
                     <dt className="text-small text-muted">{row.label}</dt>
                     <dd className="text-body">{row.value}</dd>
                   </div>
@@ -65,8 +65,8 @@ export function ProductSections({ sections }: { sections: ProductSection[] }) {
 
             {s.faq && (
               <div className={`grid ${s.body ? "mt-6" : ""}`}>
-                {s.faq.map((f) => (
-                  <details key={f.q} className="group border-b border-periwinkle/15 first:border-t">
+                {s.faq.map((f, i) => (
+                  <details key={i} className="group border-b border-periwinkle/15 first:border-t">
                     <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-4 text-body font-medium transition-colors duration-200 hover:text-accent [&::-webkit-details-marker]:hidden">
                       {f.q}
                       <span className="relative mt-[0.45em] size-3 shrink-0" aria-hidden="true">

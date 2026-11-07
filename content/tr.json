@@ -287,11 +287,11 @@
       "tagline": "Mikrotomdan alınan parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gererek lama alınmaya hazırlar.",
       "metaTitle": "SB-9K patoloji su banyosu · doku yüzdürme banyosu",
       "metaDescription": "Patoloji ve histoloji laboratuvarları için doku yüzdürme su banyosu. Parafin kesitlerini sabit sıcaklıktaki su yüzeyinde gerer; mat siyah teflon hazne, LED aydınlatma, PID kontrol.",
-      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Hazne tabanındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
+      "description": "Histopatoloji laboratuvarları için doku yüzdürme su banyosu. Mat siyah teflon kaplı alüminyum hazne, birkaç mikron kalınlığındaki yarı saydam kesitleri koyu zeminde görünür kılar; LED aydınlatma kırışıklıkları izlemeyi kolaylaştırır. Haznenin altındaki silikon ısıtıcıyı bir PID kontrolcü yönetir. Simülasyonda ayarı değiştirip kesitin nasıl açıldığını görebilir, kesiti lama alabilirsiniz.",
       "features": [
         "PID sıcaklık kontrolü ve dijital LED ekran",
         "Mat siyah teflon kaplı alüminyum hazne",
-        "Hazne tabanına yerleşik silikon ısıtıcı",
+        "Hazne altında, ısı transfer plakasına bağlı silikon ısıtıcı",
         "LED aydınlatma",
         "Rezistansı koruyan ikincil güvenlik termostatı",
         "Ortam sıcaklığından 65 °C'ye çalışma aralığı"
@@ -336,7 +336,7 @@
             },
             {
               "label": "Isıtıcı",
-              "value": "Hazne tabanına yerleşik silikon ısıtıcı"
+              "value": "Hazne altında, ısı transfer plakasına bağlı silikon ısıtıcı"
             },
             {
               "label": "Sıcaklık kontrolü",
@@ -409,7 +409,7 @@
             },
             {
               "q": "Cihazda kapak, sirkülasyon pompası ya da zamanlayıcı var mı?",
-              "a": "Hayır. SB-9K su yüzeyinde kesit germek için tasarlanmıştır; ısı hazne tabanının tamamına yayılan silikon ısıtıcıyla verilir."
+              "a": "Hayır. SB-9K su yüzeyinde kesit germek için tasarlanmıştır; ısı haznenin altındaki silikon ısıtıcıyla verilir."
             }
           ]
         }
@@ -490,7 +490,7 @@
               "a": "AhtaPatolog geliştirme aşamasında. Demo için iletişim formundan talep iletebilirsiniz."
             },
             {
-              "q": "Hangi tarayıcıların görüntüleriyle çalışır?",
+              "q": "Hangi slayt tarayıcılarla çalışır?",
               "a": "SVS, NDPI ve TIFF formatında whole-slide görüntü üreten tarayıcılarla. Farklı bir formatınız varsa bize yazın."
             },
             {
