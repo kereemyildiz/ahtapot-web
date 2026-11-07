@@ -47,7 +47,11 @@ if (!wt) {
   fail(`Worktree bulunamadı: ${ref}`);
 }
 if (path.resolve(process.cwd()).toLowerCase().startsWith(wt.path.toLowerCase())) {
-  fail("Silinecek worktree'nin içindesiniz; önce ana checkout'a dönün.");
+  // Claude Code hook'u, oturum worktree'den çıkarken bu süreci hâlâ worktree içinde başlatıyor.
+  // Windows içinde süreç çalışan klasörü silmez: hook'ta kendimizi ana checkout'a taşırız.
+  // Elle çalıştırmada ise çağıran kabuk da içeride, onu taşıyamayız; reddederiz.
+  if (hook) process.chdir(root);
+  else fail("Silinecek worktree'nin içindesiniz; önce ana checkout'a dönün.");
 }
 
 const force = hook || Boolean(flags.force);
