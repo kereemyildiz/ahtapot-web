@@ -58,10 +58,12 @@ worktree'leri de tarardı; ikisine de yedek olarak `.claude` hariç tutması ekl
 build alınca makine zorlanıyordu. `verify.mjs` build adımını ortak git klasöründeki
 `agents-build.lock` ile sıraya koyar (sahibi ölmüş kilit otomatik temizlenir).
 
-**Neden `pnpm run` değil?** Bu makinede pnpm yalnız `corepack pnpm` ile var. pnpm 11, `run`'dan
-önce bağımlılık denetimi yapıp gerekirse PATH'teki `pnpm`'i çağırıyor ve `'pnpm' is not
-recognized` ile düşüyor. `verify.mjs` komutları `package.json`'dan okur ama `node_modules/.bin`
-PATH'e eklenmiş olarak doğrudan çalıştırır.
+**Neden `pnpm run` değil?** Başta bu makinede pnpm yalnız `corepack pnpm` ile vardı; pnpm 11
+`run`'dan önce bağımlılık denetimi yapıp PATH'teki `pnpm`'i çağırıyor ve `'pnpm' is not
+recognized` ile düşüyordu. Çözüm: `corepack enable --install-directory "%APPDATA%\npm" pnpm`
+(yönetici gerektirmez, `packageManager` sürümüne sabit). `verify.mjs` yine de komutları
+`package.json`'dan okuyup `node_modules/.bin` ile doğrudan çalıştırır: PATH'e bağımlı değil ve
+her adımda pnpm'in açılış + denetim süresini harcamaz.
 
 **Neden kısa çıktı?** Worker'ın bağlamına binlerce satır log girmesin: geçen adım tek satır,
 kalan adımın son 40 satırı.
@@ -71,8 +73,8 @@ Repo'ya girmez, worktree silinince kaybolur.
 
 ## Claude Code hook kurulumu
 
-`.claude/settings.json`'a eklenir (proje ayarı; auto mode, Claude'un kendi ayar dosyasını
-değiştirmesini engellediği için kullanıcı ekler):
+`.claude/settings.json`'da (proje ayarı). Auto mode, Claude'un kendi ayar dosyasına hook
+yazmasını kullanıcı izniyle bile engelliyor; bu dosyayı kullanıcı değiştirir.
 
 ```json
 "hooks": {
