@@ -51,3 +51,7 @@ next-env.d.ts
 
 # python
 __pycache__/
+
+# Claude Code worktree'leri (iç içe checkout) ve yerel ayarlar
+.claude/worktrees/
+.claude/settings.local.json
